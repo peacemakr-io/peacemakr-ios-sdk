@@ -45,7 +45,7 @@ public class PeacemakrSDK {
   public func Encrypt(_ plaintext: Encryptable) throws -> [UInt8] {
     return try cryptoContext.Encrypt(
       key: key,
-      plaintext: Plaintext(data: plaintext.Data, aad: plaintext.AAD),
+      plaintext: Plaintext(data: plaintext.EncryptableData, aad: plaintext.AuthenticatableData),
       rand: rand
     )
   }
@@ -56,8 +56,8 @@ public class PeacemakrSDK {
    */
   public func Decrypt(_ serialized: [UInt8], dest: inout Encryptable) throws -> Void {
     let outPlaintext = try cryptoContext.Decrypt(key: key, serialized: serialized)
-    dest.Data = outPlaintext.Data
-    dest.AAD = outPlaintext.AAD
+    dest.EncryptableData = outPlaintext.EncryptableData
+    dest.AuthenticatableData = outPlaintext.AuthenticatableData
   }
   
 }

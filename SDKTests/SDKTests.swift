@@ -45,8 +45,15 @@ class SDKTests: XCTestCase {
   func testPerformanceExample() {
       // This is an example of a performance test case.
       self.measure {
-          // Put the code you want to measure the time of here.
-      }
+        let encrypted = try? sdk?.Encrypt(data!)
+        if encrypted == nil {
+          XCTAssert(false, "Encryption failed")
+        }
+        var outData: Encryptable = AppData()
+        try? sdk?.Decrypt(encrypted!!, dest: &outData)
+        
+        XCTAssert(data! == (outData as! AppData))
+        }
   }
 
 }
