@@ -13,6 +13,8 @@ enum SerializationError: Error {
 }
 
 class AppData: Encryptable, Equatable {
+  var Serialized = [UInt8]()
+  
   private var someProperty: String? = nil
   private var someOtherProperty = [String: String]()
   

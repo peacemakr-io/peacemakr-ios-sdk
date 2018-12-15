@@ -32,7 +32,7 @@ class SDKTests: XCTestCase {
   }
 
   func testExample() throws {
-    let encrypted = try? sdk?.Encrypt(data!)
+    let encrypted = try? sdk?.Encrypt(data!, sign: true)
     if encrypted == nil {
       XCTAssert(false, "Encryption failed")
     }
@@ -45,7 +45,7 @@ class SDKTests: XCTestCase {
   func testPerformanceExample() {
       // This is an example of a performance test case.
       self.measure {
-        let encrypted = try? sdk?.Encrypt(data!)
+        let encrypted = try? sdk?.Encrypt(data!, sign: true)
         if encrypted == nil {
           XCTAssert(false, "Encryption failed")
         }
