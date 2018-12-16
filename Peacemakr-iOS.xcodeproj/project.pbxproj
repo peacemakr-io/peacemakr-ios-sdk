@@ -15,6 +15,7 @@
 		071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
 		072C548D218FEB9200B0BB1A /* CoreCrypto.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		07C5104921C63D7900F94A53 /* peacemakr-services.yml in Resources */ = {isa = PBXBuildFile; fileRef = 07C5104821C63D7900F94A53 /* peacemakr-services.yml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
 		071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
+		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 		071269F8218F5D7400F68832 = {
 			isa = PBXGroup;
 			children = (
+				07C5104521C63D4600F94A53 /* Resources */,
 				07126A04218F5D7400F68832 /* SDK */,
 				07126A0F218F5D7400F68832 /* SDKTests */,
 				07126A03218F5D7400F68832 /* Products */,
@@ -121,6 +124,14 @@
 				071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		07C5104521C63D4600F94A53 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				07C5104821C63D7900F94A53 /* peacemakr-services.yml */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07C5104921C63D7900F94A53 /* peacemakr-services.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
