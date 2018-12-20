@@ -10,17 +10,20 @@ import Foundation
 import CoreCrypto
 
 public enum PeacemakrSDKError: Error {
-  case addToKeychainFailed
-  case getFromKeychainFailed
+  case addToKeychainFailed(what: String)
+  case getFromKeychainFailed(what: String)
   case internalError(what: String)
   case verificationFailed
   case decryptionFailed
+  case jsonSerializeFailed
+  case jsonDeserializeFailed
 }
 
 /**
  Provides the Peacemakr iOS SDK.
  */
 public class PeacemakrSDK {
+  private let version = "0.1.0"
   private let cryptoContext: CryptoContext
   private var rand: RandomDevice
   private let apiKey: String
@@ -30,10 +33,13 @@ public class PeacemakrSDK {
     asymm_cipher: AsymmetricCipher.RSA_4096,
     digest: MessageDigestAlgorithm.SHA3_512
   )
-  private let priv_tag = "io.peacemakr.client.private"
-  private let pub_tag = "io.peacemakr.client.public"
+  private let privTag = "io.peacemakr.client.private"
+  private let pubTag = "io.peacemakr.client.public"
   // symmetric keys start with this prefix and append the key ID onto it
-  private let symm_tag_prefix = "io.peacemakr.client.symmetric."
+  private let symmTagPrefix = "io.peacemakr.client.symmetric."
+  
+  private let clientIDTag = "io.peacemakr.client.id"
+  private let pubKeyIDTag = "io.peacemakr.client.public.id"
   
   
   public init(apiKey: String) throws {
@@ -48,20 +54,46 @@ public class PeacemakrSDK {
     let privPem = try myKey.toPem(is_priv: true)
     let pubPem = try myKey.toPem(is_priv: false)
     let pubQuery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                   kSecAttrApplicationTag as String: pub_tag,
+                                   kSecAttrApplicationTag as String: self.pubTag,
                                    kSecValueRef as String: pubPem]
     
     let pubStatus = SecItemAdd(pubQuery as CFDictionary, nil)
-    guard pubStatus == errSecSuccess else { throw PeacemakrSDKError.addToKeychainFailed }
+    guard pubStatus == errSecSuccess else { throw PeacemakrSDKError.addToKeychainFailed(what: "Public Key") }
     
     let privQuery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                    kSecAttrApplicationTag as String: priv_tag,
+                                    kSecAttrApplicationTag as String: self.privTag,
                                     kSecValueRef as String: privPem]
     
     let privStatus = SecItemAdd(privQuery as CFDictionary, nil)
-    guard privStatus == errSecSuccess else { throw PeacemakrSDKError.addToKeychainFailed }
+    guard privStatus == errSecSuccess else { throw PeacemakrSDKError.addToKeychainFailed(what: "Private Key") }
     
-    // TODO: call up to server and register myself
+    // Call up to server and register myself
+    var registerClient = Client()
+    registerClient.sdk = version
+    registerClent.id = "" // will be populated with my client ID by the server
+    registerClient.publicKey.creationTime = Date().timeIntervalSince1970
+    registerClient.publicKey.encoding = "pem"
+    registerClient.publicKey.id = "" // will be populated with my public key ID by the server
+    registerClient.publicKey.key = pubPem
+    registerClient.publicKeyregisterPublicKey.keyType = "rsa"
+    
+    ClientAPI.addClient(body: registerClient, completion: {(client, error) in
+      // Store the clientID and publicKeyID into the keychain as well
+      let clientIDQuery: [String: Any] = [kSecClass as String: kSecClassIdentity,
+                                          kSecAttrApplicationTag as String: self.clientIDTag,
+                                          kSecValueRef as String: Array(client?.id?.utf8)]
+      guard let clientIDStatus = SecItemAdd(clientIDQuery as CFDictionary, nil) == errSecSuccess else {
+        throw PeacemakrSDKError.addToKeychainFailed(what: "Client ID")
+      }
+      
+      let pubKeyIDQuery: [String: Any] = [kSecClass as String: kSecClassIdentity,
+                                          kSecAttrApplicationTag as String: self.pubKeyIDTag,
+                                          kSecValueRef as String: Array(client?.publicKey?.id?.utf8)]
+      
+      guard let pubKeyIDStatus = SecItemAdd(pubKeyIDQuery as CFDictionary, nil) == errSecSuccess else {
+        throw PeacemakrSDKError.addToKeychainFailed(what: "Public Key ID")
+      }
+    })
   }
   
   public func PreLoad() throws {
@@ -73,7 +105,7 @@ public class PeacemakrSDK {
     if keyIDStr == nil {
       throw PeacemakrSDKError.internalError(what: "Could not serialize keyID to string")
     }
-    let tag = symm_tag_prefix + keyIDStr!
+    let tag = symmTagPrefix + keyIDStr!
     
     let query: [String: Any] = [kSecClass as String: kSecClassKey,
                                 kSecAttrApplicationTag as String: tag,
@@ -83,12 +115,21 @@ public class PeacemakrSDK {
     guard status == errSecSuccess else { throw PeacemakrSDKError.addToKeychainFailed }
   }
   
-  private func getKeyByID(cfg: CryptoConfig, keyID: [UInt8]) throws -> PeacemakrKey {
+  private func getKeyByID(keyID: [UInt8], cfg: CryptoConfig?) throws -> PeacemakrKey {
+    let key = try? getLocalKeyByID(keyID: keyID, cfg: cfg)
+    do {
+      return try getLocalKeyByID(keyID: keyID, cfg: cfg)
+    } catch PeacemakrSDKError.getFromKeychainFailed { // this means that we don't have the key we need
+      // TODO: go up to server and get the key we need
+    } // Other errors should get bubbled up
+  }
+  
+  private func getLocalKeyByID(keyID: [UInt8], cfg: CryptoConfig) throws -> PeacemakrKey {
     let keyIDStr = String(bytes: keyID, encoding: .utf8)
     if keyIDStr == nil {
-      throw PeacemakrSDKError.internalError(what: "Could not serialize keyID to string")
+      throw PeacemakrSDKError.internalError(what: "Could not marshal keyID to string")
     }
-    let tag = symm_tag_prefix + keyIDStr!
+    let tag = symmTagPrefix + keyIDStr!
     
     let getquery: [String: Any] = [kSecClass as String: kSecClassKey,
                                    kSecAttrApplicationTag as String: tag,
@@ -96,7 +137,7 @@ public class PeacemakrSDK {
     
     var item: CFTypeRef?
     let status = SecItemCopyMatching(getquery as CFDictionary, &item)
-    guard status == errSecSuccess else { throw PeacemakrSDKError.getFromKeychainFailed }
+    guard status == errSecSuccess else { throw PeacemakrSDKError.getFromKeychainFailed(what: "symmetric key: " + keyIDStr) }
     
     let keyBytes = item as! [UInt8]
     return try PeacemakrKey(config: cfg, bytes: keyBytes)
@@ -105,9 +146,9 @@ public class PeacemakrSDK {
   private func getMyKey(priv: Bool) throws -> PeacemakrKey {
     var tag: String
     if priv {
-      tag = priv_tag
+      tag = privTag
     } else {
-      tag = pub_tag
+      tag = pubTag
     }
     
     let getquery: [String: Any] = [kSecClass as String: kSecClassKey,
@@ -116,7 +157,7 @@ public class PeacemakrSDK {
     
     var item: CFTypeRef?
     let status = SecItemCopyMatching(getquery as CFDictionary, &item)
-    guard status == errSecSuccess else { throw PeacemakrSDKError.getFromKeychainFailed }
+    guard status == errSecSuccess else { throw PeacemakrSDKError.getFromKeychainFailed("public/private key") }
     
     let keyBytes = item as! [Int8]
     return try PeacemakrKey(config: myKeyCfg, fileContents: keyBytes, is_priv: priv)
@@ -128,15 +169,33 @@ public class PeacemakrSDK {
     return ([], cfg)
   }
   
+  private func getMyPublicKeyID() -> [UInt8] {
+    let pubKeyIDQuery: [String: Any] = [kSecClass as String: kSecClassIdentity,
+                                        kSecAttrApplicationTag as String: self.pubKeyIDTag,
+                                        kSecReturnRef as String: true]
+    
+    var item: CFTypeRef?
+    let status = SecItemCopyMatching(getquery as CFDictionary, &item)
+    guard status == errSecSuccess else { throw PeacemakrSDKError.getFromKeychainFailed }
+    
+    return item as! [UInt8]
+  }
+  
   /**
    Returns an encrypted and base64 serialized blob that contains \p plaintext.
    Throws an error on failure of encryption or serialization.
    */
   public func Encrypt(_ plaintext: Encryptable) throws -> [UInt8] {
     let (keyID, keyCfg) = try selectEncryptionKey()
-    let ptext = Plaintext(data: plaintext.Serialized, aad: keyID)
+    let aadJSON = try? JSONSerialization.data(withJSONObject: ["cryptoKeyID": keyID, "senderKeyID": getMyPublicKeyID()], options: [])
+    if aadJSON == nil {
+      throw PeacemakrSDKError.jsonSerializeFailed
+    }
+    let messageAAD = String(data: aadJSON, encoding: .utf8)
     
-    let key = try getKeyByID(cfg: keyCfg, keyID: keyID)
+    let ptext = Plaintext(data: plaintext.Serialized, aad: messageAAD)
+    
+    let key = try getLocalKeyByID(keyID: keyID, cfg: keyCfg)
     let signKey = try getMyKey(priv: true)
 
     var encrypted = try cryptoContext.Encrypt(
@@ -152,9 +211,13 @@ public class PeacemakrSDK {
     return serialized
   }
   
-  private func getKeyID(serialized: [UInt8]) throws -> [UInt8] {
-    let keyID = try cryptoContext.ExtractUnverifiedAAD(serialized)
-    return keyID.AuthenticatableData
+  private func getKeyID(serialized: [UInt8]) throws -> ([UInt8], [UInt8]) {
+    let serializedAAD = try cryptoContext.ExtractUnverifiedAAD(serialized)
+    let aadDict = try? JSONSerialization.jsonObject(with: serializedAAD.data(using: utf8)!, options: [])
+    if aadDict == nil {
+      throw PeacemakrSDKError.jsonDeserializeFailed
+    }
+    return (aadDict["cryptoKeyID"], aadDict["senderKeyID"])
   }
   
   /**
@@ -162,15 +225,15 @@ public class PeacemakrSDK {
    Throws an error on failure of deserialization or decryption.
    */
   public func Decrypt(_ serialized: [UInt8], dest: inout Encryptable) throws -> Void {
-    let keyID = try getKeyID(serialized: serialized)
+    let (keyID, signKeyID) = try getKeyID(serialized: serialized)
     var (deserialized, cfg) = try cryptoContext.Deserialize(serialized)
     
-    let key = try getKeyByID(cfg: cfg, keyID: keyID)
+    let key = try getKeyByID(keyID: keyID, cfg: cfg)
     
     let (outPlaintext, needsVerify) = try cryptoContext.Decrypt(key: key, ciphertext: deserialized)
     if needsVerify {
-      // TODO: this is incorrect - need the sender's public key
-      let signKey = try getMyKey(priv: false)
+      let signKey = try getKeyByID(keyID: signKeyID, cfg: nil)
+      
       if !cryptoContext.Verify(senderKey: signKey, plaintext: outPlaintext, ciphertext: &deserialized) {
         throw PeacemakrSDKError.verificationFailed
       }
