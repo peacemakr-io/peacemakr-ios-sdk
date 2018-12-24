@@ -14,7 +14,6 @@
 		071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722EA218FA301005E2CA5 /* Encryptable.swift */; };
 		071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
-		072C548D218FEB9200B0BB1A /* CoreCrypto.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0752987821CAC0FD0092B179 /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752985F21CAC0FD0092B179 /* APIHelper.swift */; };
 		0752987921CAC0FD0092B179 /* AlamofireImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752986021CAC0FD0092B179 /* AlamofireImplementations.swift */; };
 		0752987A21CAC0FD0092B179 /* KeyServiceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752986221CAC0FD0092B179 /* KeyServiceAPI.swift */; };
@@ -38,8 +37,8 @@
 		0752988C21CAC0FD0092B179 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987521CAC0FD0092B179 /* Extensions.swift */; };
 		0752988D21CAC0FD0092B179 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987621CAC0FD0092B179 /* Models.swift */; };
 		0752988E21CAC0FD0092B179 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987721CAC0FD0092B179 /* Configuration.swift */; };
-		07C390C421D175E5009620A6 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C390C321D175E5009620A6 /* Alamofire.framework */; };
-		07C5104921C63D7900F94A53 /* peacemakr-services.yml in Resources */ = {isa = PBXBuildFile; fileRef = 07C5104821C63D7900F94A53 /* peacemakr-services.yml */; };
+		07C390D121D191BC009620A6 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C390CF21D1912A009620A6 /* Alamofire.framework */; };
+		07C390D321D1946E009620A6 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C390CF21D1912A009620A6 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,19 +50,6 @@
 			remoteInfo = SDK;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		072C548C218FEB8900B0BB1A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				072C548D218FEB9200B0BB1A /* CoreCrypto.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		07126A02218F5D7400F68832 /* Peacemakr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Peacemakr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,7 +85,7 @@
 		0752987521CAC0FD0092B179 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0752987621CAC0FD0092B179 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		0752987721CAC0FD0092B179 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
-		07C390C321D175E5009620A6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		07C390CF21D1912A009620A6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,7 +95,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */,
-				07C390C421D175E5009620A6 /* Alamofire.framework in Frameworks */,
+				07C390D321D1946E009620A6 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +104,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */,
+				07C390D121D191BC009620A6 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +114,7 @@
 		071269F8218F5D7400F68832 = {
 			isa = PBXGroup;
 			children = (
+				07C390CF21D1912A009620A6 /* Alamofire.framework */,
 				07C5104521C63D4600F94A53 /* Resources */,
 				07126A04218F5D7400F68832 /* SDK */,
 				07126A0F218F5D7400F68832 /* SDKTests */,
@@ -170,7 +158,6 @@
 		071722EC218FA6F1005E2CA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				07C390C321D175E5009620A6 /* Alamofire.framework */,
 				071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */,
 			);
 			name = Frameworks;
@@ -252,8 +239,7 @@
 				071269FD218F5D7400F68832 /* Headers */,
 				071269FE218F5D7400F68832 /* Sources */,
 				071269FF218F5D7400F68832 /* Frameworks */,
-				07126A00218F5D7400F68832 /* Resources */,
-				072C548C218FEB8900B0BB1A /* CopyFiles */,
+				07C390D221D193BF009620A6 /* Carthage Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -320,14 +306,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		07126A00218F5D7400F68832 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				07C5104921C63D7900F94A53 /* peacemakr-services.yml in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		07126A09218F5D7400F68832 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +314,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		07C390D221D193BF009620A6 /* Carthage Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+			);
+			name = "Carthage Copy Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		071269FE218F5D7400F68832 /* Sources */ = {
@@ -443,13 +443,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -501,12 +502,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -599,6 +601,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 				);
 				INFOPLIST_FILE = SDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -608,7 +611,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.SDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -622,6 +625,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 				);
 				INFOPLIST_FILE = SDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -631,7 +635,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.SDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

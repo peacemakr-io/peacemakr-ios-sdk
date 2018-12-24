@@ -15,7 +15,7 @@ class SDKTests: XCTestCase {
 
   override func setUp() {
     do {
-      sdk = try PeacemakrSDK()
+      sdk = try PeacemakrSDK(apiKey: "123-123-123")
       try sdk!.Register()
       try sdk!.PreLoad()
     } catch {
@@ -32,7 +32,7 @@ class SDKTests: XCTestCase {
   }
 
   func testExample() throws {
-    let encrypted = try? sdk?.Encrypt(data!, sign: true)
+    let encrypted = try? sdk?.Encrypt(data!)
     if encrypted == nil {
       XCTAssert(false, "Encryption failed")
     }
@@ -43,16 +43,15 @@ class SDKTests: XCTestCase {
   }
 
   func testPerformanceExample() {
-      // This is an example of a performance test case.
       self.measure {
-        let encrypted = try? sdk?.Encrypt(data!, sign: true)
+        let encrypted = try? self.sdk?.Encrypt(self.data!)
         if encrypted == nil {
           XCTAssert(false, "Encryption failed")
         }
         var outData: Encryptable = AppData()
-        try? sdk?.Decrypt(encrypted!!, dest: &outData)
+        try? self.sdk?.Decrypt(encrypted!!, dest: &outData)
         
-        XCTAssert(data! == (outData as! AppData))
+        XCTAssert(self.data! == (outData as! AppData))
         }
   }
 
