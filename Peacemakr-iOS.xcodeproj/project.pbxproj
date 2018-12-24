@@ -38,6 +38,7 @@
 		0752988C21CAC0FD0092B179 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987521CAC0FD0092B179 /* Extensions.swift */; };
 		0752988D21CAC0FD0092B179 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987621CAC0FD0092B179 /* Models.swift */; };
 		0752988E21CAC0FD0092B179 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0752987721CAC0FD0092B179 /* Configuration.swift */; };
+		07C390C421D175E5009620A6 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C390C321D175E5009620A6 /* Alamofire.framework */; };
 		07C5104921C63D7900F94A53 /* peacemakr-services.yml in Resources */ = {isa = PBXBuildFile; fileRef = 07C5104821C63D7900F94A53 /* peacemakr-services.yml */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +99,7 @@
 		0752987521CAC0FD0092B179 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0752987621CAC0FD0092B179 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		0752987721CAC0FD0092B179 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		07C390C321D175E5009620A6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,6 +109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */,
+				07C390C421D175E5009620A6 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +170,7 @@
 		071722EC218FA6F1005E2CA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				07C390C321D175E5009620A6 /* Alamofire.framework */,
 				071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */,
 			);
 			name = Frameworks;
@@ -523,6 +527,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;
@@ -561,6 +566,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;

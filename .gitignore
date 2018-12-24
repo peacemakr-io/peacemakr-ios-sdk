@@ -1,4 +1,8 @@
 .DS_Store
 *.framework
 *.framework.dSYM
+
 Generated/
+
+Carthage/Checkouts
+Carthage/Build
