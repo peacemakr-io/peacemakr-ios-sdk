@@ -6,3 +6,13 @@ Generated/
 
 Carthage/Checkouts
 Carthage/Build
+
+xcuserdata/
+*.dSYM
+
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+build/
+DerivedData/
