@@ -546,7 +546,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "/Users/aman/peacemakr/peacemakr-core-crypto/src/ffi/swift/CoreCrypto/universal/CoreCrypto.framework/Modules";
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -585,7 +585,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "/Users/aman/peacemakr/peacemakr-core-crypto/src/ffi/swift/CoreCrypto/universal/CoreCrypto.framework/Modules";
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "$(VALID_ARCHS)";
