@@ -502,6 +502,30 @@ paths:
           description: Successfully persist the encrypted symmetric keys
         '400':
           description: Unable to process request
+  '/crypto/asymmetric/{keyID}':
+    get:
+      security:
+        - header: []
+      tags:
+        - KeyService
+      summary: Get the public key associated with the passed-in key ID
+      operationId: getPublicKey
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: keyID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Returns a public key in PEM format
+          schema:
+            $ref: '#/definitions/PublicKey'
+        '400':
+          description: Unable to process request
 
 
   '/crypto/deriver/instance':
