@@ -9,15 +9,19 @@
 import XCTest
 @testable import Peacemakr
 
+func log(_ s: String) -> Void {
+  print(s)
+}
+
 class SDKTests: XCTestCase {
   var sdk: PeacemakrSDK? = nil
   var data: AppData? = nil
 
   override func setUp() {
     do {
-      sdk = try PeacemakrSDK(apiKey: "123-123-123")
-      try sdk!.Register()
-      try sdk!.PreLoad()
+      sdk = PeacemakrSDK(apiKey: "123-123-123", logHandler: log)
+      sdk!.Register()
+      sdk!.PreLoad()
     } catch {
       XCTAssert(false, "Initialization of the SDK failed")
     }
