@@ -3,9 +3,9 @@ info:
   description: >-
     This API describes the Peacemakr services, which enable seamless application layer encryption and verification.
   version: 1.0.0
-  title: Peace Makr
-  termsOfService: 'http://api.peacemakr.com'
-host: api.someserivce.com
+  title: Peacemakr
+  termsOfService: 'http://api.peacemakr.io'
+host: api.peacemakr.io
 basePath: /api/v1
 securityDefinitions:
   basic:
@@ -26,6 +26,7 @@ tags:
   - name: KeyDerivationServiceRegistry
     description: Register, lookup, or disband key derivation services
   - name: ServerManagement
+  - name: PhoneHome
 schemes:
   - http
 paths:
@@ -38,7 +39,29 @@ paths:
       responses:
         '200':
           description: Everythings fine.
-
+  /log:
+    post:
+      tags:
+      - PhoneHome
+      security:
+        - header: []
+      summary: Used to report back to server a logged event
+      description: Returns 200 ok if successfully persisted
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: log
+          required: true
+          schema:
+            $ref: '#/definitions/Log'
+      responses:
+        '200':
+          description: Log event successfully ingested
+        '400':
+          description: Log event unsuccessfully ingested
+        '401':
+          description: Unauthorized request
   /org:
     post:
       security:
@@ -415,7 +438,7 @@ paths:
           description: Successfully expired the use domain from service
         '400':
           description: Unable to process request
-  '/crypto/useDomain/{useDomainId}/endableKDSFallbackToCloud':
+  '/crypto/useDomain/{useDomainId}/enableKDSFallbackToCloud':
     put:
       security:
         - header: []
@@ -635,7 +658,7 @@ definitions:
         type: array
         description: Array of api keys registered to this org
         items:
-          type: string
+          $ref: '#/definitions/APIKey'
       cryptoConfigId:
         type: string
         description: cryptoconfigId of this org
@@ -652,6 +675,17 @@ definitions:
         type: string
       creator:
         $ref: '#/definitions/Contact'
+
+  Log:
+    type: object
+    required:
+      - clientId
+      - event
+    properties:
+      clientId:
+        type: string
+      event:
+        type: string
 
   Contact:
     type: object

@@ -20,5 +20,5 @@ public protocol Encryptable {
      for the encryption to work properly, but any serialization scheme is valid as
      long as deserialization is also possible.
      */
-    var Serialized: [UInt8] { get set }
+    var serializedValue: [UInt8] { get set }
 }

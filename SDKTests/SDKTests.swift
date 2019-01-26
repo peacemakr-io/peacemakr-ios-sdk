@@ -18,12 +18,19 @@ class SDKTests: XCTestCase {
   var data: AppData? = nil
 
   override func setUp() {
-    do {
-      sdk = PeacemakrSDK(apiKey: "123-123-123", logHandler: log)
-      sdk!.Register()
-      sdk!.PreLoad()
-    } catch {
+    sdk = PeacemakrSDK(apiKey: "123-123-123", logHandler: log)
+    if !sdk!.Register() {
       XCTAssert(false, "Initialization of the SDK failed")
+    }
+    
+    var i = 0
+    while !sdk!.RegistrationSuccessful && i < 100 {
+      sleep(1)
+      i+=1
+    }
+    
+    if !sdk!.RegistrationSuccessful {
+      XCTAssert(false, "Register failed!")
     }
     
     data = AppData()
@@ -36,24 +43,24 @@ class SDKTests: XCTestCase {
   }
 
   func testExample() throws {
-    let encrypted = try? sdk?.Encrypt(data!)
+    let encrypted = sdk?.Encrypt(data!)
     if encrypted == nil {
       XCTAssert(false, "Encryption failed")
     }
     var outData: Encryptable = AppData()
-    try sdk?.Decrypt(encrypted!!, dest: &outData)
+    sdk?.Decrypt(encrypted!, dest: &outData)
     
     XCTAssert(data! == (outData as! AppData))
   }
 
   func testPerformanceExample() {
       self.measure {
-        let encrypted = try? self.sdk?.Encrypt(self.data!)
+        let encrypted = self.sdk?.Encrypt(self.data!)
         if encrypted == nil {
           XCTAssert(false, "Encryption failed")
         }
         var outData: Encryptable = AppData()
-        try? self.sdk?.Decrypt(encrypted!!, dest: &outData)
+        try? self.sdk?.Decrypt(encrypted!, dest: &outData)
         
         XCTAssert(self.data! == (outData as! AppData))
         }
