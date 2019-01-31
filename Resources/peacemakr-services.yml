@@ -15,6 +15,8 @@ securityDefinitions:
     in: header
     name: authorization
 tags:
+  - name: Login
+    description: OAuth2 login related endpoints
   - name: Org
     description: Create, update, or delete an organization
   - name: Client
@@ -39,6 +41,7 @@ paths:
       responses:
         '200':
           description: Everythings fine.
+
   /log:
     post:
       tags:
@@ -62,19 +65,96 @@ paths:
           description: Log event unsuccessfully ingested
         '401':
           description: Unauthorized request
+
+  /login:
+    get:
+      tags:
+        - Login
+      summary: After aquiring and OAuth2 openId id_token from IdP (like google login), present it here and proceed with the required flow.  If this is a new user, they'll have to create an org, else, they will just get their org details, and an APIKey associated with their org.
+      operationId: login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id_token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Returns a LoginResponse, which helps the calling client determine what screen to load next (create org vs current org).
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        '401':
+          description: Not authenticated (user not who they say they are)
+        '403':
+          description: Not authorized (user not permitted to do that)
+  /login/inviteUser:
+    post:
+      tags:
+        - Login
+      security:
+      - header: []
+      summary: Invite (bind) an existing user that is not already bound to an org, to your org
+      operationId: loginInviteUser
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful
+        '401':
+          description: Not authenticated (user not who they say they are)
+        '403':
+          description: Not authorized (user not permitted to do that)
+    delete:
+      tags:
+        - Login
+      security:
+      - header: []
+      summary: Uninvite (remove) an existing user that is part of your org
+      operationId: loginUninviteUser
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: email
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful
+        '401':
+          description: Not authenticated (user not who they say they are)
+        '403':
+          description: Not authorized (user not permitted to do that)
+
   /org:
     post:
       security:
         - header: []
       tags:
         - Org
-      summary: Create a new organization
+      summary: Create a new organization. Must be an authenticated request with a valid id_token from a trusted IdP.
       operationId: addOrganization
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
+        - in: query
+          name: id_token
+          required: true
+          type: string
         - in: query
           name: orgName
           required: true
@@ -86,7 +166,7 @@ paths:
             $ref: '#/definitions/Contact'
       responses:
         '200':
-          description: Successful construction of an organization. Returns the actual organization which was registered.
+          description: Successful construction of an organization. Returns the actual organization which was registered. (Org includes an APIToken)
           schema:
             $ref: '#/definitions/Organization'
         '400':
@@ -630,6 +710,18 @@ paths:
 
 
 definitions:
+
+  LoginResponse:
+    type: object
+    properties:
+      mustCreateOrg:
+        type: boolean
+        description: "if true, then the user is not attached to an existing org, and must create a new org"
+      messageOftheDay:
+        type: string
+        description: "if set, please display this message to the user on login"
+      Org:
+        $ref: '#/definitions/Organization'
 
   Organization:
     type: object

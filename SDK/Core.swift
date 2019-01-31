@@ -38,8 +38,8 @@ public class PeacemakrSDK {
   }
   
   public init?(apiKey: String, logHandler: @escaping (String)->Void) {
-    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
-    print(SwaggerClientAPI.basePath)
+//    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
+    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
     
     self.apiKey = apiKey
     self.logHandler = logHandler
@@ -78,7 +78,7 @@ public class PeacemakrSDK {
   
   // These are async...all of them...
   private func sendRequest<T>(builder: RequestBuilder<T>, completion: @escaping (_ response: T?, _ error: Error?) -> Void) -> Void {
-    builder.addHeaders(["authorization": self.apiKey])
+    builder.addHeader(name: "authorization", value: self.apiKey)
     builder.execute({ (response, error) -> Void in
       completion(response?.body, error)
     })
@@ -87,6 +87,8 @@ public class PeacemakrSDK {
   public var RegistrationSuccessful: Bool = false
   
   public func Register() -> Bool {
+    
+    self.log("Entering Register()")
     // Generate my keypair
     let myKey = PeacemakrKey(config: myKeyCfg, rand: rand)
     if myKey == nil {
@@ -127,20 +129,28 @@ public class PeacemakrSDK {
       return false
     }
     
+    self.log("Finished setup client-side, registering with " + SwaggerClientAPI.basePath)
+    
     // Call up to server and register myself
     let registerClient = Client()
-    registerClient.sdk = version
+    registerClient.sdk = "ios-" + version
     registerClient.id = "" // will be populated with my client ID by the server
-    registerClient.publicKey?.creationTime = Int32(Date().timeIntervalSince1970)
-    registerClient.publicKey?.encoding = "pem"
-    registerClient.publicKey?.id = "" // will be populated with my public key ID by the server
-    registerClient.publicKey?.key = String(cString: pubPem)
-    registerClient.publicKey?.keyType = "rsa"
+    
+    let pubKeyToSend = PublicKey()
+    pubKeyToSend.creationTime = Int32(Date().timeIntervalSince1970)
+    pubKeyToSend.encoding = "pem"
+    pubKeyToSend.id = ""
+    pubKeyToSend.key = String(cString: pubPem)
+    pubKeyToSend.keyType = "rsa"
+    
+    registerClient.publicKey = pubKeyToSend
     
     let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
     sendRequest(builder: requestBuilder, completion: {(client, error) in
+      self.logHandler("Register request completed")
+      
       if error != nil {
-        self.log("addClient failed")
+        self.log("addClient failed with " + error.debugDescription)
         return
       }
       

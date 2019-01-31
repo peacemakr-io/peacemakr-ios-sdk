@@ -16,9 +16,12 @@ func log(_ s: String) -> Void {
 class SDKTests: XCTestCase {
   var sdk: PeacemakrSDK? = nil
   var data: AppData? = nil
+  
+  let testKey = "peacemaker-key-123-123-123"
+  let gibblygook = "gibblygook"
 
   override func setUp() {
-    sdk = PeacemakrSDK(apiKey: "peacemaker-key-123-123-123", logHandler: log)
+    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
     if !sdk!.Register() {
       XCTAssert(false, "Initialization of the SDK failed")
     }
@@ -43,6 +46,7 @@ class SDKTests: XCTestCase {
   }
 
   func testEncryptDecrypt() throws {
+    XCTAssert(sdk!.RegistrationSuccessful)
     let encrypted = sdk?.Encrypt(data!)
     if encrypted == nil {
       XCTAssert(false, "Encryption failed")

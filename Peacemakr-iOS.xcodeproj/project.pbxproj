@@ -7,66 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0701544521FCE7BC00172F8D /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542721FCE7BC00172F8D /* APIHelper.swift */; };
-		0701544621FCE7BC00172F8D /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542721FCE7BC00172F8D /* APIHelper.swift */; };
-		0701544721FCE7BC00172F8D /* AlamofireImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542821FCE7BC00172F8D /* AlamofireImplementations.swift */; };
-		0701544821FCE7BC00172F8D /* AlamofireImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542821FCE7BC00172F8D /* AlamofireImplementations.swift */; };
-		0701544921FCE7BC00172F8D /* KeyServiceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542A21FCE7BC00172F8D /* KeyServiceAPI.swift */; };
-		0701544A21FCE7BC00172F8D /* KeyServiceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542A21FCE7BC00172F8D /* KeyServiceAPI.swift */; };
-		0701544B21FCE7BC00172F8D /* ServerManagementAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542B21FCE7BC00172F8D /* ServerManagementAPI.swift */; };
-		0701544C21FCE7BC00172F8D /* ServerManagementAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542B21FCE7BC00172F8D /* ServerManagementAPI.swift */; };
-		0701544D21FCE7BC00172F8D /* ClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542C21FCE7BC00172F8D /* ClientAPI.swift */; };
-		0701544E21FCE7BC00172F8D /* ClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542C21FCE7BC00172F8D /* ClientAPI.swift */; };
-		0701544F21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542D21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift */; };
-		0701545021FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542D21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift */; };
-		0701545121FCE7BC00172F8D /* OrgAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542E21FCE7BC00172F8D /* OrgAPI.swift */; };
-		0701545221FCE7BC00172F8D /* OrgAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542E21FCE7BC00172F8D /* OrgAPI.swift */; };
-		0701545321FCE7BC00172F8D /* PhoneHomeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542F21FCE7BC00172F8D /* PhoneHomeAPI.swift */; };
-		0701545421FCE7BC00172F8D /* PhoneHomeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701542F21FCE7BC00172F8D /* PhoneHomeAPI.swift */; };
-		0701545521FCE7BC00172F8D /* CryptoConfigAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543021FCE7BC00172F8D /* CryptoConfigAPI.swift */; };
-		0701545621FCE7BC00172F8D /* CryptoConfigAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543021FCE7BC00172F8D /* CryptoConfigAPI.swift */; };
-		0701545721FCE7BC00172F8D /* CodableHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543121FCE7BC00172F8D /* CodableHelper.swift */; };
-		0701545821FCE7BC00172F8D /* CodableHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543121FCE7BC00172F8D /* CodableHelper.swift */; };
-		0701545921FCE7BC00172F8D /* JSONEncodableEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543221FCE7BC00172F8D /* JSONEncodableEncoding.swift */; };
-		0701545A21FCE7BC00172F8D /* JSONEncodableEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543221FCE7BC00172F8D /* JSONEncodableEncoding.swift */; };
-		0701545B21FCE7BC00172F8D /* APIs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543321FCE7BC00172F8D /* APIs.swift */; };
-		0701545C21FCE7BC00172F8D /* APIs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543321FCE7BC00172F8D /* APIs.swift */; };
-		0701545D21FCE7BC00172F8D /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543521FCE7BC00172F8D /* PublicKey.swift */; };
-		0701545E21FCE7BC00172F8D /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543521FCE7BC00172F8D /* PublicKey.swift */; };
-		0701545F21FCE7BC00172F8D /* KeyDerivationInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543621FCE7BC00172F8D /* KeyDerivationInstance.swift */; };
-		0701546021FCE7BC00172F8D /* KeyDerivationInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543621FCE7BC00172F8D /* KeyDerivationInstance.swift */; };
-		0701546121FCE7BC00172F8D /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543721FCE7BC00172F8D /* Log.swift */; };
-		0701546221FCE7BC00172F8D /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543721FCE7BC00172F8D /* Log.swift */; };
-		0701546321FCE7BC00172F8D /* EncryptedSymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543821FCE7BC00172F8D /* EncryptedSymmetricKey.swift */; };
-		0701546421FCE7BC00172F8D /* EncryptedSymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543821FCE7BC00172F8D /* EncryptedSymmetricKey.swift */; };
-		0701546521FCE7BC00172F8D /* HeatbeatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543921FCE7BC00172F8D /* HeatbeatResponse.swift */; };
-		0701546621FCE7BC00172F8D /* HeatbeatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543921FCE7BC00172F8D /* HeatbeatResponse.swift */; };
-		0701546721FCE7BC00172F8D /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543A21FCE7BC00172F8D /* Organization.swift */; };
-		0701546821FCE7BC00172F8D /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543A21FCE7BC00172F8D /* Organization.swift */; };
-		0701546921FCE7BC00172F8D /* CryptoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543B21FCE7BC00172F8D /* CryptoConfig.swift */; };
-		0701546A21FCE7BC00172F8D /* CryptoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543B21FCE7BC00172F8D /* CryptoConfig.swift */; };
-		0701546B21FCE7BC00172F8D /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543C21FCE7BC00172F8D /* APIKey.swift */; };
-		0701546C21FCE7BC00172F8D /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543C21FCE7BC00172F8D /* APIKey.swift */; };
-		0701546D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift */; };
-		0701546E21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift */; };
-		0701546F21FCE7BC00172F8D /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543E21FCE7BC00172F8D /* Client.swift */; };
-		0701547021FCE7BC00172F8D /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543E21FCE7BC00172F8D /* Client.swift */; };
-		0701547121FCE7BC00172F8D /* SymmetricKeyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543F21FCE7BC00172F8D /* SymmetricKeyRequest.swift */; };
-		0701547221FCE7BC00172F8D /* SymmetricKeyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701543F21FCE7BC00172F8D /* SymmetricKeyRequest.swift */; };
-		0701547321FCE7BC00172F8D /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544021FCE7BC00172F8D /* Contact.swift */; };
-		0701547421FCE7BC00172F8D /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544021FCE7BC00172F8D /* Contact.swift */; };
-		0701547521FCE7BC00172F8D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544121FCE7BC00172F8D /* Extensions.swift */; };
-		0701547621FCE7BC00172F8D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544121FCE7BC00172F8D /* Extensions.swift */; };
-		0701547721FCE7BC00172F8D /* JSONEncodingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544221FCE7BC00172F8D /* JSONEncodingHelper.swift */; };
-		0701547821FCE7BC00172F8D /* JSONEncodingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544221FCE7BC00172F8D /* JSONEncodingHelper.swift */; };
-		0701547921FCE7BC00172F8D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544321FCE7BC00172F8D /* Models.swift */; };
-		0701547A21FCE7BC00172F8D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544321FCE7BC00172F8D /* Models.swift */; };
-		0701547B21FCE7BC00172F8D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544421FCE7BC00172F8D /* Configuration.swift */; };
-		0701547C21FCE7BC00172F8D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0701544421FCE7BC00172F8D /* Configuration.swift */; };
 		0701548121FCF5C100172F8D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; };
 		0701548321FCF5D700172F8D /* Alamofire.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0701548421FCF80500172F8D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; };
 		0701548721FCF89900172F8D /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0710E2862202CB4A00CDD72A /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2662202CB4A00CDD72A /* APIHelper.swift */; };
+		0710E2872202CB4A00CDD72A /* AlamofireImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */; };
+		0710E2882202CB4A00CDD72A /* LoginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2692202CB4A00CDD72A /* LoginAPI.swift */; };
+		0710E2892202CB4A00CDD72A /* KeyServiceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26A2202CB4A00CDD72A /* KeyServiceAPI.swift */; };
+		0710E28A2202CB4A00CDD72A /* ServerManagementAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26B2202CB4A00CDD72A /* ServerManagementAPI.swift */; };
+		0710E28B2202CB4A00CDD72A /* ClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26C2202CB4A00CDD72A /* ClientAPI.swift */; };
+		0710E28C2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26D2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift */; };
+		0710E28D2202CB4A00CDD72A /* OrgAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26E2202CB4A00CDD72A /* OrgAPI.swift */; };
+		0710E28E2202CB4A00CDD72A /* PhoneHomeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E26F2202CB4A00CDD72A /* PhoneHomeAPI.swift */; };
+		0710E28F2202CB4A00CDD72A /* CryptoConfigAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2702202CB4A00CDD72A /* CryptoConfigAPI.swift */; };
+		0710E2902202CB4A00CDD72A /* CodableHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2712202CB4A00CDD72A /* CodableHelper.swift */; };
+		0710E2912202CB4A00CDD72A /* JSONEncodableEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2722202CB4A00CDD72A /* JSONEncodableEncoding.swift */; };
+		0710E2922202CB4A00CDD72A /* APIs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2732202CB4A00CDD72A /* APIs.swift */; };
+		0710E2932202CB4A00CDD72A /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2752202CB4A00CDD72A /* PublicKey.swift */; };
+		0710E2942202CB4A00CDD72A /* KeyDerivationInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2762202CB4A00CDD72A /* KeyDerivationInstance.swift */; };
+		0710E2952202CB4A00CDD72A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2772202CB4A00CDD72A /* Log.swift */; };
+		0710E2962202CB4A00CDD72A /* EncryptedSymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2782202CB4A00CDD72A /* EncryptedSymmetricKey.swift */; };
+		0710E2972202CB4A00CDD72A /* HeatbeatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2792202CB4A00CDD72A /* HeatbeatResponse.swift */; };
+		0710E2982202CB4A00CDD72A /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27A2202CB4A00CDD72A /* Organization.swift */; };
+		0710E2992202CB4A00CDD72A /* CryptoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27B2202CB4A00CDD72A /* CryptoConfig.swift */; };
+		0710E29A2202CB4A00CDD72A /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27C2202CB4A00CDD72A /* APIKey.swift */; };
+		0710E29B2202CB4A00CDD72A /* SymmetricKeyUseDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27D2202CB4A00CDD72A /* SymmetricKeyUseDomain.swift */; };
+		0710E29C2202CB4A00CDD72A /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27E2202CB4A00CDD72A /* Client.swift */; };
+		0710E29D2202CB4A00CDD72A /* SymmetricKeyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E27F2202CB4A00CDD72A /* SymmetricKeyRequest.swift */; };
+		0710E29E2202CB4A00CDD72A /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2802202CB4A00CDD72A /* LoginResponse.swift */; };
+		0710E29F2202CB4A00CDD72A /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2812202CB4A00CDD72A /* Contact.swift */; };
+		0710E2A02202CB4A00CDD72A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2822202CB4A00CDD72A /* Extensions.swift */; };
+		0710E2A12202CB4A00CDD72A /* JSONEncodingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2832202CB4A00CDD72A /* JSONEncodingHelper.swift */; };
+		0710E2A22202CB4A00CDD72A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2842202CB4A00CDD72A /* Models.swift */; };
+		0710E2A32202CB4A00CDD72A /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2852202CB4A00CDD72A /* Configuration.swift */; };
 		07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07126A02218F5D7400F68832 /* Peacemakr.framework */; };
 		07126A11218F5D7400F68832 /* SDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A10218F5D7400F68832 /* SDKTests.swift */; };
 		071722E7218F8972005E2CA5 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A1C218F61E000F68832 /* Core.swift */; };
@@ -137,36 +111,38 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0701542721FCE7BC00172F8D /* APIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
-		0701542821FCE7BC00172F8D /* AlamofireImplementations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireImplementations.swift; sourceTree = "<group>"; };
-		0701542A21FCE7BC00172F8D /* KeyServiceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyServiceAPI.swift; sourceTree = "<group>"; };
-		0701542B21FCE7BC00172F8D /* ServerManagementAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerManagementAPI.swift; sourceTree = "<group>"; };
-		0701542C21FCE7BC00172F8D /* ClientAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientAPI.swift; sourceTree = "<group>"; };
-		0701542D21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyDerivationServiceRegistryAPI.swift; sourceTree = "<group>"; };
-		0701542E21FCE7BC00172F8D /* OrgAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrgAPI.swift; sourceTree = "<group>"; };
-		0701542F21FCE7BC00172F8D /* PhoneHomeAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneHomeAPI.swift; sourceTree = "<group>"; };
-		0701543021FCE7BC00172F8D /* CryptoConfigAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoConfigAPI.swift; sourceTree = "<group>"; };
-		0701543121FCE7BC00172F8D /* CodableHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableHelper.swift; sourceTree = "<group>"; };
-		0701543221FCE7BC00172F8D /* JSONEncodableEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncodableEncoding.swift; sourceTree = "<group>"; };
-		0701543321FCE7BC00172F8D /* APIs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIs.swift; sourceTree = "<group>"; };
-		0701543521FCE7BC00172F8D /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
-		0701543621FCE7BC00172F8D /* KeyDerivationInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyDerivationInstance.swift; sourceTree = "<group>"; };
-		0701543721FCE7BC00172F8D /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		0701543821FCE7BC00172F8D /* EncryptedSymmetricKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedSymmetricKey.swift; sourceTree = "<group>"; };
-		0701543921FCE7BC00172F8D /* HeatbeatResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeatbeatResponse.swift; sourceTree = "<group>"; };
-		0701543A21FCE7BC00172F8D /* Organization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Organization.swift; sourceTree = "<group>"; };
-		0701543B21FCE7BC00172F8D /* CryptoConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoConfig.swift; sourceTree = "<group>"; };
-		0701543C21FCE7BC00172F8D /* APIKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
-		0701543D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricKeyUseDomain.swift; sourceTree = "<group>"; };
-		0701543E21FCE7BC00172F8D /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		0701543F21FCE7BC00172F8D /* SymmetricKeyRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricKeyRequest.swift; sourceTree = "<group>"; };
-		0701544021FCE7BC00172F8D /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
-		0701544121FCE7BC00172F8D /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		0701544221FCE7BC00172F8D /* JSONEncodingHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncodingHelper.swift; sourceTree = "<group>"; };
-		0701544321FCE7BC00172F8D /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		0701544421FCE7BC00172F8D /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		0701548021FCF5C100172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		0701548221FCF5D700172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		0710E2662202CB4A00CDD72A /* APIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
+		0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireImplementations.swift; sourceTree = "<group>"; };
+		0710E2692202CB4A00CDD72A /* LoginAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
+		0710E26A2202CB4A00CDD72A /* KeyServiceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyServiceAPI.swift; sourceTree = "<group>"; };
+		0710E26B2202CB4A00CDD72A /* ServerManagementAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerManagementAPI.swift; sourceTree = "<group>"; };
+		0710E26C2202CB4A00CDD72A /* ClientAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientAPI.swift; sourceTree = "<group>"; };
+		0710E26D2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyDerivationServiceRegistryAPI.swift; sourceTree = "<group>"; };
+		0710E26E2202CB4A00CDD72A /* OrgAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrgAPI.swift; sourceTree = "<group>"; };
+		0710E26F2202CB4A00CDD72A /* PhoneHomeAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneHomeAPI.swift; sourceTree = "<group>"; };
+		0710E2702202CB4A00CDD72A /* CryptoConfigAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoConfigAPI.swift; sourceTree = "<group>"; };
+		0710E2712202CB4A00CDD72A /* CodableHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableHelper.swift; sourceTree = "<group>"; };
+		0710E2722202CB4A00CDD72A /* JSONEncodableEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncodableEncoding.swift; sourceTree = "<group>"; };
+		0710E2732202CB4A00CDD72A /* APIs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIs.swift; sourceTree = "<group>"; };
+		0710E2752202CB4A00CDD72A /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
+		0710E2762202CB4A00CDD72A /* KeyDerivationInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyDerivationInstance.swift; sourceTree = "<group>"; };
+		0710E2772202CB4A00CDD72A /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		0710E2782202CB4A00CDD72A /* EncryptedSymmetricKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedSymmetricKey.swift; sourceTree = "<group>"; };
+		0710E2792202CB4A00CDD72A /* HeatbeatResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeatbeatResponse.swift; sourceTree = "<group>"; };
+		0710E27A2202CB4A00CDD72A /* Organization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Organization.swift; sourceTree = "<group>"; };
+		0710E27B2202CB4A00CDD72A /* CryptoConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoConfig.swift; sourceTree = "<group>"; };
+		0710E27C2202CB4A00CDD72A /* APIKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		0710E27D2202CB4A00CDD72A /* SymmetricKeyUseDomain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricKeyUseDomain.swift; sourceTree = "<group>"; };
+		0710E27E2202CB4A00CDD72A /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		0710E27F2202CB4A00CDD72A /* SymmetricKeyRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricKeyRequest.swift; sourceTree = "<group>"; };
+		0710E2802202CB4A00CDD72A /* LoginResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
+		0710E2812202CB4A00CDD72A /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		0710E2822202CB4A00CDD72A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		0710E2832202CB4A00CDD72A /* JSONEncodingHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncodingHelper.swift; sourceTree = "<group>"; };
+		0710E2842202CB4A00CDD72A /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		0710E2852202CB4A00CDD72A /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		07126A02218F5D7400F68832 /* Peacemakr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Peacemakr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07126A06218F5D7400F68832 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07126A0B218F5D7400F68832 /* Peacemakr-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Peacemakr-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,54 +196,56 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0701542621FCE7BC00172F8D /* Swaggers */ = {
+		0710E2652202CB4A00CDD72A /* Swaggers */ = {
 			isa = PBXGroup;
 			children = (
-				0701542721FCE7BC00172F8D /* APIHelper.swift */,
-				0701542821FCE7BC00172F8D /* AlamofireImplementations.swift */,
-				0701542921FCE7BC00172F8D /* APIs */,
-				0701543121FCE7BC00172F8D /* CodableHelper.swift */,
-				0701543221FCE7BC00172F8D /* JSONEncodableEncoding.swift */,
-				0701543321FCE7BC00172F8D /* APIs.swift */,
-				0701543421FCE7BC00172F8D /* Models */,
-				0701544121FCE7BC00172F8D /* Extensions.swift */,
-				0701544221FCE7BC00172F8D /* JSONEncodingHelper.swift */,
-				0701544321FCE7BC00172F8D /* Models.swift */,
-				0701544421FCE7BC00172F8D /* Configuration.swift */,
+				0710E2662202CB4A00CDD72A /* APIHelper.swift */,
+				0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */,
+				0710E2682202CB4A00CDD72A /* APIs */,
+				0710E2712202CB4A00CDD72A /* CodableHelper.swift */,
+				0710E2722202CB4A00CDD72A /* JSONEncodableEncoding.swift */,
+				0710E2732202CB4A00CDD72A /* APIs.swift */,
+				0710E2742202CB4A00CDD72A /* Models */,
+				0710E2822202CB4A00CDD72A /* Extensions.swift */,
+				0710E2832202CB4A00CDD72A /* JSONEncodingHelper.swift */,
+				0710E2842202CB4A00CDD72A /* Models.swift */,
+				0710E2852202CB4A00CDD72A /* Configuration.swift */,
 			);
 			name = Swaggers;
 			path = Generated/SwaggerClient/Classes/Swaggers;
 			sourceTree = SOURCE_ROOT;
 		};
-		0701542921FCE7BC00172F8D /* APIs */ = {
+		0710E2682202CB4A00CDD72A /* APIs */ = {
 			isa = PBXGroup;
 			children = (
-				0701542A21FCE7BC00172F8D /* KeyServiceAPI.swift */,
-				0701542B21FCE7BC00172F8D /* ServerManagementAPI.swift */,
-				0701542C21FCE7BC00172F8D /* ClientAPI.swift */,
-				0701542D21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift */,
-				0701542E21FCE7BC00172F8D /* OrgAPI.swift */,
-				0701542F21FCE7BC00172F8D /* PhoneHomeAPI.swift */,
-				0701543021FCE7BC00172F8D /* CryptoConfigAPI.swift */,
+				0710E2692202CB4A00CDD72A /* LoginAPI.swift */,
+				0710E26A2202CB4A00CDD72A /* KeyServiceAPI.swift */,
+				0710E26B2202CB4A00CDD72A /* ServerManagementAPI.swift */,
+				0710E26C2202CB4A00CDD72A /* ClientAPI.swift */,
+				0710E26D2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift */,
+				0710E26E2202CB4A00CDD72A /* OrgAPI.swift */,
+				0710E26F2202CB4A00CDD72A /* PhoneHomeAPI.swift */,
+				0710E2702202CB4A00CDD72A /* CryptoConfigAPI.swift */,
 			);
 			path = APIs;
 			sourceTree = "<group>";
 		};
-		0701543421FCE7BC00172F8D /* Models */ = {
+		0710E2742202CB4A00CDD72A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				0701543521FCE7BC00172F8D /* PublicKey.swift */,
-				0701543621FCE7BC00172F8D /* KeyDerivationInstance.swift */,
-				0701543721FCE7BC00172F8D /* Log.swift */,
-				0701543821FCE7BC00172F8D /* EncryptedSymmetricKey.swift */,
-				0701543921FCE7BC00172F8D /* HeatbeatResponse.swift */,
-				0701543A21FCE7BC00172F8D /* Organization.swift */,
-				0701543B21FCE7BC00172F8D /* CryptoConfig.swift */,
-				0701543C21FCE7BC00172F8D /* APIKey.swift */,
-				0701543D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift */,
-				0701543E21FCE7BC00172F8D /* Client.swift */,
-				0701543F21FCE7BC00172F8D /* SymmetricKeyRequest.swift */,
-				0701544021FCE7BC00172F8D /* Contact.swift */,
+				0710E2752202CB4A00CDD72A /* PublicKey.swift */,
+				0710E2762202CB4A00CDD72A /* KeyDerivationInstance.swift */,
+				0710E2772202CB4A00CDD72A /* Log.swift */,
+				0710E2782202CB4A00CDD72A /* EncryptedSymmetricKey.swift */,
+				0710E2792202CB4A00CDD72A /* HeatbeatResponse.swift */,
+				0710E27A2202CB4A00CDD72A /* Organization.swift */,
+				0710E27B2202CB4A00CDD72A /* CryptoConfig.swift */,
+				0710E27C2202CB4A00CDD72A /* APIKey.swift */,
+				0710E27D2202CB4A00CDD72A /* SymmetricKeyUseDomain.swift */,
+				0710E27E2202CB4A00CDD72A /* Client.swift */,
+				0710E27F2202CB4A00CDD72A /* SymmetricKeyRequest.swift */,
+				0710E2802202CB4A00CDD72A /* LoginResponse.swift */,
+				0710E2812202CB4A00CDD72A /* Contact.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -333,7 +311,7 @@
 		07C5104521C63D4600F94A53 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0701542621FCE7BC00172F8D /* Swaggers */,
+				0710E2652202CB4A00CDD72A /* Swaggers */,
 				07C5104821C63D7900F94A53 /* peacemakr-services.yml */,
 			);
 			path = Resources;
@@ -553,39 +531,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0701545921FCE7BC00172F8D /* JSONEncodableEncoding.swift in Sources */,
-				0701544721FCE7BC00172F8D /* AlamofireImplementations.swift in Sources */,
-				0701546721FCE7BC00172F8D /* Organization.swift in Sources */,
-				0701545B21FCE7BC00172F8D /* APIs.swift in Sources */,
+				0710E2862202CB4A00CDD72A /* APIHelper.swift in Sources */,
+				0710E2A22202CB4A00CDD72A /* Models.swift in Sources */,
+				0710E2892202CB4A00CDD72A /* KeyServiceAPI.swift in Sources */,
+				0710E28A2202CB4A00CDD72A /* ServerManagementAPI.swift in Sources */,
+				0710E2992202CB4A00CDD72A /* CryptoConfig.swift in Sources */,
+				0710E2872202CB4A00CDD72A /* AlamofireImplementations.swift in Sources */,
 				071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */,
-				0701545321FCE7BC00172F8D /* PhoneHomeAPI.swift in Sources */,
-				0701547B21FCE7BC00172F8D /* Configuration.swift in Sources */,
-				0701546F21FCE7BC00172F8D /* Client.swift in Sources */,
-				0701547521FCE7BC00172F8D /* Extensions.swift in Sources */,
-				0701547721FCE7BC00172F8D /* JSONEncodingHelper.swift in Sources */,
-				0701544B21FCE7BC00172F8D /* ServerManagementAPI.swift in Sources */,
-				0701544D21FCE7BC00172F8D /* ClientAPI.swift in Sources */,
-				0701545F21FCE7BC00172F8D /* KeyDerivationInstance.swift in Sources */,
 				072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */,
-				0701546B21FCE7BC00172F8D /* APIKey.swift in Sources */,
+				0710E28C2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift in Sources */,
+				0710E2882202CB4A00CDD72A /* LoginAPI.swift in Sources */,
+				0710E2952202CB4A00CDD72A /* Log.swift in Sources */,
+				0710E29B2202CB4A00CDD72A /* SymmetricKeyUseDomain.swift in Sources */,
+				0710E2932202CB4A00CDD72A /* PublicKey.swift in Sources */,
+				0710E2982202CB4A00CDD72A /* Organization.swift in Sources */,
+				0710E29F2202CB4A00CDD72A /* Contact.swift in Sources */,
+				0710E2912202CB4A00CDD72A /* JSONEncodableEncoding.swift in Sources */,
+				0710E2A32202CB4A00CDD72A /* Configuration.swift in Sources */,
+				0710E29E2202CB4A00CDD72A /* LoginResponse.swift in Sources */,
+				0710E2902202CB4A00CDD72A /* CodableHelper.swift in Sources */,
+				0710E2A12202CB4A00CDD72A /* JSONEncodingHelper.swift in Sources */,
+				0710E2962202CB4A00CDD72A /* EncryptedSymmetricKey.swift in Sources */,
+				0710E28B2202CB4A00CDD72A /* ClientAPI.swift in Sources */,
 				071722E7218F8972005E2CA5 /* Core.swift in Sources */,
-				0701546521FCE7BC00172F8D /* HeatbeatResponse.swift in Sources */,
-				0701545521FCE7BC00172F8D /* CryptoConfigAPI.swift in Sources */,
-				0701546921FCE7BC00172F8D /* CryptoConfig.swift in Sources */,
-				0701545D21FCE7BC00172F8D /* PublicKey.swift in Sources */,
-				0701545721FCE7BC00172F8D /* CodableHelper.swift in Sources */,
+				0710E28E2202CB4A00CDD72A /* PhoneHomeAPI.swift in Sources */,
 				07E235052201586000192E3C /* Persister.swift in Sources */,
-				0701544921FCE7BC00172F8D /* KeyServiceAPI.swift in Sources */,
-				0701546121FCE7BC00172F8D /* Log.swift in Sources */,
-				0701547321FCE7BC00172F8D /* Contact.swift in Sources */,
-				0701544521FCE7BC00172F8D /* APIHelper.swift in Sources */,
-				0701547921FCE7BC00172F8D /* Models.swift in Sources */,
-				0701545121FCE7BC00172F8D /* OrgAPI.swift in Sources */,
-				0701544F21FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift in Sources */,
-				0701546D21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift in Sources */,
-				0701546321FCE7BC00172F8D /* EncryptedSymmetricKey.swift in Sources */,
+				0710E28F2202CB4A00CDD72A /* CryptoConfigAPI.swift in Sources */,
+				0710E2972202CB4A00CDD72A /* HeatbeatResponse.swift in Sources */,
+				0710E29C2202CB4A00CDD72A /* Client.swift in Sources */,
 				071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */,
-				0701547121FCE7BC00172F8D /* SymmetricKeyRequest.swift in Sources */,
+				0710E2942202CB4A00CDD72A /* KeyDerivationInstance.swift in Sources */,
+				0710E2A02202CB4A00CDD72A /* Extensions.swift in Sources */,
+				0710E2922202CB4A00CDD72A /* APIs.swift in Sources */,
+				0710E29A2202CB4A00CDD72A /* APIKey.swift in Sources */,
+				0710E28D2202CB4A00CDD72A /* OrgAPI.swift in Sources */,
+				0710E29D2202CB4A00CDD72A /* SymmetricKeyRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,35 +574,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07E23508220165E100192E3C /* PersisterTests.swift in Sources */,
-				0701545E21FCE7BC00172F8D /* PublicKey.swift in Sources */,
-				0701546C21FCE7BC00172F8D /* APIKey.swift in Sources */,
-				0701547421FCE7BC00172F8D /* Contact.swift in Sources */,
-				0701545A21FCE7BC00172F8D /* JSONEncodableEncoding.swift in Sources */,
-				0701544821FCE7BC00172F8D /* AlamofireImplementations.swift in Sources */,
-				0701545221FCE7BC00172F8D /* OrgAPI.swift in Sources */,
-				0701544621FCE7BC00172F8D /* APIHelper.swift in Sources */,
-				0701545021FCE7BC00172F8D /* KeyDerivationServiceRegistryAPI.swift in Sources */,
-				0701546E21FCE7BC00172F8D /* SymmetricKeyUseDomain.swift in Sources */,
-				0701546221FCE7BC00172F8D /* Log.swift in Sources */,
-				0701547C21FCE7BC00172F8D /* Configuration.swift in Sources */,
-				0701544C21FCE7BC00172F8D /* ServerManagementAPI.swift in Sources */,
-				0701546A21FCE7BC00172F8D /* CryptoConfig.swift in Sources */,
-				0701547221FCE7BC00172F8D /* SymmetricKeyRequest.swift in Sources */,
-				0701546021FCE7BC00172F8D /* KeyDerivationInstance.swift in Sources */,
-				0701547821FCE7BC00172F8D /* JSONEncodingHelper.swift in Sources */,
-				0701547021FCE7BC00172F8D /* Client.swift in Sources */,
-				0701545421FCE7BC00172F8D /* PhoneHomeAPI.swift in Sources */,
-				0701546621FCE7BC00172F8D /* HeatbeatResponse.swift in Sources */,
-				0701544E21FCE7BC00172F8D /* ClientAPI.swift in Sources */,
-				0701545621FCE7BC00172F8D /* CryptoConfigAPI.swift in Sources */,
-				0701544A21FCE7BC00172F8D /* KeyServiceAPI.swift in Sources */,
-				0701545821FCE7BC00172F8D /* CodableHelper.swift in Sources */,
-				0701547621FCE7BC00172F8D /* Extensions.swift in Sources */,
-				0701546421FCE7BC00172F8D /* EncryptedSymmetricKey.swift in Sources */,
-				0701546821FCE7BC00172F8D /* Organization.swift in Sources */,
 				07126A11218F5D7400F68832 /* SDKTests.swift in Sources */,
-				0701545C21FCE7BC00172F8D /* APIs.swift in Sources */,
-				0701547A21FCE7BC00172F8D /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,7 +774,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.iOS;
+				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.iOS;
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
@@ -862,7 +814,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.iOS;
+				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.iOS;
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
@@ -948,7 +900,7 @@
 					"@loader_path/Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.SDKTestHost;
+				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.SDKTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -974,7 +926,7 @@
 					"@loader_path/Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.peacemakr.SDKTestHost;
+				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.SDKTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
