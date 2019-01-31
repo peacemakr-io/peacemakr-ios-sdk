@@ -18,7 +18,7 @@ class SDKTests: XCTestCase {
   var data: AppData? = nil
 
   override func setUp() {
-    sdk = PeacemakrSDK(apiKey: "123-123-123", logHandler: log)
+    sdk = PeacemakrSDK(apiKey: "peacemaker-key-123-123-123", logHandler: log)
     if !sdk!.Register() {
       XCTAssert(false, "Initialization of the SDK failed")
     }
@@ -42,7 +42,7 @@ class SDKTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
 
-  func testExample() throws {
+  func testEncryptDecrypt() throws {
     let encrypted = sdk?.Encrypt(data!)
     if encrypted == nil {
       XCTAssert(false, "Encryption failed")
@@ -60,7 +60,7 @@ class SDKTests: XCTestCase {
           XCTAssert(false, "Encryption failed")
         }
         var outData: Encryptable = AppData()
-        try? self.sdk?.Decrypt(encrypted!, dest: &outData)
+        self.sdk?.Decrypt(encrypted!, dest: &outData)
         
         XCTAssert(self.data! == (outData as! AppData))
         }

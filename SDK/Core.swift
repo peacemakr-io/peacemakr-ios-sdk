@@ -30,15 +30,16 @@ public class PeacemakrSDK {
   // symmetric keys start with this prefix and append the key ID onto it
   private let symmTagPrefix = "io.peacemakr.client.symmetric."
   
+  private let persister: Persister
+  
   private struct ClientData: Codable {
     let clientID: String
     let publicKeyID: [UInt8]
   }
   
-  private let clientDataURL: URL?
-  
   public init?(apiKey: String, logHandler: @escaping (String)->Void) {
     SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
+    print(SwaggerClientAPI.basePath)
     
     self.apiKey = apiKey
     self.logHandler = logHandler
@@ -47,22 +48,7 @@ public class PeacemakrSDK {
     cryptoContext = cc!
     rand = PeacemakrRandomDevice()
     
-    do {
-      let docsBaseURL = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-      self.clientDataURL = docsBaseURL.appendingPathComponent("clientData.json", isDirectory: false)
-      do {
-        if FileManager.default.fileExists(atPath: self.clientDataURL!.path) {
-          try FileManager.default.removeItem(at: self.clientDataURL!)
-        }
-        FileManager.default.createFile(atPath: self.clientDataURL!.path, contents: nil, attributes: nil)
-      } catch {
-        self.log("Unable to create file at \(self.clientDataURL!)")
-        return nil
-      }
-    } catch {
-      self.clientDataURL = nil
-      self.log("Unable to get a file URL for client data")
-    }
+    self.persister = DefaultPersister(logHandler: self.logHandler)
     
     if cc == nil {
       self.log("Unable to init CryptoContext")
@@ -98,40 +84,6 @@ public class PeacemakrSDK {
     })
   }
   
-  private func storeClientData(_ data: ClientData) -> Bool {
-    let encoder = JSONEncoder()
-    do {
-      let data = try encoder.encode(data)
-      try data.write(to: self.clientDataURL!)
-    } catch {
-      self.log("Unable to write client data to file: " + error.localizedDescription)
-      return false
-    }
-    
-    return true
-  }
-  
-  private func getClientData() -> ClientData? {
-    if !FileManager.default.fileExists(atPath: self.clientDataURL!.path) {
-      self.logHandler("File at path \(self.clientDataURL!.path) does not exist!")
-      return nil
-    }
-    
-    if let data = FileManager.default.contents(atPath: self.clientDataURL!.path) {
-      let decoder = JSONDecoder()
-      do {
-        let model = try decoder.decode(PeacemakrSDK.ClientData.self, from: data)
-        return model
-      } catch let error {
-        self.logHandler("Failed to decode ClientData: " + error.localizedDescription)
-        return nil
-      }
-    } else {
-      self.logHandler("No data at \(self.clientDataURL!.path)!")
-      return nil
-    }
-  }
-  
   public var RegistrationSuccessful: Bool = false
   
   public func Register() -> Bool {
@@ -154,29 +106,8 @@ public class PeacemakrSDK {
     privPem.withUnsafeBufferPointer({buf -> Void in
       privPemData = Data(buffer: buf)
     })
-    
-    let privQuery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                    kSecAttrApplicationTag as String: self.privTag,
-                                    kSecValueData as String: privPemData!]
-    
-    let delPrivStatus = SecItemDelete([kSecClass as String: kSecClassKey,
-                                       kSecAttrApplicationTag as String: self.privTag] as CFDictionary)
-    if delPrivStatus != errSecSuccess && delPrivStatus != errSecItemNotFound {
-      if #available(iOS 11.3, *) {
-        self.log("Failed to clear out keychain (priv): " + String(delPrivStatus) + " - " + (SecCopyErrorMessageString(delPrivStatus, nil)! as String))
-      } else {
-        self.log("Failed to clear out keychain (priv): " + String(delPrivStatus))
-      }
-      return false
-    }
-    
-    let privStatus = SecItemAdd(privQuery as CFDictionary, nil)
-    if privStatus != errSecSuccess {
-      if #available(iOS 11.3, *) {
-        self.log("Failed to add private key to keychain: " + String(privStatus) + " - " + (SecCopyErrorMessageString(privStatus, nil)! as String))
-      } else {
-        self.log("Failed to add private key to keychain: " + String(privStatus))
-      }
+    if !self.persister.storeKey(privPemData!, keyID: self.privTag) {
+      self.log("Storing my private key failed")
       return false
     }
     
@@ -187,34 +118,12 @@ public class PeacemakrSDK {
       return false
     }
     let pubPem = pub!
-    
     var pubPemData: Data? = nil
     pubPem.withUnsafeBufferPointer({buf -> Void in
       pubPemData = Data(buffer: buf)
     })
-    
-    let pubQuery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                   kSecAttrApplicationTag as String: self.pubTag,
-                                   kSecValueData as String: pubPemData!]
-    
-    let delPubStatus = SecItemDelete([kSecClass as String: kSecClassKey,
-                                      kSecAttrApplicationTag as String: self.pubTag] as CFDictionary)
-    if delPubStatus != errSecSuccess && delPubStatus != errSecItemNotFound {
-      if #available(iOS 11.3, *) {
-        self.log("Failed to clear out keychain (pub): " + String(delPubStatus) + " - " + (SecCopyErrorMessageString(delPubStatus, nil)! as String))
-      } else {
-        self.log("Failed to clear out keychain (pub): " + String(delPubStatus))
-      }
-      return false
-    }
-    
-    let pubStatus = SecItemAdd(pubQuery as CFDictionary, nil)
-    if pubStatus != errSecSuccess {
-      if #available(iOS 11.3, *) {
-        self.log("Failed to add public key to keychain: " + String(pubStatus) + " - " + (SecCopyErrorMessageString(pubStatus, nil)! as String))
-      } else {
-        self.log("Failed to add public key to keychain: " + String(pubStatus))
-      }
+    if !self.persister.storeKey(pubPemData!, keyID: self.pubTag) {
+      self.log("Storing my public key failed")
       return false
     }
     
@@ -232,22 +141,27 @@ public class PeacemakrSDK {
     sendRequest(builder: requestBuilder, completion: {(client, error) in
       if error != nil {
         self.log("addClient failed")
+        return
       }
       
       // Store the clientID and publicKeyID
       let clientID = client?.id
       if clientID == nil {
         self.log("Client ID returned was nil")
+        return
+      }
+      if !self.persister.storeData(key: "clientID", val: clientID) {
+        self.log("couldn't store my client ID")
+        return
       }
 
       let pubKeyID = client?.publicKey?.id
       if pubKeyID == nil {
         self.log("Public key ID returned was nil")
       }
-
-      let clientInfo = ClientData(clientID: clientID!, publicKeyID: Array(pubKeyID!.utf8))
-      if !self.storeClientData(clientInfo) {
-        self.log("Failed to store client data")
+      if !self.persister.storeData(key: "pubKeyID", val: pubKeyID) {
+        self.log("couldn't store my public key ID")
+        return
       }
       
       self.RegistrationSuccessful = true
@@ -257,13 +171,13 @@ public class PeacemakrSDK {
   }
   
   private func getMyClientID() -> String? {
-    let clientData = getClientData()
-    if clientData == nil {
-      self.logHandler("failed to get my client ID from the filesystem")
+    let clientID: String? = self.persister.getData(key: "clientID")
+    if clientID == nil {
+      self.logHandler("failed to get my client ID")
       return nil
     }
     
-    return clientData!.clientID
+    return clientID
   }
   
   public func PreLoad() -> Bool {
@@ -277,19 +191,14 @@ public class PeacemakrSDK {
       self.log("Could not serialize keyID to string")
       return false
     }
-    let tag = symmTagPrefix + keyIDStr!
+    let tag = self.symmTagPrefix + keyIDStr!
     
-    let query: [String: Any] = [kSecClass as String: kSecClassKey,
-                                kSecAttrApplicationTag as String: tag,
-                                kSecValueData as String: Data(bytes: key)]
-    
-    let status = SecItemAdd(query as CFDictionary, nil)
-    guard status == errSecSuccess else {
-      self.log("could not add symmetric key: " + keyIDStr! + " to keychain")
-      return false
+    var keyData: Data? = nil
+    key.withUnsafeBufferPointer{ buf -> Void in
+      keyData = Data(buffer: buf)
     }
     
-    return true
+    return self.persister.storeKey(keyData!, keyID: tag)
   }
   
   private func getPublicKeyByID(keyID: [UInt8], cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
@@ -311,19 +220,20 @@ public class PeacemakrSDK {
     }
     let tag = symmTagPrefix + keyIDStr!
     
-    let getquery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                   kSecAttrApplicationTag as String: tag,
-                                   kSecReturnRef as String: true]
-    
-    var item: CFTypeRef?
-    let status = SecItemCopyMatching(getquery as CFDictionary, &item)
-    guard status == errSecSuccess else {
-      self.log("could not get symmetric key: " + keyIDStr! + " from keychain")
+    let keyData = self.persister.getKey(tag)
+    if keyData == nil {
+      self.log("Could not retreive key at: " + tag)
       return nil
     }
     
-    let keyBytes = item as! [UInt8]
-    return PeacemakrKey(config: cfg, bytes: keyBytes)
+    if let keyBytes = keyData?.withUnsafeBytes({
+      [UInt8](UnsafeBufferPointer(start: $0, count: keyData!.count))
+    }) {
+      return PeacemakrKey(config: cfg, bytes: keyBytes)
+    }
+    
+    self.log("Unable to marshal key data into byte array")
+    return nil
   }
   
   private func getSymmKeyByID(keyID: [UInt8], cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
@@ -335,7 +245,7 @@ public class PeacemakrSDK {
     // this means that we don't have the key we need, so go up to server and get the key we need
     let myClientID = getMyClientID()
     if myClientID == nil {
-      self.log("Unable to get client ID")
+      self.log("can't get my client ID")
       return nil
     }
     
@@ -415,19 +325,15 @@ public class PeacemakrSDK {
       tag = pubTag
     }
     
-    let getquery: [String: Any] = [kSecClass as String: kSecClassKey,
-                                   kSecAttrApplicationTag as String: tag,
-                                   kSecReturnRef as String: true]
-    
-    var item: CFTypeRef?
-    let status = SecItemCopyMatching(getquery as CFDictionary, &item)
-    guard status == errSecSuccess else {
-      self.log("unable to get my key (public/private) from keychain")
-      return nil
+    let keyData = self.persister.getKey(tag)
+    if let keyBytes = keyData?.withUnsafeBytes({
+      [Int8](UnsafeBufferPointer(start: $0, count: keyData!.count))
+    }) {
+      return PeacemakrKey(config: myKeyCfg, fileContents: keyBytes, is_priv: priv)
     }
     
-    let keyBytes = item as! [Int8]
-    return PeacemakrKey(config: myKeyCfg, fileContents: keyBytes, is_priv: priv)
+    self.log("unable to get my key (public/private) from keychain")
+    return nil
   }
   
   private func selectEncryptionKey() -> ([UInt8], CoreCrypto.CryptoConfig)? {
@@ -436,14 +342,14 @@ public class PeacemakrSDK {
     return ([], cfg)
   }
   
-  private func getMyPublicKeyID() -> [UInt8]? {
-    let clientData = getClientData()
-    if clientData == nil {
+  private func getMyPublicKeyID() -> String? {
+    let pubKeyID: String? = self.persister.getData(key: "pubKeyID")
+    if pubKeyID == nil {
       self.log("failed to get my public key ID from the filesystem")
       return nil
     }
     
-    return clientData!.publicKeyID
+    return pubKeyID
   }
   
   /**
@@ -458,7 +364,13 @@ public class PeacemakrSDK {
     }
     
     let (keyID, keyCfg) = selectedKey!
-    let aadJSON = try? JSONSerialization.data(withJSONObject: ["cryptoKeyID": keyID, "senderKeyID": getMyPublicKeyID()], options: [])
+    let myPubKeyID = getMyPublicKeyID()
+    if myPubKeyID == nil {
+      self.log("Cannot get my public key ID, so cannot sign the message")
+    }
+    
+    let jsonObject: [String: [UInt8]] = ["cryptoKeyID": keyID, "senderKeyID": [UInt8](myPubKeyID?.utf8 ?? "unsigned".utf8)]
+    let aadJSON = try? JSONSerialization.data(withJSONObject: jsonObject, options: [])
     if aadJSON == nil {
       self.log("Failed to serialize the key IDs to json")
       return nil
@@ -488,8 +400,10 @@ public class PeacemakrSDK {
       return nil
     }
     
-    // Sign the message with my key
-    cryptoContext.Sign(senderKey: signKey!, plaintext: ptext, ciphertext: &encrypted!)
+    // Sign the message with my key (but only if we can give our public key ID)
+    if myPubKeyID != nil {
+      cryptoContext.Sign(senderKey: signKey!, plaintext: ptext, ciphertext: &encrypted!)
+    }
     
     let serialized = UnwrapCall(cryptoContext.Serialize(encrypted!), onError: self.log)
     if serialized == nil {
