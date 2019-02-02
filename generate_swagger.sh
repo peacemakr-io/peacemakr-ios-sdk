@@ -3,5 +3,5 @@ docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli validate \
 
 docker run --rm -v ${PWD}:/local swaggerapi/swagger-codegen-cli generate \
     -i /local/Resources/peacemakr-services.yml \
-    -l swift3 \
+    -l swift4 \
     -o /local/Generated

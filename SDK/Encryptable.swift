@@ -15,10 +15,15 @@ import Foundation
  and AAD, please refer to their individual documentation.
  */
 public protocol Encryptable {
-    /**
-     The actual data to be encrypted. This must be serialized into an array of bytes
-     for the encryption to work properly, but any serialization scheme is valid as
-     long as deserialization is also possible.
-     */
-    var serializedValue: [UInt8] { get set }
+  /**
+   The actual data to be encrypted. This must be serialized into an array of bytes
+   for the encryption to work properly, but any serialization scheme is valid as
+   long as deserialization is also possible.
+   */
+  var serializedValue: [UInt8] { get set }
+
+  /**
+   How to handle errors within the Peacemakr SDK
+   */
+  func onError(error: Error) -> Void
 }

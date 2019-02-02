@@ -17,57 +17,74 @@ class SDKTests: XCTestCase {
   var sdk: PeacemakrSDK? = nil
   var data: AppData? = nil
   
-  let testKey = "peacemaker-key-123-123-123"
+  let testKey = "Ie/LmqLI3yJm7yASKd4jnoYJvYwLs9m5t7Fr/mNtb6I="
   let gibblygook = "gibblygook"
 
   override func setUp() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
-    if !sdk!.Register() {
-      XCTAssert(false, "Initialization of the SDK failed")
-    }
-    
-    var i = 0
-    while !sdk!.RegistrationSuccessful && i < 100 {
-      sleep(1)
-      i+=1
-    }
-    
-    if !sdk!.RegistrationSuccessful {
-      XCTAssert(false, "Register failed!")
-    }
-    
+    super.setUp()
     data = AppData()
     data?.setSomeProperty(prop: "something")
     data?.setSomeOtherProperty(key: "someKey", value: "someValue")
   }
 
   override func tearDown() {
+    super.tearDown()
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+  }
+  
+  func testRegister() {
+    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    
+    let expectation = self.expectation(description: "Registration successful")
+    
+    if !sdk!.Register(completion: {
+      XCTAssert($0 == nil)
+      expectation.fulfill()
+    }) {
+      XCTAssert(false, "Initialization of the SDK failed")
+    }
+
+    waitForExpectations(timeout: 5, handler: nil)
+    
+    XCTAssert(sdk!.RegistrationSuccessful, "Register failed")
   }
 
   func testEncryptDecrypt() throws {
-    XCTAssert(sdk!.RegistrationSuccessful)
-    let encrypted = sdk?.Encrypt(data!)
-    if encrypted == nil {
-      XCTAssert(false, "Encryption failed")
-    }
-    var outData: Encryptable = AppData()
-    sdk?.Decrypt(encrypted!, dest: &outData)
+    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
     
-    XCTAssert(data! == (outData as! AppData))
-  }
-
-  func testPerformanceExample() {
-      self.measure {
-        let encrypted = self.sdk?.Encrypt(self.data!)
-        if encrypted == nil {
-          XCTAssert(false, "Encryption failed")
-        }
-        var outData: Encryptable = AppData()
-        self.sdk?.Decrypt(encrypted!, dest: &outData)
-        
-        XCTAssert(self.data! == (outData as! AppData))
-        }
+    let registerExpectation = self.expectation(description: "Registration successful")
+    
+    if !sdk!.Register(completion: {
+      XCTAssert($0 == nil)
+      registerExpectation.fulfill()
+    }) {
+      XCTAssert(false, "Initialization of the SDK failed")
+    }
+    
+    waitForExpectations(timeout: 5, handler: nil)
+    
+    XCTAssert(sdk!.RegistrationSuccessful, "Register failed")
+    
+    let encryptExpectation = self.expectation(description: "Encrypt successful")
+    let decryptExpectation = self.expectation(description: "Decrypt successful")
+    
+    let destination = AppData()
+    
+    let decryptCall = { (serialized) in
+      self.sdk!.Decrypt(serialized, dest: destination, completion: { (dest) in
+        XCTAssert(dest as! AppData == self.data!)
+        decryptExpectation.fulfill()
+      })
+    }
+    
+    sdk!.Encrypt(data!, completion: { (serialized, err) in
+      XCTAssert(err == nil)
+      encryptExpectation.fulfill()
+      
+      XCTAssert(decryptCall(serialized))
+    })
+    
+    waitForExpectations(timeout: 10, handler: nil)
   }
 
 }

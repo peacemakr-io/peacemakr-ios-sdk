@@ -38,8 +38,9 @@ class PersisterTests: XCTestCase {
   func testDatastore() throws {
     let clientID = "some client ID"
     
-    XCTAssert(persister!.storeData(key: "clientID", val: clientID))
-    let gotClientID: String? = persister!.getData(key: "clientID")
+    XCTAssert(persister!.storeData("clientID", val: clientID))
+    XCTAssert(persister!.hasData("clientID"))
+    let gotClientID: String? = persister!.getData("clientID")
     XCTAssert(gotClientID != nil)
     XCTAssert(gotClientID! == clientID)
   }

@@ -40,6 +40,10 @@ class AppData: Encryptable, Equatable {
     someOtherProperty[key] = value
   }
   
+  func onError(error: Error) {
+    NSLog(error.localizedDescription)
+  }
+  
   var EncryptableData: [UInt8] {
     get {
       let jsonEncoder = JSONEncoder()

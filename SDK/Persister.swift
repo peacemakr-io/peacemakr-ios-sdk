@@ -11,8 +11,9 @@ import Foundation
 protocol Persister {
   func storeKey(_ key: Data, keyID: String) -> Bool
   func getKey(_ keyID: String) -> Data?
-  func storeData<T: Codable>(key: String, val: T) -> Bool
-  func getData<T: Codable>(key: String) -> T?
+  func storeData<T: Codable>(_ key: String, val: T) -> Bool
+  func getData<T: Codable>(_ key: String) -> T?
+  func hasData(_ key: String) -> Bool
 }
 
 class DefaultPersister: Persister {
@@ -65,17 +66,25 @@ class DefaultPersister: Persister {
     return item as? Data
   }
   
-  func storeData<T: Codable>(key: String, val: T) -> Bool {
+  func storeData<T: Codable>(_ key: String, val: T) -> Bool {
     let userDefaults = UserDefaults.standard
     userDefaults.set(val, forKey: key)
     return userDefaults.synchronize()
   }
   
-  func getData<T: Codable>(key: String) -> T? {
+  func getData<T: Codable>(_ key: String) -> T? {
     let userDefaults = UserDefaults.standard
     if !userDefaults.synchronize() {
       self.log("unable to syncronize user defaults, may be unable to get item")
     }
     return userDefaults.object(forKey: key) as? T
+  }
+  
+  func hasData(_ key: String) -> Bool {
+    let userDefaults = UserDefaults.standard
+    if !userDefaults.synchronize() {
+      self.log("unable to syncronize user defaults, may be unable to get item")
+    }
+    return userDefaults.object(forKey: key) != nil
   }
 }
