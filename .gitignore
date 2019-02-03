@@ -2,7 +2,13 @@
 *.framework
 *.framework.dSYM
 
-Generated/
+!Generated/
+Generated/*
+!Generated/SwaggerClient/
+Generated/SwaggerClient/*
+!Generated/SwaggerClient/Classes
+Generated/SwaggerClient/Classes/*
+!Generated/SwaggerClient/Classes/Swaggers/
 
 Carthage/Checkouts
 Carthage/Build
