@@ -12,6 +12,7 @@ Generated/SwaggerClient/Classes/*
 
 Carthage/Checkouts
 Carthage/Build
+Cartfile.resolved
 
 xcuserdata/
 *.dSYM
