@@ -13,3 +13,9 @@ You may run into mysterious 400 and 404 errors, if you do, check the request cod
 ```
 let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
 ```
+
+## Setup
+
+1. Get Carthage
+2. `cd /path/to/Peacemakr-iOS && carthage update`
+3. `open Peacemakr-iOS.xcodeproj`

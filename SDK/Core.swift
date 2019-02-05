@@ -279,24 +279,9 @@ public class PeacemakrSDK {
         }
       }
       
+      self.log("Finished syncing symmetric keys")
       completion(nil)
     }
-    
-//    let encodedUseDomains: Data? = self.persister.getData(self.dataPrefix + "UseDomains")
-//    if encodedUseDomains == nil {
-//      self.log("Could not get use domains from storage")
-//      completion(NSError(domain: "could not get use domains from storage", code: -17, userInfo: nil))
-//      return
-//    }
-//
-//    let useDomains: [SymmetricKeyUseDomain]? = try? JSONDecoder().decode([SymmetricKeyUseDomain].self, from: encodedUseDomains!)
-//    if useDomains == nil {
-//      self.log("Could not decode use domains from storage")
-//      completion(NSError(domain: "could not decode use domains from storage", code: -18, userInfo: nil))
-//      return
-//    }
-//
-//    let useDomainKeyIDs = useDomains!.flatMap({$0.encryptionKeyIds})
     
     let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: myClientID)
     requestBuilder.execute({(keys, error) in
@@ -306,7 +291,7 @@ public class PeacemakrSDK {
         return
       }
       
-      if keys == nil || keys?.body == nil {
+      if keys == nil || keys?.body == nil || keys?.body?.count == 0 {
         self.log("no keys returned in get all encrypted keys request")
         completion(NSError(domain: "No keys were returned", code: -10, userInfo: nil))
         return
@@ -343,16 +328,21 @@ public class PeacemakrSDK {
           return
         }
         let (keyPlaintext, needVerify) = decryptResult!
+        self.log("decrypted a key")
         
         if needVerify {
           self.getPublicKeyByID(keyID: signKeyID, cfg: self.myKeyCfg, completion: { (pKey) in
             if pKey == nil {
               self.log("Public key: " + String(bytes: signKeyID, encoding: .utf8)! + " could not be gotten")
               completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
+              return
             }
             self.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!, completion: {(verified) in
               if verified {
+                self.log("verified a key")
                 finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
+              } else {
+                completion(NSError(domain: "Unable to verify message", code: -20, userInfo: nil))
               }
             })
           })
