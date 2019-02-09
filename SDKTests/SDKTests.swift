@@ -17,14 +17,14 @@ class SDKTests: XCTestCase {
   var sdk: PeacemakrSDK? = nil
   var data: AppData? = nil
   
-  let testKey = "eoQr0BqcIzN7iHz8FqdJuP/5LWxan99YiSKR9HtB/io="
+  let testKey = "1MM/tGB2nztn0YCe185iNq0hnB0+Qnugaxa6ohir79I="
   let gibblygook = "gibblygook"
 
   override func setUp() {
     super.setUp()
     data = AppData()
-    data?.setSomeProperty(prop: "something")
-    data?.setSomeOtherProperty(key: "someKey", value: "someValue")
+    data!.setSomeProperty(prop: "something")
+    data!.setSomeOtherProperty(key: "someKey", value: "someValue")
   }
 
   override func tearDown() {
@@ -52,14 +52,13 @@ class SDKTests: XCTestCase {
   func testSync() {
     sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
     let registerExpectation = self.expectation(description: "Registration Successful")
-    if !sdk!.Register(completion: {
+    XCTAssert(sdk!.Register(completion: {
       XCTAssert($0 == nil)
       registerExpectation.fulfill()
-    }) {
-      XCTAssert(false, "Initialization of the SDK failed")
-    }
+    }), "Initialization of the SDK failed")
     
-    waitForExpectations(timeout: 5, handler: nil)
+    waitForExpectations(timeout: 10, handler: nil)
+    UserDefaults.standard.synchronize()
 
     let gotOrgInfoExpectation = self.expectation(description: "Got org info")
 
@@ -89,8 +88,8 @@ class SDKTests: XCTestCase {
       XCTAssert(err == nil)
       syncExpectation.fulfill()
     }
-    
-    waitForExpectations(timeout: 5, handler: nil)
+
+    waitForExpectations(timeout: 30, handler: nil)
     
     XCTAssert(sdk!.RegistrationSuccessful, "Register failed")
     
@@ -101,10 +100,10 @@ class SDKTests: XCTestCase {
     let (serialized, err) = sdk!.Encrypt(data!)
     XCTAssert(err == nil)
     
-    self.sdk!.Decrypt(serialized, dest: destination, completion: { (dest) in
+    XCTAssert(self.sdk!.Decrypt(serialized, dest: destination, completion: { (dest) in
       XCTAssert(dest as! AppData == self.data!)
       decryptExpectation.fulfill()
-    })
+    }))
     
     
     waitForExpectations(timeout: 10, handler: nil)

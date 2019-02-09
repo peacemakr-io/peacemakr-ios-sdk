@@ -12,8 +12,7 @@ enum SerializationError: Error {
   case badMagicNumber
 }
 
-class AppData: Encryptable, Equatable {
-  var serializedValue = [UInt8]()
+class AppData: Codable, Encryptable, Equatable {
   
   private var someProperty: String? = nil
   private var someOtherProperty = [String: String]()
@@ -44,25 +43,22 @@ class AppData: Encryptable, Equatable {
     NSLog(error.localizedDescription)
   }
   
-  var EncryptableData: [UInt8] {
+  var serializedValue: [UInt8] {
     get {
-      let jsonEncoder = JSONEncoder()
-      let out = try? jsonEncoder.encode(someOtherProperty)
+      let out = try? JSONEncoder().encode(self)
+      if out == nil {
+        return [UInt8]()
+      }
       return [UInt8](out!)
     }
     set(serialized) {
-      let jsonDecoder = JSONDecoder()
-      someOtherProperty = try! jsonDecoder.decode(Dictionary<String, String>.self, from: Data(serialized))
-    }
-  }
-  
-  var AuthenticatableData: [UInt8] {
-    get {
-      let out = Data(someProperty!.utf8)
-      return [UInt8](out)
-    }
-    set(serialized) {
-      someProperty = String(bytes: serialized, encoding: .utf8)
+      let data = try? JSONDecoder().decode(AppData.self, from: Data(bytes: serialized))
+      if data == nil {
+        NSLog("Failed to decode data")
+      }
+      
+      self.someProperty = data!.someProperty
+      self.someOtherProperty = data!.someOtherProperty
     }
   }
     

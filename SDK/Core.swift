@@ -157,7 +157,7 @@ public class PeacemakrSDK {
         return
       }
       
-      self.log("Registered new iOS client: " + clientID!)
+      self.log("Registered new iOS client: " + self.getMyClientID())
       completion(nil)
     })
     
@@ -165,7 +165,7 @@ public class PeacemakrSDK {
   }
   
   private func getMyClientID() -> String {
-    let clientID: String? = self.persister.getData(self.dataPrefix + self.pubKeyIDTag)
+    let clientID: String? = self.persister.getData(self.dataPrefix + self.clientIDTag)
     if clientID == nil {
       self.logHandler("failed to get my client ID")
       return ""
@@ -206,34 +206,33 @@ public class PeacemakrSDK {
     return self.persister.storeKey(keyData!, keyID: tag)
   }
   
-  private func getPublicKeyByID(keyID: [UInt8], cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
-    
-    if let keyBytes: String = self.persister.getData(self.dataPrefix + String(bytes: keyID, encoding: .utf8)!) {
-      return keyBytes.withCString {
-        completion(PeacemakrKey(config: cfg, fileContents: [CChar](UnsafeBufferPointer(start: $0, count: keyBytes.count)), is_priv: false))
-      }
+  private func getPublicKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
+    if let keyBytes: String = self.persister.getData(self.dataPrefix + keyID) {
+      print(keyBytes)
+      return completion(PeacemakrKey(config: cfg, fileContents: keyBytes.cString(using: .utf8)!, is_priv: false))
     }
     
-    let requestBuilder = KeyServiceAPI.getPublicKeyWithRequestBuilder(keyID: String(bytes: keyID, encoding: .utf8)!)
+    let requestBuilder = KeyServiceAPI.getPublicKeyWithRequestBuilder(keyID: keyID)
     requestBuilder.execute({(key, error) in
-      let keyStr = key?.body?.key ?? ""
-      let keyIDStr = String(bytes: keyID, encoding: .utf8) ?? "unknown-key-id"
-      if !self.persister.storeData(self.dataPrefix + keyIDStr, val: keyStr) {
-        self.log("Unable to store returned key: " + keyIDStr)
+      if error != nil {
+        self.log("Attempted to get public key: " + error!.localizedDescription)
+        return completion(nil)
       }
-      keyStr.withCString {
-        completion(PeacemakrKey(config: cfg, fileContents: [CChar](UnsafeBufferPointer(start: $0, count: keyStr.count)), is_priv: false))
+      
+      if let keyStr = key?.body?.key {
+        if !self.persister.storeData(self.dataPrefix + keyID, val: keyStr) {
+          self.log("Unable to store returned key: " + keyID)
+        }
+        return completion(PeacemakrKey(config: cfg, fileContents: keyStr.cString(using: .utf8)!, is_priv: false))
       }
+      
+      self.log("Attempted to get public key, and the response was empty")
+      return completion(nil)
     })
   }
   
-  private func getLocalKeyByID(keyID: [UInt8], cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
-    let keyIDStr = String(bytes: keyID, encoding: .utf8)
-    if keyIDStr == nil {
-      self.log("Could not marshal keyID to string")
-      return nil
-    }
-    let tag = symmTagPrefix + keyIDStr!
+  private func getLocalKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
+    let tag = symmTagPrefix + keyID
     
     let keyData = self.persister.getKey(tag)
     if keyData == nil {
@@ -264,6 +263,8 @@ public class PeacemakrSDK {
     let myPrivKey = getMyKey(priv: true)
     
     let finishKeyStorage = { (keyPlaintext: Plaintext, keyLen: Int, keyIDs: [String]) -> Void in
+      self.log("Storing keys: " + keyIDs.joined(separator: ", "))
+      
       guard let keyBytes = Data(base64Encoded: String(bytes: keyPlaintext.EncryptableData, encoding: .utf8)!) else {
         self.log("Invalid b64 key")
         completion(NSError(domain: "invalid b64 key", code: -15, userInfo: nil))
@@ -278,8 +279,6 @@ public class PeacemakrSDK {
           return
         }
       }
-      
-      self.log("Finished syncing symmetric keys")
       completion(nil)
     }
     
@@ -328,18 +327,16 @@ public class PeacemakrSDK {
           return
         }
         let (keyPlaintext, needVerify) = decryptResult!
-        self.log("decrypted a key")
         
         if needVerify {
           self.getPublicKeyByID(keyID: signKeyID, cfg: self.myKeyCfg, completion: { (pKey) in
             if pKey == nil {
-              self.log("Public key: " + String(bytes: signKeyID, encoding: .utf8)! + " could not be gotten")
+              self.log("Public key: " + signKeyID + " could not be gotten")
               completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
               return
             }
             self.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!, completion: {(verified) in
               if verified {
-                self.log("verified a key")
                 finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
               } else {
                 completion(NSError(domain: "Unable to verify message", code: -20, userInfo: nil))
@@ -353,7 +350,7 @@ public class PeacemakrSDK {
     })
   }
   
-  private func getSymmKeyByID(keyID: [UInt8], cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?, Error?) -> Void)) -> Void {
+  private func getSymmKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?, Error?) -> Void)) -> Void {
     let symmKey = getLocalKeyByID(keyID: keyID, cfg: cfg)
     if symmKey != nil {
       completion(symmKey, nil)
@@ -369,7 +366,7 @@ public class PeacemakrSDK {
       
       let downloadedKey = self.getLocalKeyByID(keyID: keyID, cfg: cfg)
       if downloadedKey == nil {
-        completion(nil, NSError(domain: "Could not get key " + String(bytes: keyID, encoding: .utf8)! + " from storage after synchronizing keys", code: -17, userInfo: nil))
+        completion(nil, NSError(domain: "Could not get key " + keyID + " from storage after synchronizing keys", code: -17, userInfo: nil))
       }
       
       completion(downloadedKey, nil)
@@ -396,7 +393,7 @@ public class PeacemakrSDK {
   }
   
   private func getMyPublicKeyID() -> String {
-    let pubKeyID: String? = self.persister.getData("pubKeyID")
+    let pubKeyID: String? = self.persister.getData(self.dataPrefix + self.pubKeyIDTag)
     if pubKeyID == nil {
       self.log("failed to get my public key ID from the filesystem")
       return ""
@@ -452,7 +449,10 @@ public class PeacemakrSDK {
         return
       }
       
-      // TODO: store use domain selector scheme
+      if !self.persister.storeData(self.dataPrefix + "UseDomainSelectorScheme", val: response?.body?.symmetricKeyUseDomainSelectorScheme) {
+        self.log("Failed to store use domain selector scheme")
+        completion(NSError(domain: "failed to store use domain selector scheme", code: -37, userInfo: nil))
+      }
       
       let data = try? JSONEncoder().encode(response?.body?.symmetricKeyUseDomains)
       if data == nil {
@@ -470,13 +470,19 @@ public class PeacemakrSDK {
     }
   }
   
-  private func selectKey(useDomainID: String) -> ([UInt8], CoreCrypto.CryptoConfig)? {
+  private func selectKey(useDomainID: String) -> (String, CoreCrypto.CryptoConfig)? {
     // Use the string, if it's empty then just use the first one
     let encodedUseDomains: Data? = self.persister.getData(self.dataPrefix + "UseDomains")
     if encodedUseDomains == nil {
       self.log("Persisted use domains were nil")
       return nil
     }
+    
+//    let useDomainSelector: String? = self.persister.getData(self.dataPrefix + "UseDomainSelectorScheme")
+//    if useDomainSelector == nil {
+//      self.log("Persisted use domain selector scheme was nil")
+//      return nil
+//    }
     
     let useDomains = try? JSONDecoder().decode([SymmetricKeyUseDomain].self, from: encodedUseDomains!)
     
@@ -508,15 +514,7 @@ public class PeacemakrSDK {
       return nil
     }
     
-    let key = self.persister.getKey(self.symmTagPrefix + encryptionKeyID!)
-    if key == nil {
-      self.log("Unable to get key ID " + encryptionKeyID!)
-      return nil
-    }
-    
-    return key!.withUnsafeBytes({ (buf) -> ([UInt8], CoreCrypto.CryptoConfig) in
-      return ([UInt8](UnsafeBufferPointer(start: buf, count: key!.count)), keyCfg)
-    })
+    return (encryptionKeyID!, keyCfg)
   }
   
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
@@ -530,7 +528,7 @@ public class PeacemakrSDK {
     
     let myPubKeyID = self.getMyPublicKeyID()
     
-    let jsonObject: [String: [UInt8]] = ["cryptoKeyID": keyIDandCfg!.0, "senderKeyID": [UInt8](myPubKeyID.utf8)]
+    let jsonObject: [String: String] = ["cryptoKeyID": keyIDandCfg!.0, "senderKeyID": myPubKeyID]
     let aadJSON = try? JSONSerialization.data(withJSONObject: jsonObject, options: [])
     if aadJSON == nil {
       self.log("Failed to serialize the key IDs to json")
@@ -544,7 +542,7 @@ public class PeacemakrSDK {
     
     let keyToUse = self.getLocalKeyByID(keyID: keyIDandCfg!.0, cfg: keyIDandCfg!.1)
     if keyToUse == nil {
-      self.log("Unable to get key with ID " + String(bytes: keyIDandCfg!.0, encoding: .utf8)!)
+      self.log("Unable to get key with ID " + keyIDandCfg!.0)
       return nil
     }
     
@@ -589,7 +587,7 @@ public class PeacemakrSDK {
     return (serialized!, nil)
   }
   
-  private func getKeyID(serialized: [UInt8]) -> ([UInt8], [UInt8])? {
+  private func getKeyID(serialized: [UInt8]) -> (String, String)? {
     let serializedAAD = UnwrapCall(cryptoContext.ExtractUnverifiedAAD(serialized), onError: self.log)
     if serializedAAD == nil {
       return nil
@@ -601,9 +599,18 @@ public class PeacemakrSDK {
       return nil
     }
     
-    let aad = aadDict as! Dictionary<String, [UInt8]>
+    if let aad = aadDict as? [String: Any] {
+      let cryptoKeyID = aad["cryptoKeyID"] as? String
+      let senderKeyID = aad["senderKeyID"] as? String
+      if cryptoKeyID != nil && cryptoKeyID! == "" {
+        return ("", senderKeyID!)
+      }
+      
+      return (cryptoKeyID!, senderKeyID!)
+    }
     
-    return (aad["cryptoKeyID"]!, aad["senderKeyID"]!)
+    return ("", "")
+    
   }
   
   /**
@@ -659,7 +666,6 @@ public class PeacemakrSDK {
               completion(dest)
               return
             }
-            
             dest.serializedValue = outPlaintext.EncryptableData
             completion(dest)
           })

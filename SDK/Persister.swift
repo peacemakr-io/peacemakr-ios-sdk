@@ -68,23 +68,18 @@ class DefaultPersister: Persister {
   
   func storeData<T: Codable>(_ key: String, val: T) -> Bool {
     let userDefaults = UserDefaults.standard
+    userDefaults.removeObject(forKey: key)
     userDefaults.set(val, forKey: key)
-    return userDefaults.synchronize()
+    return true
   }
   
   func getData<T: Codable>(_ key: String) -> T? {
     let userDefaults = UserDefaults.standard
-    if !userDefaults.synchronize() {
-      self.log("unable to syncronize user defaults, may be unable to get item")
-    }
     return userDefaults.object(forKey: key) as? T
   }
   
   func hasData(_ key: String) -> Bool {
     let userDefaults = UserDefaults.standard
-    if !userDefaults.synchronize() {
-      self.log("unable to syncronize user defaults, may be unable to get item")
-    }
     return userDefaults.object(forKey: key) != nil
   }
 }
