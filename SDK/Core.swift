@@ -208,7 +208,6 @@ public class PeacemakrSDK {
   
   private func getPublicKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
     if let keyBytes: String = self.persister.getData(self.dataPrefix + keyID) {
-      print(keyBytes)
       return completion(PeacemakrKey(config: cfg, fileContents: keyBytes.cString(using: .utf8)!, is_priv: false))
     }
     
