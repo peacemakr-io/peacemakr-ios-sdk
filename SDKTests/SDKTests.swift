@@ -9,16 +9,12 @@
 import XCTest
 @testable import Peacemakr
 
-func log(_ s: String) -> Void {
-  print(s)
-}
-
 class SDKTests: XCTestCase {
   var sdk: PeacemakrSDK? = nil
   var data: AppData? = nil
   
   let testKey = "1MM/tGB2nztn0YCe185iNq0hnB0+Qnugaxa6ohir79I="
-  let gibblygook = "gibblygook"
+  let basePath = "http://localhost:8080/api/v1"
 
   override func setUp() {
     super.setUp()
@@ -33,7 +29,7 @@ class SDKTests: XCTestCase {
   }
   
   func testRegister() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = PeacemakrSDK(apiKey: testKey, basePath: basePath)
     
     let expectation = self.expectation(description: "Registration successful")
     
@@ -50,7 +46,7 @@ class SDKTests: XCTestCase {
   }
   
   func testSync() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = PeacemakrSDK(apiKey: testKey, basePath: basePath)
     let registerExpectation = self.expectation(description: "Registration Successful")
     XCTAssert(sdk!.Register(completion: {
       XCTAssert($0 == nil)
@@ -72,7 +68,7 @@ class SDKTests: XCTestCase {
   }
 
   func testEncryptDecrypt() throws {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = PeacemakrSDK(apiKey: testKey, basePath: basePath)
     
     let registerExpectation = self.expectation(description: "Registration successful")
     
@@ -82,6 +78,8 @@ class SDKTests: XCTestCase {
     }) {
       XCTAssert(false, "Initialization of the SDK failed")
     }
+    
+    sdk!.ClearCache()
     
     let syncExpectation = self.expectation(description: "Sync successful")
     sdk!.Sync { (err) in
@@ -100,7 +98,8 @@ class SDKTests: XCTestCase {
     let (serialized, err) = sdk!.Encrypt(data!)
     XCTAssert(err == nil)
     
-    XCTAssert(self.sdk!.Decrypt(serialized, dest: destination, completion: { (dest) in
+    XCTAssert(self.sdk!.Decrypt(serialized, dest: destination, completion: { (dest, err) in
+      XCTAssert(err == nil)
       XCTAssert(dest as! AppData == self.data!)
       decryptExpectation.fulfill()
     }))

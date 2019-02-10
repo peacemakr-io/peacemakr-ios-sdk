@@ -14,7 +14,7 @@ enum SerializationError: Error {
 
 class AppData: Codable, Encryptable, Equatable {
   
-  private var someProperty: String? = nil
+  private var someProperty: String = ""
   private var someOtherProperty = [String: String]()
   
   init() {}
@@ -37,10 +37,6 @@ class AppData: Codable, Encryptable, Equatable {
   
   func setSomeOtherProperty(key: String, value: String) -> Void {
     someOtherProperty[key] = value
-  }
-  
-  func onError(error: Error) {
-    NSLog(error.localizedDescription)
   }
   
   var serializedValue: [UInt8] {

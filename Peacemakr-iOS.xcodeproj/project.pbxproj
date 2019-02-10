@@ -49,6 +49,7 @@
 		071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
 		077F732E21D19AC000061810 /* CoreCrypto.framework in Copy Core Crypto */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		07BF3009220F496500A00399 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BF3008220F496500A00399 /* Logging.swift */; };
 		07E235052201586000192E3C /* Persister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235042201586000192E3C /* Persister.swift */; };
 		07E23508220165E100192E3C /* PersisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235062201653D00192E3C /* PersisterTests.swift */; };
 		07FBFF3921E0045900D9D0C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FBFF3821E0045900D9D0C6 /* AppDelegate.swift */; };
@@ -153,6 +154,7 @@
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
 		071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
+		07BF3008220F496500A00399 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		07C390CF21D1912A009620A6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Alamofire.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 		07E235042201586000192E3C /* Persister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persister.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				071722E8218F9996005E2CA5 /* RandomDevice.swift */,
 				071722EA218FA301005E2CA5 /* Encryptable.swift */,
 				07E235042201586000192E3C /* Persister.swift */,
+				07BF3008220F496500A00399 /* Logging.swift */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -538,6 +541,7 @@
 				0710E2992202CB4A00CDD72A /* CryptoConfig.swift in Sources */,
 				0710E2872202CB4A00CDD72A /* AlamofireImplementations.swift in Sources */,
 				071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */,
+				07BF3009220F496500A00399 /* Logging.swift in Sources */,
 				072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */,
 				0710E28C2202CB4A00CDD72A /* KeyDerivationServiceRegistryAPI.swift in Sources */,
 				0710E2882202CB4A00CDD72A /* LoginAPI.swift in Sources */,

@@ -21,9 +21,4 @@ public protocol Encryptable {
    long as deserialization is also possible.
    */
   var serializedValue: [UInt8] { get set }
-
-  /**
-   How to handle errors within the Peacemakr SDK
-   */
-  func onError(error: Error) -> Void
 }

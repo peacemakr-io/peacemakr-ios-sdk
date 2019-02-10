@@ -9,15 +9,17 @@
 import Foundation
 import CoreCrypto
 
+import os.log
+
 /**
  Provides the Peacemakr iOS SDK.
  */
 public class PeacemakrSDK {
   private let version = "0.0.1"
   private let cryptoContext: CryptoContext
-  private var rand: RandomDevice
+  private var rand: RandomDevice = PeacemakrRandomDevice()
   private let apiKey: String
-  private var logHandler: (String) -> Void
+  private var logHandler: (PeacemakrError) -> Void
   private let myKeyCfg = CoreCrypto.CryptoConfig(
     mode: EncryptionMode.ASYMMETRIC,
     symm_cipher: SymmetricCipher.AES_256_GCM,
@@ -36,42 +38,47 @@ public class PeacemakrSDK {
   
   private let persister: Persister
   
-  public init?(apiKey: String, logHandler: @escaping (String)->Void) {
+  public init?(apiKey: String, basePath: String = "") {
     self.apiKey = apiKey
-    self.logHandler = logHandler
+    self.logHandler = { (err) in
+      print(err.description)
+    }
     
     let cc = CryptoContext()
     cryptoContext = cc!
-    rand = PeacemakrRandomDevice()
     
     self.persister = DefaultPersister(logHandler: self.logHandler)
     
     if cc == nil {
-      self.log("Unable to init CryptoContext")
+      self.log(PeacemakrError(what: "Unable to init CryptoContext", subsystem: .Crypto, shouldSend: true))
       return nil
     }
     
-//    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
-    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    if basePath == "" {
+      SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
+    } else {
+      SwaggerClientAPI.basePath = basePath
+    }
+    
     SwaggerClientAPI.customHeaders = ["Authorization": self.apiKey]
   }
   
-  private func log(_ s: String) -> Void {
-    let logStr = s + " - SDK Version: iOS-" + self.version
+  private func log(_ e: PeacemakrError) -> Void {
+    let logStr = e.description
     
-    if self.RegistrationSuccessful {
-      let logEvent = Log(clientId: getMyClientID(), event: logStr)
+    if self.RegistrationSuccessful && e.shouldSend {
+      let logEvent = Log(clientId: myClientID, event: logStr)
       
       let requestBuilder = PhoneHomeAPI.logPostWithRequestBuilder(log: logEvent)
       requestBuilder.execute({(response, error) in
         if error != nil {
-          self.logHandler("phonehome request failed")
+          let err = PeacemakrError(what: error!.localizedDescription, subsystem: .Network, shouldSend: false)
+          self.logHandler(err)
         }
       })
     }
     
-    // Log whether or not the request succeeds
-    self.logHandler(logStr)
+    self.logHandler(e)
   }
   
   public var RegistrationSuccessful: Bool {
@@ -80,19 +87,58 @@ public class PeacemakrSDK {
     }
   }
   
+  private var myClientID: String {
+    get {
+      let clientID: String? = self.persister.getData(self.dataPrefix + self.clientIDTag)
+      if clientID == nil {
+        let error = PeacemakrError(what: "failed to get my client ID", subsystem: .Persister, shouldSend: false)
+        self.logHandler(error)
+        return ""
+      }
+      
+      return clientID!
+    }
+  }
+  
+  private var myPubKeyID: String {
+    get {
+      let pubKeyID: String? = self.persister.getData(self.dataPrefix + self.pubKeyIDTag)
+      if pubKeyID == nil {
+        let error = PeacemakrError(what: "failed to get my public key ID", subsystem: .Persister, shouldSend: false)
+        self.logHandler(error)
+        return ""
+      }
+      
+      return pubKeyID!
+    }
+  }
+  
+  private func cryptoOnError(_ s: String) -> Void {
+    let error = PeacemakrError(what: s, subsystem: .Crypto, shouldSend: true)
+    self.log(error)
+  }
+  
   public func Register(completion: (@escaping (Error?) -> Void)) -> Bool {
+    
+    // Short-circuit if we've already registered
+    if RegistrationSuccessful {
+      completion(nil)
+      return true
+    }
     
     // Generate my keypair
     let myKey = PeacemakrKey(config: myKeyCfg, rand: rand)
     if myKey == nil {
-      self.log("Keygen failed")
+      let error = PeacemakrError(what: "failed to generate my key pair", subsystem: .Crypto, shouldSend: true)
+      self.logHandler(error)
       return false
     }
     
     // Store private key
-    let priv = UnwrapCall(myKey!.toPem(is_priv: true), onError: self.log)
+    let priv = UnwrapCall(myKey!.toPem(is_priv: true), onError: self.cryptoOnError)
     if priv == nil {
-      self.log("priv key to pem failed")
+      let error = PeacemakrError(what: "priv key to pem failed", subsystem: .Crypto, shouldSend: true)
+      self.log(error)
       return false
     }
     var privPemData: Data? = nil
@@ -100,14 +146,16 @@ public class PeacemakrSDK {
       privPemData = Data(buffer: buf)
     })
     if !self.persister.storeKey(privPemData!, keyID: self.privTag) {
-      self.log("Storing my private key failed")
+      let error = PeacemakrError(what: "storing private key failed", subsystem: .Persister, shouldSend: true)
+      self.log(error)
       return false
     }
     
     // Store public key
-    let pub = UnwrapCall(myKey!.toPem(is_priv: false), onError: self.log)
+    let pub = UnwrapCall(myKey!.toPem(is_priv: false), onError: self.cryptoOnError)
     if pub == nil {
-      self.log("pub key to pem failed")
+      let error = PeacemakrError(what: "pub key to pem failed", subsystem: .Crypto, shouldSend: true)
+      self.log(error)
       return false
     }
     var pubPemData: Data? = nil
@@ -115,7 +163,8 @@ public class PeacemakrSDK {
       pubPemData = Data(buffer: buf)
     })
     if !self.persister.storeKey(pubPemData!, keyID: self.pubTag) {
-      self.log("Storing my public key failed")
+      let error = PeacemakrError(what: "Storing my public key failed", subsystem: .Persister, shouldSend: true)
+      self.log(error)
       return false
     }
     
@@ -125,9 +174,9 @@ public class PeacemakrSDK {
     
     let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
     requestBuilder.execute({ (client, error) in
-      self.logHandler("Register request completed")
       if error != nil {
-        self.log("addClient failed with " + error.debugDescription)
+        let e = PeacemakrError(what: "addClient failed with " + error.debugDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
         completion(error)
         return
       }
@@ -135,68 +184,62 @@ public class PeacemakrSDK {
       // Store the clientID and publicKeyID
       let clientID = client?.body?._id
       if clientID == nil {
-        self.log("Client ID returned was nil")
+        let e = PeacemakrError(what: "client ID returned from server was nil", subsystem: .Server, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "no client ID", code: -1, userInfo: nil))
         return
       }
       if !self.persister.storeData(self.dataPrefix + self.clientIDTag, val: clientID) {
-        self.log("couldn't store my client ID")
+        let e = PeacemakrError(what: "could not store client ID", subsystem: .Persister, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "could not store client ID", code: -2, userInfo: nil))
         return
       }
       
       let pubKeyID = client?.body?.publicKey._id
       if pubKeyID == nil {
-        self.log("Public key ID returned was nil")
+        let e = PeacemakrError(what: "public key ID returned from server was nil", subsystem: .Server, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "no public key ID", code: -3, userInfo: nil))
         return
       }
       if !self.persister.storeData(self.dataPrefix + self.pubKeyIDTag, val: pubKeyID) {
-        self.log("couldn't store my public key ID")
+        let e = PeacemakrError(what: "could not store public key ID", subsystem: .Persister, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "couldn't store public key ID", code: -4, userInfo: nil))
         return
       }
       
-      self.log("Registered new iOS client: " + self.getMyClientID())
       completion(nil)
     })
     
     return true
   }
   
-  private func getMyClientID() -> String {
-    let clientID: String? = self.persister.getData(self.dataPrefix + self.clientIDTag)
-    if clientID == nil {
-      self.logHandler("failed to get my client ID")
-      return ""
-    }
-    
-    return clientID!
-  }
-  
   public func Sync(completion: (@escaping (Error?) -> Void)) -> Void {
     self.syncOrgInfo { (err) in
       if err != nil {
-        completion(err)
+        return completion(err)
       }
       
       self.syncCryptoConfig(completion: { (err) in
         if err != nil {
-          completion(err)
+          return completion(err)
         }
         
-        self.syncSymmetricKeys(completion: {completion($0)})
+        self.syncSymmetricKeys(completion: {
+          return completion($0)
+        })
       })
     }
   }
   
-  private func storeKey(key: [UInt8], keyID: [UInt8]) -> Bool {
-    let keyIDStr = String(bytes: keyID, encoding: .utf8)
-    if keyIDStr == nil {
-      self.log("Could not serialize keyID to string")
-      return false
-    }
-    let tag = self.symmTagPrefix + keyIDStr!
+  public func ClearCache() -> Void {
+    // TODO
+  }
+  
+  private func storeKey(key: [UInt8], keyID: String) -> Bool {
+    let tag = self.symmTagPrefix + keyID
     
     var keyData: Data? = nil
     key.withUnsafeBufferPointer{ buf -> Void in
@@ -214,18 +257,20 @@ public class PeacemakrSDK {
     let requestBuilder = KeyServiceAPI.getPublicKeyWithRequestBuilder(keyID: keyID)
     requestBuilder.execute({(key, error) in
       if error != nil {
-        self.log("Attempted to get public key: " + error!.localizedDescription)
+        let e = PeacemakrError(what: "Attempted to get public key: " + error!.localizedDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
         return completion(nil)
       }
       
       if let keyStr = key?.body?.key {
         if !self.persister.storeData(self.dataPrefix + keyID, val: keyStr) {
-          self.log("Unable to store returned key: " + keyID)
+          let e = PeacemakrError(what: "Could not store public key: " + keyID, subsystem: .Persister, shouldSend: false)
+          self.log(e)
+          return completion(nil)
         }
         return completion(PeacemakrKey(config: cfg, fileContents: keyStr.cString(using: .utf8)!, is_priv: false))
       }
       
-      self.log("Attempted to get public key, and the response was empty")
       return completion(nil)
     })
   }
@@ -235,7 +280,8 @@ public class PeacemakrSDK {
     
     let keyData = self.persister.getKey(tag)
     if keyData == nil {
-      self.log("Could not retreive key at: " + tag)
+      let e = PeacemakrError(what: "Could not retreive key at: " + tag, subsystem: .Persister, shouldSend: false)
+      self.log(e)
       return nil
     }
     
@@ -245,12 +291,13 @@ public class PeacemakrSDK {
       return PeacemakrKey(config: cfg, bytes: keyBytes)
     }
     
-    self.log("Unable to marshal key data into byte array")
+    let e = PeacemakrError(what: "Unable to marshal key data into byte array", subsystem: .Swift, shouldSend: false)
+    self.log(e)
     return nil
   }
   
   private func verifyMessage(plaintext: Plaintext, ciphertext: inout Ciphertext, verifyKey: PeacemakrKey, completion: (@escaping (Bool) -> Void)) {
-    let verified = UnwrapCall(self.cryptoContext.Verify(senderKey: verifyKey, plaintext: plaintext, ciphertext: &ciphertext), onError: self.log)
+    let verified = UnwrapCall(self.cryptoContext.Verify(senderKey: verifyKey, plaintext: plaintext, ciphertext: &ciphertext), onError: self.cryptoOnError)
     if verified == nil || verified == false {
       completion(false)
     }
@@ -258,22 +305,21 @@ public class PeacemakrSDK {
   }
   
   private func syncSymmetricKeys(completion: (@escaping (Error?) -> Void)) {
-    let myClientID = getMyClientID()
     let myPrivKey = getMyKey(priv: true)
     
     let finishKeyStorage = { (keyPlaintext: Plaintext, keyLen: Int, keyIDs: [String]) -> Void in
-      self.log("Storing keys: " + keyIDs.joined(separator: ", "))
-      
       guard let keyBytes = Data(base64Encoded: String(bytes: keyPlaintext.EncryptableData, encoding: .utf8)!) else {
-        self.log("Invalid b64 key")
+        let e = PeacemakrError(what: "Invalid b64 key", subsystem: .Swift, shouldSend: false)
+        self.log(e)
         completion(NSError(domain: "invalid b64 key", code: -15, userInfo: nil))
         return
       }
       
       for (i, keyID) in keyIDs.enumerated() {
         let thisKeyBytes = keyBytes[i*keyLen..<(i+1)*keyLen]
-        if !self.storeKey(key: Array(thisKeyBytes), keyID: Array(keyID.utf8)) {
-          self.log("Storing key failed for key: " + keyID)
+        if !self.storeKey(key: Array(thisKeyBytes), keyID: keyID) {
+          let e = PeacemakrError(what: "Storing key failed for key: " + keyID, subsystem: .Persister, shouldSend: false)
+          self.log(e)
           completion(NSError(domain: "Key storage failed", code: -16, userInfo: nil))
           return
         }
@@ -281,16 +327,18 @@ public class PeacemakrSDK {
       completion(nil)
     }
     
-    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: myClientID)
+    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: self.myClientID)
     requestBuilder.execute({(keys, error) in
       if error != nil {
-        self.log("get encrypted keys failed with " + error!.localizedDescription)
+        let e = PeacemakrError(what: "get encrypted keys failed with " + error!.localizedDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
         completion(error)
         return
       }
       
       if keys == nil || keys?.body == nil || keys?.body?.count == 0 {
-        self.log("no keys returned in get all encrypted keys request")
+        let e = PeacemakrError(what: "no keys returned in get all encrypted keys request", subsystem: .Server, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "No keys were returned", code: -10, userInfo: nil))
         return
       }
@@ -303,25 +351,28 @@ public class PeacemakrSDK {
         // Grab the keyID from the ciphertext
         let storedKeyIDs = self.getKeyID(serialized: Array(serialized))
         if storedKeyIDs == nil {
-          self.log("Unable to extract key IDs serialized key package")
+          let e = PeacemakrError(what: "Unable to extract key IDs serialized key package", subsystem: .Server, shouldSend: true)
+          self.log(e)
           completion(NSError(domain: "Unable to extract key IDs", code: -11, userInfo: nil))
           return
         }
         
         // Gotta get the singing key IDs
         let (_, signKeyID) = storedKeyIDs!
-        let deserializedCfg = UnwrapCall(self.cryptoContext.Deserialize(Array(serialized)), onError: self.log)
+        let deserializedCfg = UnwrapCall(self.cryptoContext.Deserialize(Array(serialized)), onError: self.cryptoOnError)
         if deserializedCfg == nil {
-          self.log("Unable to deserialize key package ciphertext")
+          let e = PeacemakrError(what: "Unable to deserialize key package ciphertext", subsystem: .Crypto, shouldSend: false)
+          self.log(e)
           completion(NSError(domain: "Unable to deserialize the key package", code: -12, userInfo: nil))
           return
         }
         var (deserialized, _) = deserializedCfg!
         
         // Decrypt the key
-        let decryptResult = UnwrapCall(self.cryptoContext.Decrypt(key: myPrivKey!, ciphertext: deserialized), onError: self.log)
+        let decryptResult = UnwrapCall(self.cryptoContext.Decrypt(key: myPrivKey!, ciphertext: deserialized), onError: self.cryptoOnError)
         if decryptResult == nil {
-          self.log("Unable to decrypt key package ciphertext")
+          let e = PeacemakrError(what: "Unable to decrypt key package ciphertext", subsystem: .Crypto, shouldSend: true)
+          self.log(e)
           completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
           return
         }
@@ -329,8 +380,7 @@ public class PeacemakrSDK {
         
         if needVerify {
           self.getPublicKeyByID(keyID: signKeyID, cfg: self.myKeyCfg, completion: { (pKey) in
-            if pKey == nil {
-              self.log("Public key: " + signKeyID + " could not be gotten")
+            if pKey == nil { // already logged a message
               completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
               return
             }
@@ -338,6 +388,8 @@ public class PeacemakrSDK {
               if verified {
                 finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
               } else {
+                let e = PeacemakrError(what: "unable to verify keyderiver message", subsystem: .Crypto, shouldSend: true)
+                self.log(e)
                 completion(NSError(domain: "Unable to verify message", code: -20, userInfo: nil))
               }
             })
@@ -349,6 +401,7 @@ public class PeacemakrSDK {
     })
   }
   
+  // TODO: don't use the key if it's past its TTL
   private func getSymmKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?, Error?) -> Void)) -> Void {
     let symmKey = getLocalKeyByID(keyID: keyID, cfg: cfg)
     if symmKey != nil {
@@ -387,18 +440,9 @@ public class PeacemakrSDK {
       return PeacemakrKey(config: myKeyCfg, fileContents: keyBytes, is_priv: priv)
     }
     
-    self.log("unable to get my key (public/private) from keychain")
+    let e = PeacemakrError(what: "unable to get my key (public/private) from keychain", subsystem: .Persister, shouldSend: false)
+    self.log(e)
     return nil
-  }
-  
-  private func getMyPublicKeyID() -> String {
-    let pubKeyID: String? = self.persister.getData(self.dataPrefix + self.pubKeyIDTag)
-    if pubKeyID == nil {
-      self.log("failed to get my public key ID from the filesystem")
-      return ""
-    }
-    
-    return pubKeyID!
   }
   
   // Stores org ID and crypto config ID
@@ -406,26 +450,27 @@ public class PeacemakrSDK {
     let requestBuilder = OrgAPI.getOrganizationFromAPIKeyWithRequestBuilder(apikey: self.apiKey)
     requestBuilder.execute { (response, err) in
       if err != nil {
-        self.log("Trying to get org from API Key: " + err!.localizedDescription)
+        let e = PeacemakrError(what: "Trying to get org from API Key: " + err!.localizedDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
         completion(err)
         return
       }
       
       let orgID = response?.body?._id
       if !self.persister.storeData(self.dataPrefix + "OrgID", val: orgID!) {
-        self.log("Unable to store OrgID")
+        let e = PeacemakrError(what: "Unable to store OrgID", subsystem: .Server, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "Unable to store org ID", code: -30, userInfo: nil))
         return
       }
       
       let cryptoConfigID = response?.body?.cryptoConfigId
       if !self.persister.storeData(self.dataPrefix + "CryptoConfigID", val: cryptoConfigID!) {
-        self.log("Unable to store CryptoConfigID")
+        let e = PeacemakrError(what: "Unable to store CryptoConfigID", subsystem: .Persister, shouldSend: false)
+        self.log(e)
         completion(NSError(domain: "Unable to store crypto config ID", code: -31, userInfo: nil))
         return
       }
-      
-      self.log("got orgID " + orgID! + " and cryptoConfigID " + cryptoConfigID!)
       
       completion(nil)
     }
@@ -437,19 +482,22 @@ public class PeacemakrSDK {
     let requestBuilder = CryptoConfigAPI.getCryptoConfigWithRequestBuilder(cryptoConfigId: cryptoConfigID!)
     requestBuilder.execute { (response, err) in
       if err != nil {
-        self.log("Trying to get the CryptoConfig: " + err!.localizedDescription)
+        let e = PeacemakrError(what: "Trying to get the CryptoConfig: " + err!.localizedDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
         completion(err)
         return
       }
       
       if response?.body == nil {
-        self.log("Response body was nil")
+        let e = PeacemakrError(what: "Response body was nil", subsystem: .Server, shouldSend: true)
+        self.log(e)
         completion(NSError(domain: "response body was nil", code: -34, userInfo: nil))
         return
       }
       
       if !self.persister.storeData(self.dataPrefix + "UseDomainSelectorScheme", val: response?.body?.symmetricKeyUseDomainSelectorScheme) {
-        self.log("Failed to store use domain selector scheme")
+        let e = PeacemakrError(what: "Failed to store use domain selector scheme", subsystem: .Persister, shouldSend: false)
+        self.log(e)
         completion(NSError(domain: "failed to store use domain selector scheme", code: -37, userInfo: nil))
       }
       
@@ -460,11 +508,11 @@ public class PeacemakrSDK {
       }
       
       if !self.persister.storeData(self.dataPrefix + "UseDomains", val: data!) {
-        self.log("Failed to store use domains")
+        let e = PeacemakrError(what: "Failed to store use domains", subsystem: .Persister, shouldSend: false)
+        self.log(e)
         completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
       }
       
-      self.log("Synchronized the crypto config")
       completion(nil)
     }
   }
@@ -473,13 +521,15 @@ public class PeacemakrSDK {
     // Use the string, if it's empty then just use the first one
     let encodedUseDomains: Data? = self.persister.getData(self.dataPrefix + "UseDomains")
     if encodedUseDomains == nil {
-      self.log("Persisted use domains were nil")
+      // If the enocded use domains are nil, it's likely that we were sent an empty list from the server
+      let e = PeacemakrError(what: "Persisted use domains were nil", subsystem: .Server, shouldSend: true)
+      self.log(e)
       return nil
     }
     
 //    let useDomainSelector: String? = self.persister.getData(self.dataPrefix + "UseDomainSelectorScheme")
 //    if useDomainSelector == nil {
-//      self.log("Persisted use domain selector scheme was nil")
+//      let e = PeacemakrError(what: "Persisted use domain selector scheme was nil")
 //      return nil
 //    }
     
@@ -498,18 +548,21 @@ public class PeacemakrSDK {
     
     let encryptionKeys = useDomainToUse?.encryptionKeyIds
     if encryptionKeys == nil {
-      self.log("Invalid use domain, no key IDs contained within")
+      let e = PeacemakrError(what: "Invalid use domain, no key IDs contained within", subsystem: .Server, shouldSend: true)
+      self.log(e)
       return nil
     }
     
-    let encryptionKeyID = encryptionKeys?.randomElement()
     var keyCfg = CoreCrypto.CryptoConfig(mode: .SYMMETRIC, symm_cipher: .CHACHA20_POLY1305, asymm_cipher: .NONE, digest: .SHA3_512)
     if useDomainToUse?.symmetricKeyEncryptionAlg == "AESGCM" {
       keyCfg = CoreCrypto.CryptoConfig(mode: .SYMMETRIC, symm_cipher: .AES_256_GCM, asymm_cipher: .NONE, digest: .SHA3_512)
     }
     
+    let encryptionKeyID = encryptionKeys?.randomElement()
     if encryptionKeyID == nil {
-      self.log("Invalid encryption key ID")
+      // This means something ahs gone horribly wrong in the encryption key IDs
+      let e = PeacemakrError(what: "Invalid encryption key ID", subsystem: .Server, shouldSend: true)
+      self.log(e)
       return nil
     }
     
@@ -521,27 +574,28 @@ public class PeacemakrSDK {
       
     let keyIDandCfg = self.selectKey(useDomainID: useDomainID)
     if keyIDandCfg == nil {
-      self.log("Unable to select a key")
+      // Already logged inside the function
       return nil
     }
     
-    let myPubKeyID = self.getMyPublicKeyID()
-    
-    let jsonObject: [String: String] = ["cryptoKeyID": keyIDandCfg!.0, "senderKeyID": myPubKeyID]
+    let jsonObject: [String: String] = ["cryptoKeyID": keyIDandCfg!.0, "senderKeyID": self.myPubKeyID]
     let aadJSON = try? JSONSerialization.data(withJSONObject: jsonObject, options: [])
     if aadJSON == nil {
-      self.log("Failed to serialize the key IDs to json")
+      let e = PeacemakrError(what: "Failed to serialize the key IDs to json", subsystem: .Swift, shouldSend: false)
+      self.log(e)
       return nil
     }
     let messageAAD = String(data: aadJSON!, encoding: .utf8)
     if messageAAD == nil {
-      self.log("Failed to marshal the json AAD to a string")
+      let e = PeacemakrError(what: "Failed to marshal the json AAD to a string", subsystem: .Swift, shouldSend: false)
+      self.log(e)
       return nil
     }
     
     let keyToUse = self.getLocalKeyByID(keyID: keyIDandCfg!.0, cfg: keyIDandCfg!.1)
     if keyToUse == nil {
-      self.log("Unable to get key with ID " + keyIDandCfg!.0)
+      let e = PeacemakrError(what: "Unable to get key with ID " + keyIDandCfg!.0, subsystem: .Persister, shouldSend: false)
+      self.log(e)
       return nil
     }
     
@@ -563,23 +617,26 @@ public class PeacemakrSDK {
       key: aadAndKey!.1,
       plaintext: p,
       rand: self.rand
-    ), onError: self.log)
+    ), onError: self.cryptoOnError)
     if encrypted == nil {
-      self.log("Encryption failed")
+      let e = PeacemakrError(what: "Encryption failed", subsystem: .Crypto, shouldSend: true)
+      self.log(e)
       return ([UInt8](), NSError(domain: "Encryption failed", code: -103, userInfo: nil))
     }
     
     let signKey = self.getMyKey(priv: true)
     if signKey == nil {
-      self.log("Unable to get my private key")
+      let e = PeacemakrError(what: "Unable to get my private key", subsystem: .Persister, shouldSend: true)
+      self.log(e)
       return ([UInt8](), NSError(domain: "Unable to get my private key", code: -104, userInfo: nil))
     }
     
     self.cryptoContext.Sign(senderKey: signKey!, plaintext: p, ciphertext: &encrypted!)
     
-    let serialized = UnwrapCall(self.cryptoContext.Serialize(encrypted!), onError: self.log)
+    let serialized = UnwrapCall(self.cryptoContext.Serialize(encrypted!), onError: self.cryptoOnError)
     if serialized == nil {
-      self.log("Serialization failed")
+      let e = PeacemakrError(what: "Serialization failed", subsystem: .Crypto, shouldSend: true)
+      self.log(e)
       return ([UInt8](), NSError(domain: "Serialization failed", code: -105, userInfo: nil))
     }
     
@@ -587,14 +644,15 @@ public class PeacemakrSDK {
   }
   
   private func getKeyID(serialized: [UInt8]) -> (String, String)? {
-    let serializedAAD = UnwrapCall(cryptoContext.ExtractUnverifiedAAD(serialized), onError: self.log)
+    let serializedAAD = UnwrapCall(cryptoContext.ExtractUnverifiedAAD(serialized), onError: self.cryptoOnError)
     if serializedAAD == nil {
       return nil
     }
     
     let aadDict = try? JSONSerialization.jsonObject(with: Data(bytes: serializedAAD!.AuthenticatableData), options: [])
     if aadDict == nil {
-      self.log("json deserialization of AAD failed")
+      let e = PeacemakrError(what: "json deserialization of AAD failed", subsystem: .Swift, shouldSend: true)
+      self.log(e)
       return nil
     }
     
@@ -616,17 +674,19 @@ public class PeacemakrSDK {
    Deserializes and decrypts \p serialized and stores the output into \p dest.
    Throws an error on failure of deserialization or decryption.
    */
-  public func Decrypt(_ serialized: [UInt8], dest: Encryptable, completion: (@escaping (Encryptable) -> Void)) -> Bool {
+  public func Decrypt(_ serialized: [UInt8], dest: Encryptable, completion: (@escaping (Encryptable?, Error?) -> Void)) -> Bool {
     let keyIDs = getKeyID(serialized: serialized)
     if keyIDs == nil {
-      self.log("Unable to parse key IDs from message")
+      let e = PeacemakrError(what: "Unable to parse key IDs from message", subsystem: .Crypto, shouldSend: false)
+      self.log(e)
       return false
     }
     
     let (keyID, signKeyID) = keyIDs!
-    let deserializedCfg = UnwrapCall(cryptoContext.Deserialize(serialized), onError: self.log)
+    let deserializedCfg = UnwrapCall(cryptoContext.Deserialize(serialized), onError: self.cryptoOnError)
     if deserializedCfg == nil {
-      self.log("Unable to deserialize encrypted message")
+      let e = PeacemakrError(what: "Unable to deserialize encrypted message", subsystem: .Crypto, shouldSend: false)
+      self.log(e)
       return false
     }
     var (deserialized, cfg) = deserializedCfg!
@@ -635,43 +695,47 @@ public class PeacemakrSDK {
     getSymmKeyByID(keyID: keyID, cfg: cfg, completion: { (key, err) in
       var dest = dest
       if err != nil {
-        self.log("Trying to get the symmetric key: " + err!.localizedDescription)
-        dest.onError(error: err!)
-        completion(dest)
+        let e = PeacemakrError(what: "Trying to get the symmetric key: " + err!.localizedDescription, subsystem: .Network, shouldSend: false)
+        self.log(e)
+        completion(nil, err)
       }
       if key == nil {
-        self.log("Unable to get symmetric key for decrypting the messaage")
-        dest.onError(error: NSError(domain: "Unable to get symmetric decrypt key", code: -106, userInfo: nil))
-        completion(dest)
+        let e = PeacemakrError(what: "Unable to get symmetric key for decrypting the messaage", subsystem: .Server, shouldSend: true)
+        self.log(e)
+        completion(nil, NSError(domain: "Unable to get symmetric decrypt key", code: -106, userInfo: nil))
         return
       }
       
       // Then decrypt
-      let decryptResult = UnwrapCall(self.cryptoContext.Decrypt(key: key!, ciphertext: deserialized), onError: self.log)
+      let decryptResult = UnwrapCall(self.cryptoContext.Decrypt(key: key!, ciphertext: deserialized), onError: self.cryptoOnError)
       if decryptResult == nil {
-        self.log("Decryption failed")
-        dest.onError(error: NSError(domain: "Decryption failed", code: -107, userInfo: nil))
-        completion(dest)
+        let e = PeacemakrError(what: "Decryption failed - decrypt key ID: " + keyID, subsystem: .Crypto, shouldSend: true)
+        self.log(e)
+        completion(nil, NSError(domain: "Decryption failed", code: -107, userInfo: nil))
         return
       }
       let (outPlaintext, needsVerify) = decryptResult!
       // And verify (which is another callback)
       if needsVerify {
         self.getPublicKeyByID(keyID: signKeyID, cfg: self.myKeyCfg, completion: { (verifyKey) in
+          if verifyKey == nil {
+            completion(nil, NSError(domain: "Verification failed", code: -113, userInfo: nil))
+            return
+          }
           self.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey!, completion: { (verified) in
             if !verified {
-              self.log("Verification failed")
-              dest.onError(error: NSError(domain: "Verification failed", code: -108, userInfo: nil))
-              completion(dest)
+              let e = PeacemakrError(what: "Verification failed - public key ID: " + signKeyID, subsystem: .Crypto, shouldSend: true)
+              self.log(e)
+              completion(nil, NSError(domain: "Verification failed", code: -108, userInfo: nil))
               return
             }
             dest.serializedValue = outPlaintext.EncryptableData
-            completion(dest)
+            completion(dest, nil)
           })
         })
       } else {
         dest.serializedValue = outPlaintext.EncryptableData
-        completion(dest)
+        completion(dest, nil)
       }
     })
     

@@ -13,7 +13,7 @@ class PersisterTests: XCTestCase {
   var persister: DefaultPersister? = nil
   
   override func setUp() {
-    persister = DefaultPersister(logHandler: log)
+    persister = DefaultPersister(logHandler: { print($0) })
   }
   
   func testKeystore() throws {
