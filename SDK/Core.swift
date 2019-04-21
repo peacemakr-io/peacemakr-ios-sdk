@@ -74,13 +74,13 @@ public class PeacemakrSDK {
     self.logHandler(logStr)
   }
   
-  public var RegistrationSuccessful: Bool {
+  public var registrationSuccessful: Bool {
     get {
       return self.persister.hasData(self.dataPrefix + self.clientIDTag) && self.persister.hasData(self.dataPrefix + self.pubKeyIDTag)
     }
   }
   
-  public func Register(completion: (@escaping (Error?) -> Void)) -> Bool {
+  public func register(completion: (@escaping (Error?) -> Void)) -> Bool {
     
     // Generate my keypair
     let myKey = PeacemakrKey(config: myKeyCfg, rand: rand)
@@ -174,7 +174,7 @@ public class PeacemakrSDK {
     return clientID!
   }
   
-  public func Sync(completion: (@escaping (Error?) -> Void)) -> Void {
+  public func sync(completion: (@escaping (Error?) -> Void)) -> Void {
     self.syncOrgInfo { (err) in
       if err != nil {
         completion(err)
@@ -552,7 +552,7 @@ public class PeacemakrSDK {
    Returns an encrypted and base64 serialized blob that contains \p plaintext.
    Throws an error on failure of encryption or serialization.
    */
-  public func Encrypt(_ plaintext: Encryptable, useDomainID: String? = nil) -> ([UInt8], Error?) {
+  public func encrypt(_ plaintext: Encryptable, useDomainID: String? = nil) -> ([UInt8], Error?) {
     let aadAndKey = self.getEncryptionKey(useDomainID: useDomainID ?? "")
     if aadAndKey == nil {
       return ([UInt8](), NSError(domain: "Unable to get the encryption key", code: -101, userInfo: nil))
@@ -616,7 +616,7 @@ public class PeacemakrSDK {
    Deserializes and decrypts \p serialized and stores the output into \p dest.
    Throws an error on failure of deserialization or decryption.
    */
-  public func Decrypt(_ serialized: [UInt8], dest: Encryptable, completion: (@escaping (Encryptable) -> Void)) -> Bool {
+  public func decrypt(_ serialized: [UInt8], dest: Encryptable, completion: (@escaping (Encryptable) -> Void)) -> Bool {
     let keyIDs = getKeyID(serialized: serialized)
     if keyIDs == nil {
       self.log("Unable to parse key IDs from message")

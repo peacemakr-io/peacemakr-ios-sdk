@@ -17,13 +17,13 @@ public final class PeacemakrRandomDevice: RandomDevice {
         super.init()
     }
     
-    override public var Generator: RNGBuf {
+    override public var generator: RNGBuf {
         return { bytes, count in
             return SecRandomCopyBytes(kSecRandomDefault, count, bytes!)
         }
     }
     
-    override public var Err: RNGErr {
+    override public var err: RNGErr {
         return { code in
             switch code {
             case 0:
