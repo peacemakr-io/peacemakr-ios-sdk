@@ -43,22 +43,21 @@ class AppData: Codable, Encryptable, Equatable {
     NSLog(error.localizedDescription)
   }
   
-  var serializedValue: [UInt8] {
+  var serializedValue: Data {
     get {
-      let out = try? JSONEncoder().encode(self)
-      if out == nil {
-        return [UInt8]()
+      guard let out = try? JSONEncoder().encode(self) else {
+        return Data()
       }
-      return [UInt8](out!)
+      return out
     }
     set(serialized) {
-      let data = try? JSONDecoder().decode(AppData.self, from: Data(bytes: serialized))
-      if data == nil {
+      if let data = try? JSONDecoder().decode(AppData.self, from: serialized) {
+        self.someProperty = data.someProperty
+        self.someOtherProperty = data.someOtherProperty
+        
+      } else {
         NSLog("Failed to decode data")
       }
-      
-      self.someProperty = data!.someProperty
-      self.someOtherProperty = data!.someOtherProperty
     }
   }
     
