@@ -26,8 +26,8 @@ public class PeacemakrSDK {
       return "<Unknown Peacemakr SDK version>"
     }
   }
-
-  private let cryptoContext: CryptoContext?
+  
+  private let cryptoContext: CryptoContext
   private var rand: RandomDevice
   private let apiKey: String
   private var logHandler: (String) -> Void
@@ -50,11 +50,15 @@ public class PeacemakrSDK {
   private let persister: Persister
 
   public init?(apiKey: String, logHandler: @escaping (String)->Void) {
+
+    guard let cryptoCtxt = CryptoContext() else {
+      return nil
+    }
+
     self.apiKey = apiKey
     self.logHandler = logHandler
 
-
-    self.cryptoContext = CryptoContext()
+    self.cryptoContext = cryptoCtxt
     self.rand = PeacemakrRandomDevice()
 
     self.persister = DefaultPersister(logHandler: self.logHandler)
