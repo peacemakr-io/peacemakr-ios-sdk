@@ -35,35 +35,34 @@ class SDKTests: XCTestCase {
   func testRegister() {
     sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
     
+    XCTAssertNotNil(sdk)
+    
     let expectation = self.expectation(description: "Registration successful")
     
-    if !sdk!.register(completion: {
-      XCTAssert($0 == nil)
+    sdk?.register(completion: { error in
+      XCTAssertNil(error)
       expectation.fulfill()
-    }) {
-      XCTAssert(false, "Initialization of the SDK failed")
-    }
-
+    })
+    
     waitForExpectations(timeout: 5, handler: nil)
     
-    XCTAssert(sdk!.RegistrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful, "Register failed")
   }
   
   func testSync() {
     sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
-    let registerExpectation = self.expectation(description: "Registration Successful")
-    XCTAssert(sdk!.register(completion: {
-      XCTAssert($0 == nil)
-      registerExpectation.fulfill()
-    }), "Initialization of the SDK failed")
+    XCTAssertNotNil(sdk)
+
+    sdk?.register(completion: { error in
+      XCTAssertNil(error)
+    })
     
-    waitForExpectations(timeout: 10, handler: nil)
     UserDefaults.standard.synchronize()
 
     let gotOrgInfoExpectation = self.expectation(description: "Got org info")
-
-    sdk!.Sync(completion: {
-      XCTAssert($0 == nil)
+    
+    sdk?.sync(completion: { error in
+      XCTAssertNil(error)
       gotOrgInfoExpectation.fulfill()
     })
 
@@ -71,18 +70,16 @@ class SDKTests: XCTestCase {
 
   }
 
+  
   func testEncryptDecrypt() throws {
     sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    XCTAssertNotNil(sdk)
     
-    let registerExpectation = self.expectation(description: "Registration successful")
+    sdk?.register(completion: { error in
+      XCTAssertNil(error)
+    })
     
-    if !sdk!.register(completion: {
-      XCTAssert($0 == nil)
-      registerExpectation.fulfill()
-    }) {
-      XCTAssert(false, "Initialization of the SDK failed")
-    }
-    
+
     let syncExpectation = self.expectation(description: "Sync successful")
     sdk!.sync { (err) in
       XCTAssert(err == nil)
@@ -97,10 +94,10 @@ class SDKTests: XCTestCase {
     
     let destination = AppData()
     
-    let (serialized, err) = sdk!.Encrypt(data!)
+    let (serialized, err) = sdk!.encrypt(data!)
     XCTAssert(err == nil)
     
-    XCTAssert(self.sdk!.decrypt(serialized, dest: destination, completion: { (dest) in
+    XCTAssert(self.sdk!.decrypt(serialized!, dest: destination, completion: { (dest) in
       XCTAssert(dest as! AppData == self.data!)
       decryptExpectation.fulfill()
     }))

@@ -20,7 +20,7 @@ public protocol Encryptable {
    for the encryption to work properly, but any serialization scheme is valid as
    long as deserialization is also possible.
    */
-  var serializedValue: [UInt8] { get set }
+  var serializedValue: Data { get set }
 
   /**
    How to handle errors within the Peacemakr SDK

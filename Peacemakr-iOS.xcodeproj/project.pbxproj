@@ -46,9 +46,7 @@
 		071722E7218F8972005E2CA5 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A1C218F61E000F68832 /* Core.swift */; };
 		071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722E8218F9996005E2CA5 /* RandomDevice.swift */; };
 		071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722EA218FA301005E2CA5 /* Encryptable.swift */; };
-		071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
-		077F732E21D19AC000061810 /* CoreCrypto.framework in Copy Core Crypto */ = {isa = PBXBuildFile; fileRef = 071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		07E235052201586000192E3C /* Persister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235042201586000192E3C /* Persister.swift */; };
 		07E23508220165E100192E3C /* PersisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235062201653D00192E3C /* PersisterTests.swift */; };
 		07FBFF3921E0045900D9D0C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FBFF3821E0045900D9D0C6 /* AppDelegate.swift */; };
@@ -56,6 +54,7 @@
 		07FBFF3E21E0045900D9D0C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3C21E0045900D9D0C6 /* Main.storyboard */; };
 		07FBFF4021E0045A00D9D0C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3F21E0045A00D9D0C6 /* Assets.xcassets */; };
 		07FBFF4321E0045A00D9D0C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF4121E0045A00D9D0C6 /* LaunchScreen.storyboard */; };
+		BD055648227FB47D000A0F04 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD055647227FB47D000A0F04 /* CoreCrypto.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,7 +102,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				077F732E21D19AC000061810 /* CoreCrypto.framework in Copy Core Crypto */,
 			);
 			name = "Copy Core Crypto";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,7 +149,6 @@
 		07126A1C218F61E000F68832 /* Core.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; tabWidth = 2; };
 		071722E8218F9996005E2CA5 /* RandomDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDevice.swift; sourceTree = "<group>"; };
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
-		071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
 		07C390CF21D1912A009620A6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Alamofire.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
@@ -165,6 +162,7 @@
 		07FBFF4221E0045A00D9D0C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		07FBFF4421E0045A00D9D0C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07FBFF4821E0046300D9D0C6 /* SDKTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDKTestHost.entitlements; sourceTree = "<group>"; };
+		BD055647227FB47D000A0F04 /* CoreCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,7 +170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				071722EE218FA6F1005E2CA5 /* CoreCrypto.framework in Frameworks */,
+				BD055648227FB47D000A0F04 /* CoreCrypto.framework in Frameworks */,
 				0701548121FCF5C100172F8D /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,9 +299,9 @@
 		071722EC218FA6F1005E2CA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BD055647227FB47D000A0F04 /* CoreCrypto.framework */,
 				07C390CF21D1912A009620A6 /* Alamofire.framework */,
 				0701548021FCF5C100172F8D /* Alamofire.framework */,
-				071722ED218FA6F1005E2CA5 /* CoreCrypto.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -754,7 +752,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = TVN85SMC24;
+				DEVELOPMENT_TEAM = 6P9U9FXT4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -794,7 +792,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = TVN85SMC24;
+				DEVELOPMENT_TEAM = 6P9U9FXT4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
