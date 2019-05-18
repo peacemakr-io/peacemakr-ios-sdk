@@ -55,6 +55,7 @@
 		07FBFF4021E0045A00D9D0C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3F21E0045A00D9D0C6 /* Assets.xcassets */; };
 		07FBFF4321E0045A00D9D0C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF4121E0045A00D9D0C6 /* LaunchScreen.storyboard */; };
 		BD055648227FB47D000A0F04 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD055647227FB47D000A0F04 /* CoreCrypto.framework */; };
+		BD1132E922908E2700E04E93 /* PeacemakrProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -163,6 +164,7 @@
 		07FBFF4421E0045A00D9D0C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07FBFF4821E0046300D9D0C6 /* SDKTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDKTestHost.entitlements; sourceTree = "<group>"; };
 		BD055647227FB47D000A0F04 /* CoreCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeacemakrProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,6 +283,7 @@
 				071722E8218F9996005E2CA5 /* RandomDevice.swift */,
 				071722EA218FA301005E2CA5 /* Encryptable.swift */,
 				07E235042201586000192E3C /* Persister.swift */,
+				BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -546,6 +549,7 @@
 				0710E29F2202CB4A00CDD72A /* Contact.swift in Sources */,
 				0710E2912202CB4A00CDD72A /* JSONEncodableEncoding.swift in Sources */,
 				0710E2A32202CB4A00CDD72A /* Configuration.swift in Sources */,
+				BD1132E922908E2700E04E93 /* PeacemakrProtocol.swift in Sources */,
 				0710E29E2202CB4A00CDD72A /* LoginResponse.swift in Sources */,
 				0710E2902202CB4A00CDD72A /* CodableHelper.swift in Sources */,
 				0710E2A12202CB4A00CDD72A /* JSONEncodingHelper.swift in Sources */,
