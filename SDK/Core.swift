@@ -12,7 +12,7 @@ import CoreCrypto
 /**
  Provides the Peacemakr iOS SDK.
  */
-public class PeacemakrSDK {
+public class Peacemakr {
 
 
   private var version: String {
@@ -92,6 +92,15 @@ public class PeacemakrSDK {
       return self.persister.hasData(self.dataPrefix + self.clientIDTag) && self.persister.hasData(self.dataPrefix + self.pubKeyIDTag)
     }
   }
+  
+  /**
+   Registers to PeaceMakr as a client.
+   
+   The persister is used to detect prior registrations on this client, so safe to call multiple times. Once a successful invocation of Register is executed once, subsequent calls become a noop. One successful call is required before any cryptographic use of this SDK. Successful registration returns a nil error.
+   Registration may fail with invalid apiKey, missing network connectivity, or an invalid persister. On failure, take corrections action and invoke again.
+   
+   - Parameter competion: error handler
+   */
 
   public func register(completion: (@escaping (Error?) -> Void)) {
 
@@ -551,9 +560,16 @@ public class PeacemakrSDK {
     return (messageAAD, keyToUse)
   }
 
+  /// MARK: - Encryption
+  
   /**
-   Returns an encrypted and base64 serialized blob that contains \p plaintext.
-   Throws an error on failure of encryption or serialization.
+   Encrypt the plaintext.
+   
+   Restrict which keys may be used to a Use Domain of this specific name. Names of Use Domains are not unique, and this non-unique property of your Organization's Use Domains allows for graceful rotation of encryption keys off of old (retiring, stale, or compromised) Use Domains, simply by creating a new Use Domain with the same name. The transitional purity, both Use Domains may be selected for encryption use by clients restricted to one particular name. Then, retiring of one of the two Use Domains is possible without disrupting your deployed application.
+   
+   - Parameter plaintext: text to encrypt
+   - Parameter domain: domain ID
+   - Returns: a b64 encoded ciphertext blob on success, else returns a non-nil error.
    */
   public func encrypt(_ plaintext: Encryptable, useDomainID: String? = nil) -> (Data?, Error?) {
     guard let aadAndKey = self.getEncryptionKey(useDomainID: useDomainID ?? ""),
@@ -607,10 +623,15 @@ public class PeacemakrSDK {
 
   }
 
-  /**
-   Deserializes and decrypts \p serialized and stores the output into \p dest.
-   Throws an error on failure of deserialization or decryption.
-   */
+  /// MARK: - Decryption
+  
+  /// Decrypt the ciphertexts. Returns original plaintext on success, else returns a non-nil error.
+  ///
+  /// - Parameters:
+  ///     - serialized: data.
+  ///     - dest: Encryptable type
+  ///     - completion: Encryptable
+  
   public func decrypt(_ serialized: Data, dest: Encryptable, completion: (@escaping (Encryptable) -> Void)) -> Bool {
 
     guard let keyIDs = getKeyID(serialized: serialized) else {
