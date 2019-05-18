@@ -8,19 +8,9 @@
 
 import Foundation
 
-// store operating system / platform
-#if os(iOS)
-let OS = "iOS"
-#elseif os(OSX)
-let OS = "OSX"
-#elseif os(watchOS)
-let OS = "watchOS"
-#elseif os(tvOS)
-let OS = "tvOS"
-#endif
-
 class ConsoleBaseOutput: Hashable, Equatable {
-  let product = "Peacemakr"
+  
+  let product = Metadata.shared.productName
   
   // each concole base class must have an own hashValue to prevent duplicate outputs
   lazy public var hashValue: Int = 0

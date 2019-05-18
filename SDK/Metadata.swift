@@ -24,5 +24,14 @@ class Metadata {
     }
   }
   
+  var productName: String {
+    if let bundleInfo = Bundle(for: type(of: self)).infoDictionary,
+      let bundleName = bundleInfo["CFBundleName"] as? String {
+      return "\(bundleName)"
+    } else {
+      return "Peacemakr"
+    }
+  }
+  
 }
 
