@@ -57,6 +57,8 @@
 		BD055648227FB47D000A0F04 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD055647227FB47D000A0F04 /* CoreCrypto.framework */; };
 		BD1132E922908E2700E04E93 /* PeacemakrProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */; };
 		BD1132ED2290924300E04E93 /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132EC2290924300E04E93 /* Metadata.swift */; };
+		BD1132EF22909F8B00E04E93 /* PeacemakrLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132EE22909F8B00E04E93 /* PeacemakrLog.swift */; };
+		BD1132F22290A6F300E04E93 /* ConsoleBaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -167,6 +169,8 @@
 		BD055647227FB47D000A0F04 /* CoreCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeacemakrProtocol.swift; sourceTree = "<group>"; };
 		BD1132EC2290924300E04E93 /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
+		BD1132EE22909F8B00E04E93 /* PeacemakrLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeacemakrLog.swift; sourceTree = "<group>"; };
+		BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleBaseOutput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +284,7 @@
 		07126A04218F5D7400F68832 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				BD1132F02290A6D700E04E93 /* Logging */,
 				07126A06218F5D7400F68832 /* Info.plist */,
 				07126A1C218F61E000F68832 /* Core.swift */,
 				071722E8218F9996005E2CA5 /* RandomDevice.swift */,
@@ -333,6 +338,15 @@
 				07FBFF4421E0045A00D9D0C6 /* Info.plist */,
 			);
 			path = SDKTestHost;
+			sourceTree = "<group>";
+		};
+		BD1132F02290A6D700E04E93 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				BD1132EE22909F8B00E04E93 /* PeacemakrLog.swift */,
+				BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */,
+			);
+			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -535,9 +549,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD1132EF22909F8B00E04E93 /* PeacemakrLog.swift in Sources */,
 				0710E2862202CB4A00CDD72A /* APIHelper.swift in Sources */,
 				0710E2A22202CB4A00CDD72A /* Models.swift in Sources */,
 				0710E2892202CB4A00CDD72A /* KeyServiceAPI.swift in Sources */,
+				BD1132F22290A6F300E04E93 /* ConsoleBaseOutput.swift in Sources */,
 				0710E28A2202CB4A00CDD72A /* ServerManagementAPI.swift in Sources */,
 				0710E2992202CB4A00CDD72A /* CryptoConfig.swift in Sources */,
 				0710E2872202CB4A00CDD72A /* AlamofireImplementations.swift in Sources */,
