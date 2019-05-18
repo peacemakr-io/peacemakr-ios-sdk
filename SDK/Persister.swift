@@ -17,20 +17,17 @@ protocol Persister {
 }
 
 class DefaultPersister: Persister {
-  let log: (String) -> Void
   
-  init(logHandler: @escaping (String) -> Void) {
-    log = logHandler
-  }
+  init() {}
   
   func storeKey(_ key: Data, keyID: String) -> Bool {
     let delStatus = SecItemDelete([kSecClass as String: kSecClassKey,
                                        kSecAttrApplicationTag as String: keyID] as CFDictionary)
     if delStatus != errSecSuccess && delStatus != errSecItemNotFound {
       if #available(iOS 11.3, *) {
-        self.log("Failed to clear out keychain entry for keyID: " + keyID + " with error " + String(delStatus) + " - " + (SecCopyErrorMessageString(delStatus, nil)! as String))
+        Logger.error("failed to clear out keychain entry for keyID: " + keyID + " with error " + String(delStatus) + " - " + (SecCopyErrorMessageString(delStatus, nil)! as String))
       } else {
-        self.log("Failed to clear out keychain entry for keyID: " + keyID + " with error " + String(delStatus))
+        Logger.error("Failed to clear out keychain entry for keyID: " + keyID + " with error " + String(delStatus))
       }
       return false
     }
@@ -41,9 +38,9 @@ class DefaultPersister: Persister {
     let addStatus = SecItemAdd(keyQuery as CFDictionary, nil)
     if addStatus != errSecSuccess {
       if #available(iOS 11.3, *) {
-        self.log("Failed to add keychain entry for keyID: " + keyID + " with error " + String(delStatus) + " - " + (SecCopyErrorMessageString(delStatus, nil)! as String))
+        Logger.error("failed to add keychain entry for keyID: " + keyID + " with error " + String(delStatus) + " - " + (SecCopyErrorMessageString(delStatus, nil)! as String))
       } else {
-        self.log("Failed to add keychain entry for keyID: " + keyID + " with error " + String(delStatus))
+        Logger.error("failed to add keychain entry for keyID: " + keyID + " with error " + String(delStatus))
       }
       return false
     }
@@ -59,7 +56,7 @@ class DefaultPersister: Persister {
     var item: CFTypeRef?
     let status = SecItemCopyMatching(getquery as CFDictionary, &item)
     if status != errSecSuccess {
-      self.log("unable to get key " + keyID + " from keychain")
+      Logger.error("failed to get key " + keyID + " from keychain")
       return nil
     }
     
