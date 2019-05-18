@@ -12,7 +12,6 @@ import Foundation
 public protocol PeacemakrProtocol {
   
   /// Completion Handlers
-  typealias LogHandler = (String) -> Void
   typealias ErrorHandler = (Error?) -> Void
   typealias PeacemakrStrResult = (data: String?, error: Error?)
   typealias PeacemakrDataResult = (data: Data?, error: Error?)
