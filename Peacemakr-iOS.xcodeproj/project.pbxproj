@@ -43,7 +43,7 @@
 		0710E2A32202CB4A00CDD72A /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2852202CB4A00CDD72A /* Configuration.swift */; };
 		07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07126A02218F5D7400F68832 /* Peacemakr.framework */; };
 		07126A11218F5D7400F68832 /* SDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A10218F5D7400F68832 /* SDKTests.swift */; };
-		071722E7218F8972005E2CA5 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A1C218F61E000F68832 /* Core.swift */; };
+		071722E7218F8972005E2CA5 /* Peacemakr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07126A1C218F61E000F68832 /* Peacemakr.swift */; };
 		071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722E8218F9996005E2CA5 /* RandomDevice.swift */; };
 		071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722EA218FA301005E2CA5 /* Encryptable.swift */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
@@ -59,6 +59,10 @@
 		BD1132ED2290924300E04E93 /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132EC2290924300E04E93 /* Metadata.swift */; };
 		BD1132EF22909F8B00E04E93 /* PeacemakrLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132EE22909F8B00E04E93 /* PeacemakrLog.swift */; };
 		BD1132F22290A6F300E04E93 /* ConsoleBaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */; };
+		BDA2699F2290C2FC00700B6F /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA2699E2290C2FC00700B6F /* KeyManager.swift */; };
+		BDA269A12290CCE300700B6F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA269A02290CCE300700B6F /* Constants.swift */; };
+		BDA269A32290D19C00700B6F /* SyncHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA269A22290D19C00700B6F /* SyncHandler.swift */; };
+		BDA269A52290D36D00700B6F /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA269A42290D36D00700B6F /* Utilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,7 +154,7 @@
 		07126A0B218F5D7400F68832 /* Peacemakr-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Peacemakr-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07126A10218F5D7400F68832 /* SDKTests.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = SDKTests.swift; sourceTree = "<group>"; tabWidth = 2; };
 		07126A12218F5D7400F68832 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		07126A1C218F61E000F68832 /* Core.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; tabWidth = 2; };
+		07126A1C218F61E000F68832 /* Peacemakr.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = Peacemakr.swift; sourceTree = "<group>"; tabWidth = 2; };
 		071722E8218F9996005E2CA5 /* RandomDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDevice.swift; sourceTree = "<group>"; };
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
@@ -171,6 +175,10 @@
 		BD1132EC2290924300E04E93 /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
 		BD1132EE22909F8B00E04E93 /* PeacemakrLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeacemakrLog.swift; sourceTree = "<group>"; };
 		BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleBaseOutput.swift; sourceTree = "<group>"; };
+		BDA2699E2290C2FC00700B6F /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		BDA269A02290CCE300700B6F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		BDA269A22290D19C00700B6F /* SyncHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHandler.swift; sourceTree = "<group>"; };
+		BDA269A42290D36D00700B6F /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,14 +292,17 @@
 		07126A04218F5D7400F68832 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				BDA269A62290D4AE00700B6F /* Utilities */,
 				BD1132F02290A6D700E04E93 /* Logging */,
 				07126A06218F5D7400F68832 /* Info.plist */,
-				07126A1C218F61E000F68832 /* Core.swift */,
+				07126A1C218F61E000F68832 /* Peacemakr.swift */,
 				071722E8218F9996005E2CA5 /* RandomDevice.swift */,
 				071722EA218FA301005E2CA5 /* Encryptable.swift */,
 				07E235042201586000192E3C /* Persister.swift */,
 				BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */,
 				BD1132EC2290924300E04E93 /* Metadata.swift */,
+				BDA2699E2290C2FC00700B6F /* KeyManager.swift */,
+				BDA269A22290D19C00700B6F /* SyncHandler.swift */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -347,6 +358,15 @@
 				BD1132F12290A6F300E04E93 /* ConsoleBaseOutput.swift */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		BDA269A62290D4AE00700B6F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				BDA269A02290CCE300700B6F /* Constants.swift */,
+				BDA269A42290D36D00700B6F /* Utilities.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -550,6 +570,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD1132EF22909F8B00E04E93 /* PeacemakrLog.swift in Sources */,
+				BDA269A32290D19C00700B6F /* SyncHandler.swift in Sources */,
 				0710E2862202CB4A00CDD72A /* APIHelper.swift in Sources */,
 				0710E2A22202CB4A00CDD72A /* Models.swift in Sources */,
 				0710E2892202CB4A00CDD72A /* KeyServiceAPI.swift in Sources */,
@@ -573,13 +594,16 @@
 				0710E29E2202CB4A00CDD72A /* LoginResponse.swift in Sources */,
 				0710E2902202CB4A00CDD72A /* CodableHelper.swift in Sources */,
 				0710E2A12202CB4A00CDD72A /* JSONEncodingHelper.swift in Sources */,
+				BDA269A12290CCE300700B6F /* Constants.swift in Sources */,
 				0710E2962202CB4A00CDD72A /* EncryptedSymmetricKey.swift in Sources */,
 				0710E28B2202CB4A00CDD72A /* ClientAPI.swift in Sources */,
-				071722E7218F8972005E2CA5 /* Core.swift in Sources */,
+				071722E7218F8972005E2CA5 /* Peacemakr.swift in Sources */,
 				0710E28E2202CB4A00CDD72A /* PhoneHomeAPI.swift in Sources */,
 				07E235052201586000192E3C /* Persister.swift in Sources */,
 				0710E28F2202CB4A00CDD72A /* CryptoConfigAPI.swift in Sources */,
 				0710E2972202CB4A00CDD72A /* HeatbeatResponse.swift in Sources */,
+				BDA2699F2290C2FC00700B6F /* KeyManager.swift in Sources */,
+				BDA269A52290D36D00700B6F /* Utilities.swift in Sources */,
 				0710E29C2202CB4A00CDD72A /* Client.swift in Sources */,
 				071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */,
 				0710E2942202CB4A00CDD72A /* KeyDerivationInstance.swift in Sources */,

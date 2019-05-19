@@ -33,5 +33,14 @@ class Metadata {
     }
   }
   
+  var clientId: String {
+    guard let clientId: String = Persister.getData(Constants.dataPrefix + Constants.clientIDTag) else {
+      Logger.error("failed to get client Id")
+      return ""
+    }
+    
+    return clientId
+  }
+  
 }
 

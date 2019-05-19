@@ -89,6 +89,9 @@ class Logger {
     write(level: .fault, message: message,
           file: file, function: function, line: line)
   }
+  public class func onError(_ s: String) -> Void {
+    Logger.error(s)
+  }
   // internal write to console
   private class func write(level: Logger.Level, message: @autoclosure () -> String,
                            file: String = #file, function: String = #function, line: Int = #line) {

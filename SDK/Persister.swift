@@ -8,19 +8,17 @@
 
 import Foundation
 
-protocol Persister {
-  func storeKey(_ key: Data, keyID: String) -> Bool
-  func getKey(_ keyID: String) -> Data?
-  func storeData<T: Codable>(_ key: String, val: T) -> Bool
-  func getData<T: Codable>(_ key: String) -> T?
-  func hasData(_ key: String) -> Bool
+protocol PersisterProtocol {
+  static func storeKey(_ key: Data, keyID: String) -> Bool
+  static func getKey(_ keyID: String) -> Data?
+  static func storeData<T: Codable>(_ key: String, val: T) -> Bool
+  static func getData<T: Codable>(_ key: String) -> T?
+  static func hasData(_ key: String) -> Bool
 }
 
-class DefaultPersister: Persister {
+class Persister: PersisterProtocol {
   
-  init() {}
-  
-  func storeKey(_ key: Data, keyID: String) -> Bool {
+  class func storeKey(_ key: Data, keyID: String) -> Bool {
     let delStatus = SecItemDelete([kSecClass as String: kSecClassKey,
                                        kSecAttrApplicationTag as String: keyID] as CFDictionary)
     if delStatus != errSecSuccess && delStatus != errSecItemNotFound {
@@ -48,7 +46,7 @@ class DefaultPersister: Persister {
     return true
   }
   
-  func getKey(_ keyID: String) -> Data? {
+  class func getKey(_ keyID: String) -> Data? {
     let getquery: [String: Any] = [kSecClass as String: kSecClassKey,
                                    kSecAttrApplicationTag as String: keyID,
                                    kSecReturnData as String: true]
@@ -63,19 +61,19 @@ class DefaultPersister: Persister {
     return item as? Data
   }
   
-  func storeData<T: Codable>(_ key: String, val: T) -> Bool {
+  class func storeData<T: Codable>(_ key: String, val: T) -> Bool {
     let userDefaults = UserDefaults.standard
     userDefaults.removeObject(forKey: key)
     userDefaults.set(val, forKey: key)
     return true
   }
   
-  func getData<T: Codable>(_ key: String) -> T? {
+  class func getData<T: Codable>(_ key: String) -> T? {
     let userDefaults = UserDefaults.standard
     return userDefaults.object(forKey: key) as? T
   }
   
-  func hasData(_ key: String) -> Bool {
+  class func hasData(_ key: String) -> Bool {
     let userDefaults = UserDefaults.standard
     return userDefaults.object(forKey: key) != nil
   }
