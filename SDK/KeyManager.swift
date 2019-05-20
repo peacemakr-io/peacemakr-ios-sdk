@@ -68,9 +68,9 @@ class KeyManager {
     return (priv, pub)
   }
   
-  class func getKeyID(serialized: Data, cryptoContext: CryptoContext) throws -> (keyID: String, signKeyID: String) {
+  class func getKeyID(serialized: Data) throws -> (keyID: String, signKeyID: String) {
     
-    guard let serializedAAD = UnwrapCall(cryptoContext.extractUnverifiedAAD(serialized), onError: Logger.onError)  else {
+    guard let serializedAAD = UnwrapCall(CryptoContext.extractUnverifiedAAD(serialized), onError: Logger.onError)  else {
       throw KeyManagerError.serializationError
     }
     

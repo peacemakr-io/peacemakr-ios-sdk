@@ -13,11 +13,13 @@ import CoreCrypto
  Provides the Peacemakr iOS SDK.
  */
 public class Peacemakr: PeacemakrProtocol {
+  
   /// MARK: - Peacemakr Errors
   
   enum PeacemakrError: Error {
     case initializationError
     case registrationError
+    case keyManagerError
 
     
     var localizedDescription: String {
@@ -26,6 +28,8 @@ public class Peacemakr: PeacemakrProtocol {
         return "failed to initialize Peacemakr SDK"
       case .registrationError:
         return "failed to register to Peacemakr"
+      case .keyManagerError:
+        return "faild to access keys"
       }
     }
   }
@@ -37,7 +41,6 @@ public class Peacemakr: PeacemakrProtocol {
   
   /// MARK: - CoreCrypto
   
-  private let cryptoContext: CryptoContext
   private var rand: RandomDevice
   
   /// MARK: - Properties
@@ -46,17 +49,14 @@ public class Peacemakr: PeacemakrProtocol {
   
   /// MARK: - Initializers
 
-  // throw instaed of return Optional
-  // pros of throwing exception: sdk can pass very specific message about an error
-  public init(apiKey: String) throws {
+  required public init(apiKey: String) throws {
 
-    guard let cryptoCtxt = CryptoContext() else {
+    if !CryptoContext.setup() {
       throw PeacemakrError.initializationError
     }
 
     self.apiKey = apiKey
 
-    self.cryptoContext = cryptoCtxt
     self.rand = PeacemakrRandomDevice()
 
     // TODO: move to configuration file
@@ -73,14 +73,6 @@ public class Peacemakr: PeacemakrProtocol {
     }
   }
   
-  /**
-   Registers to PeaceMakr as a client.
-   
-   The persister is used to detect prior registrations on this client, so safe to call multiple times. Once a successful invocation of Register is executed once, subsequent calls become a noop. One successful call is required before any cryptographic use of this SDK. Successful registration returns a nil error.
-   Registration may fail with invalid apiKey, missing network connectivity, or an invalid persister. On failure, take corrections action and invoke again.
-   
-   - Parameter competion: error handler
-   */
   public func register(completion: (@escaping ErrorHandler)) {
     registerToPeacemakr(completion: completion)
     
@@ -127,9 +119,9 @@ public class Peacemakr: PeacemakrProtocol {
     })
   }
 
- 
-
-  public func sync(completion: (@escaping (Error?) -> Void)) -> Void {
+  /// MARK: - Sync
+  
+  public func sync(completion:  (@escaping ErrorHandler)) -> Void {
     SyncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
       if err != nil {
         completion(err)
@@ -140,12 +132,10 @@ public class Peacemakr: PeacemakrProtocol {
           completion(err)
         }
 
-        SyncHandler.syncSymmetricKeys(cryptoContext: self.cryptoContext, completion: {completion($0)})
+        SyncHandler.syncSymmetricKeys(completion: {completion($0)})
       })
     }
   }
-
-  
 
   
   private func getSymmKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?, Error?) -> Void)) -> Void {
@@ -156,7 +146,7 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     // If we don't have the key already, re-sync and call the completion callback when we're done
-    SyncHandler.syncSymmetricKeys(cryptoContext: cryptoContext, completion: { (err) in
+    SyncHandler.syncSymmetricKeys(completion: { (err) in
       if err != nil {
         completion(nil, err)
         return
@@ -170,23 +160,9 @@ public class Peacemakr: PeacemakrProtocol {
       completion(downloadedKey, nil)
     })
   }
-
-  
-
- 
-
   
   /// MARK: - Encryption
-  
-  /**
-   Encrypt the plaintext.
-   
-   Restrict which keys may be used to a Use Domain of this specific name. Names of Use Domains are not unique, and this non-unique property of your Organization's Use Domains allows for graceful rotation of encryption keys off of old (retiring, stale, or compromised) Use Domains, simply by creating a new Use Domain with the same name. The transitional purity, both Use Domains may be selected for encryption use by clients restricted to one particular name. Then, retiring of one of the two Use Domains is possible without disrupting your deployed application.
-   
-   - Parameter plaintext: text to encrypt
-   - Parameter domain: domain ID
-   - Returns: a b64 encoded ciphertext blob on success, else returns a non-nil error.
-   */
+
   public func encrypt(plaintext: String) -> Peacemakr.PeacemakrStrResult {
     guard let plntxt = plaintext.data(using: .utf8) else {
       return (nil, NSError(domain: "Encryption failed", code: -103, userInfo: nil))
@@ -239,7 +215,7 @@ public class Peacemakr: PeacemakrProtocol {
     }
     let p = Plaintext(data: rawMessageData, aad: aadData)
 
-    guard let encrypted = UnwrapCall(self.cryptoContext.encrypt(
+    guard let encrypted = UnwrapCall(CryptoContext.encrypt(
       key: aadAndKey.key,
       plaintext: p,
       rand: self.rand
@@ -256,9 +232,9 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     // TODO: digest alg should come from config or fall back to default sha 512 or sha 256
-    self.cryptoContext.sign(senderKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
+    CryptoContext.sign(senderKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
 
-    guard let serialized = UnwrapCall(self.cryptoContext.serialize(.SHA_256, encCiphertext), onError: Logger.onError) else {
+    guard let serialized = UnwrapCall(CryptoContext.serialize(.SHA_256, encCiphertext), onError: Logger.onError) else {
       Logger.error("Serialization failed")
       return (nil, NSError(domain: "Serialization failed", code: -105, userInfo: nil))
     }
@@ -269,12 +245,6 @@ public class Peacemakr: PeacemakrProtocol {
 
   /// MARK: - Decryption
   
-  /// Decrypt the ciphertexts. Returns original plaintext on success, else returns a non-nil error.
-  ///
-  /// - Parameters:
-  ///     - serialized: data.
-  ///     - dest: Encryptable type
-  ///     - completion: Encryptable
   public func decrypt(ciphertext: Data, completion: (@escaping (PeacemakrDataResult) -> Void)) {
     return decrypt(ciphertext, completion: completion)
   }
@@ -298,13 +268,13 @@ public class Peacemakr: PeacemakrProtocol {
   
   private func decrypt(_ serialized: Data, completion: (@escaping (PeacemakrDataResult) -> Void)) {
 
-    guard let keyIDs = try? KeyManager.getKeyID(serialized: serialized, cryptoContext: cryptoContext) else {
+    guard let keyIDs = try? KeyManager.getKeyID(serialized: serialized) else {
       Logger.error("Unable to parse key IDs from message")
       completion((nil, NSError(domain: "Unable to get key id", code: -106, userInfo: nil)))
       return
     }
     
-    guard let deserializedCfg = UnwrapCall(cryptoContext.deserialize(serialized), onError: Logger.onError) else {
+    guard let deserializedCfg = UnwrapCall(CryptoContext.deserialize(serialized), onError: Logger.onError) else {
       completion((nil, NSError(domain: "Unable to desirialize data", code: -106, userInfo: nil)))
       Logger.error("Unable to deserialize encrypted message")
       return
@@ -325,7 +295,7 @@ public class Peacemakr: PeacemakrProtocol {
       }
 
       // Then decrypt
-      guard let decryptResult = UnwrapCall(self.cryptoContext.decrypt(key: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
+      guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
         completion((nil, NSError(domain: "Decryption failed", code: -107, userInfo: nil)))
         return
       }
@@ -334,7 +304,11 @@ public class Peacemakr: PeacemakrProtocol {
       // And verify (which is another callback)
       if needsVerify {
         KeyManager.getPublicKeyByID(keyID: keyIDs.signKeyID, completion: { (verifyKey) in
-          Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey!, cryptoContext: self.cryptoContext, completion: { (verified) in
+          guard let verifyKey = key else {
+            completion((nil, PeacemakrError.keyManagerError))
+            return
+          }
+          Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey, completion: { (verified) in
             if !verified {
               completion((nil, NSError(domain: "Verification failed", code: -108, userInfo: nil)))
               return
