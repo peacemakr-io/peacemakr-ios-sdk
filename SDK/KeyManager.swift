@@ -131,6 +131,7 @@ class KeyManager {
     useDomains.forEach { domain in
       if domain._id == useDomainID {
         useDomainToUse = domain
+        return
       }
     }
     
@@ -177,7 +178,7 @@ class KeyManager {
     
     return PeacemakrKey(asymmCipher: KeyManager.myKeyCfg.asymmCipher,
                         symmCipher: myKeyCfg.symmCipher,
-                        fileContents: keyData.base64EncodedString(),
+                        fileContents: keyData.toString(),
                         isPriv: priv)
   }
   

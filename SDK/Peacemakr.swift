@@ -255,10 +255,10 @@ public class Peacemakr: PeacemakrProtocol {
       return (nil, NSError(domain: "Unable to get my private key", code: -104, userInfo: nil))
     }
 
-    // NOTE: I set .DIGEST_UNSPECIFIED because I am not sure what it should be
-    self.cryptoContext.sign(senderKey: signKey, plaintext: p, digest: .DIGEST_UNSPECIFIED, ciphertext: &encCiphertext)
+    // TODO: digest alg should come from config or fall back to default sha 512 or sha 256
+    self.cryptoContext.sign(senderKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
 
-    guard let serialized = UnwrapCall(self.cryptoContext.serialize(.DIGEST_UNSPECIFIED, encCiphertext), onError: Logger.onError) else {
+    guard let serialized = UnwrapCall(self.cryptoContext.serialize(.SHA_256, encCiphertext), onError: Logger.onError) else {
       Logger.error("Serialization failed")
       return (nil, NSError(domain: "Serialization failed", code: -105, userInfo: nil))
     }
