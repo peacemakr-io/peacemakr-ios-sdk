@@ -86,7 +86,7 @@ class SyncHandler {
     }
   }
   
-  class func syncSymmetricKeys(cryptoContext: CryptoContext, completion: (@escaping (Error?) -> Void)) {
+  class func syncSymmetricKeys(completion: (@escaping (Error?) -> Void)) {
     
     guard let myPrivKey = KeyManager.getMyKey(priv: true) else {
       Logger.error("failed to get key")
@@ -136,13 +136,13 @@ class SyncHandler {
         guard let serialized = key.packagedCiphertext.data(using: .utf8) else { continue }
         
         // Grab the keyID from the ciphertext
-        guard let storedKeyIDs = try? KeyManager.getKeyID(serialized: serialized, cryptoContext: cryptoContext) else {
+        guard let storedKeyIDs = try? KeyManager.getKeyID(serialized: serialized) else {
           Logger.error("Unable to extract key IDs serialized key package")
           completion(NSError(domain: "Unable to extract key IDs", code: -11, userInfo: nil))
           return
         }
         
-        guard let deserializedCfg = UnwrapCall(cryptoContext.deserialize(serialized), onError: Logger.onError) else {
+        guard let deserializedCfg = UnwrapCall(CryptoContext.deserialize(serialized), onError: Logger.onError) else {
           Logger.error("Unable to deserialize key package ciphertext")
           completion(NSError(domain: "Unable to deserialize the key package", code: -12, userInfo: nil))
           return
@@ -150,7 +150,7 @@ class SyncHandler {
         var (deserialized, _) = deserializedCfg
         
         // Decrypt the key
-        guard let decryptResult = UnwrapCall(cryptoContext.decrypt(key: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
+        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
           Logger.error("Unable to decrypt key package ciphertext")
           completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
           return
@@ -165,7 +165,7 @@ class SyncHandler {
               completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
               return
             }
-            Utilities.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!, cryptoContext: cryptoContext, completion: {(verified) in
+            Utilities.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!, completion: {(verified) in
               if verified {
                 finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
               } else {
