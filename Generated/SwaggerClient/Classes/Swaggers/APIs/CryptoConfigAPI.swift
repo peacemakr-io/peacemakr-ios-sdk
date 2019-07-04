@@ -179,7 +179,7 @@ open class CryptoConfigAPI {
     open class func getCryptoConfigWithRequestBuilder(cryptoConfigId: String) -> RequestBuilder<CryptoConfig> {
         var path = "/crypto/config/{cryptoConfigId}"
         let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
-        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

@@ -436,7 +436,7 @@ open class OrgAPI {
     open class func getOrganizationFromAPIKeyWithRequestBuilder(apikey: String) -> RequestBuilder<Organization> {
         var path = "/org/key/{apikey}"
         let apikeyPreEscape = "\(apikey)"
-        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{apikey}", with: apikeyPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
