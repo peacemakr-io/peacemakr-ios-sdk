@@ -150,7 +150,7 @@ class SyncHandler {
         var (deserialized, _) = deserializedCfg
         
         // Decrypt the key
-        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
+        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(recipientKey: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
           Logger.error("Unable to decrypt key package ciphertext")
           completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
           return
