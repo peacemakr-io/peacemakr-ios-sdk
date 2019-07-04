@@ -216,7 +216,7 @@ public class Peacemakr: PeacemakrProtocol {
     let p = Plaintext(data: rawMessageData, aad: aadData)
 
     guard let encrypted = UnwrapCall(CryptoContext.encrypt(
-      key: aadAndKey.key,
+      recipientKey: aadAndKey.key,
       plaintext: p,
       rand: self.rand
     ), onError: Logger.onError) else {
@@ -232,7 +232,7 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     // TODO: digest alg should come from config or fall back to default sha 512 or sha 256
-    CryptoContext.sign(senderKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
+    CryptoContext.sign(recipientKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
 
     guard let serialized = UnwrapCall(CryptoContext.serialize(.SHA_256, encCiphertext), onError: Logger.onError) else {
       Logger.error("Serialization failed")
@@ -295,7 +295,7 @@ public class Peacemakr: PeacemakrProtocol {
       }
 
       // Then decrypt
-      guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
+      guard let decryptResult = UnwrapCall(CryptoContext.decrypt(recipientKey: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
         completion((nil, NSError(domain: "Decryption failed", code: -107, userInfo: nil)))
         return
       }
