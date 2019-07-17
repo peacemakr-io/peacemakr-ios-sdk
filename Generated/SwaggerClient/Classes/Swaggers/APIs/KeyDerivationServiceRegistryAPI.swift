@@ -103,6 +103,98 @@ open class KeyDerivationServiceRegistryAPI {
     }
 
     /**
+     Get the all key derivers registerd to org
+     
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func getAllKeyDerivationServiceInstances(completion: @escaping ((_ data: [KeyDerivationInstance]?,_ error: Error?) -> Void)) {
+        getAllKeyDerivationServiceInstancesWithRequestBuilder().execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Get the all key derivers registerd to org
+     - GET /crypto/deriver/all-instances
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example=[ {
+  "serviceIds" : [ "serviceIds", "serviceIds" ],
+  "baseUrl" : "baseUrl",
+  "active" : true,
+  "id" : "id",
+  "version" : "version"
+}, {
+  "serviceIds" : [ "serviceIds", "serviceIds" ],
+  "baseUrl" : "baseUrl",
+  "active" : true,
+  "id" : "id",
+  "version" : "version"
+} ]}]
+
+     - returns: RequestBuilder<[KeyDerivationInstance]> 
+     */
+    open class func getAllKeyDerivationServiceInstancesWithRequestBuilder() -> RequestBuilder<[KeyDerivationInstance]> {
+        let path = "/crypto/deriver/all-instances"
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<[KeyDerivationInstance]>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Get the keyderiver details by id
+     
+     - parameter keyDerivationInstanceId: (path)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func getKeyDerivationServiceInstance(keyDerivationInstanceId: String, completion: @escaping ((_ data: KeyDerivationInstance?,_ error: Error?) -> Void)) {
+        getKeyDerivationServiceInstanceWithRequestBuilder(keyDerivationInstanceId: keyDerivationInstanceId).execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Get the keyderiver details by id
+     - GET /crypto/deriver/instance/{keyDerivationInstanceId}
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example={
+  "serviceIds" : [ "serviceIds", "serviceIds" ],
+  "baseUrl" : "baseUrl",
+  "active" : true,
+  "id" : "id",
+  "version" : "version"
+}}]
+     
+     - parameter keyDerivationInstanceId: (path)  
+
+     - returns: RequestBuilder<KeyDerivationInstance> 
+     */
+    open class func getKeyDerivationServiceInstanceWithRequestBuilder(keyDerivationInstanceId: String) -> RequestBuilder<KeyDerivationInstance> {
+        var path = "/crypto/deriver/instance/{keyDerivationInstanceId}"
+        let keyDerivationInstanceIdPreEscape = "\(keyDerivationInstanceId)"
+        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{keyDerivationInstanceId}", with: keyDerivationInstanceIdPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<KeyDerivationInstance>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
      Heatbeat from the given key derivation service instance
      
      - parameter keyDerivationInstanceId: (path)  
@@ -123,6 +215,7 @@ open class KeyDerivationServiceRegistryAPI {
        - name: header
      - examples: [{contentType=application/json, example={
   "requests" : [ {
+    "mustSignDeliveredSymmetricKeys" : true,
     "creationTime" : 0,
     "packagedCiphertextVersion" : 1,
     "deliveryPublicKeyIds" : [ "deliveryPublicKeyIds", "deliveryPublicKeyIds" ],
@@ -131,6 +224,7 @@ open class KeyDerivationServiceRegistryAPI {
     "keyDerivationServiceId" : "keyDerivationServiceId",
     "symmetricKeyLength" : 6
   }, {
+    "mustSignDeliveredSymmetricKeys" : true,
     "creationTime" : 0,
     "packagedCiphertextVersion" : 1,
     "deliveryPublicKeyIds" : [ "deliveryPublicKeyIds", "deliveryPublicKeyIds" ],

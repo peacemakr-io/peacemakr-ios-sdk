@@ -211,9 +211,7 @@ class KeyManager {
       }
       
       if let keyStr = key?.body?.key {
-        if !Persister.storeData(Constants.dataPrefix + keyID, val: keyStr) {
-          Logger.error("failed to store key with ID: \(keyID)")
-        }
+        Persister.storeData(Constants.dataPrefix + keyID, val: keyStr)
         
         return completion(PeacemakrKey(asymmCipher: myKeyCfg.asymmCipher, symmCipher: myKeyCfg.symmCipher, fileContents: keyStr, isPriv: false))
       } else {

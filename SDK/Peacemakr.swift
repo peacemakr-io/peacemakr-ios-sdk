@@ -45,24 +45,38 @@ public class Peacemakr: PeacemakrProtocol {
   
   /// MARK: - Properties
   
-  private let apiKey: String
+  private var apiKey: String = ""
   
   /// MARK: - Initializers
 
-  required public init(apiKey: String) throws {
+  required public init(apiKey: String, logLevel: Logger.Level) throws {
 
     if !CryptoContext.setup() {
       throw PeacemakrError.initializationError
     }
+    
+    Logger.setup(logLevel)
 
-    self.apiKey = apiKey
+//    self.apiKey = apiKey
 
     self.rand = PeacemakrRandomDevice()
 
     // TODO: move to configuration file
 //    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
+    
     SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
-    SwaggerClientAPI.customHeaders = ["Authorization": self.apiKey]
+    OrgAPI.getTestOrganizationAPIKey { (key, err) in
+      if err != nil {
+        Logger.error("Faild to get test org \(err!.localizedDescription)")
+      }
+      
+      if let testApiKey = key {
+        self.apiKey = testApiKey.key
+        SwaggerClientAPI.customHeaders = ["Authorization": self.apiKey]
+      }
+    }
+    SwaggerClientAPI.customHeaders = ["contentType": "application/json"]
+    SwaggerClientAPI.customHeaders = ["accept": "application/json"]
   }
   
   /// MARK: - Registration
@@ -86,16 +100,16 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     // Call up to server and register myself
-    let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: "rsa", encoding: "pem", key: keyPair.pub.toString())
+    let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: "rsa", encoding: "pem", key: keyPair.pub.toString(), owningClientId: nil, owningOrgId: nil)
 
-    let registerClient = Client(_id: "", sdk: version, publicKey: pubKeyToSend)
+    let registerClient = Client(_id: "", sdk: version, preferredPublicKeyId: nil, publicKeys: [pubKeyToSend])
 
     let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
 
     requestBuilder.execute({ (resp, error) in
       Logger.info("registration request completed")
       if error != nil {
-        Logger.error("addClient failed with " + error.debugDescription)
+        Logger.error("addClient failed with " + error!.localizedDescription )
         completion(error)
         return
       }
@@ -106,13 +120,18 @@ public class Peacemakr: PeacemakrProtocol {
         return
       }
 
-    // Store the clientID and publicKeyID
-     guard Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: body._id),
-          Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKey._id) else {
-        Logger.error("failed to store key pair")
-        completion(NSError(domain: "could not store metadata", code: -2, userInfo: nil))
-        return
+      // Store the clientID
+      Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: body._id)
+      
+      // We only sent up one public key,
+      // but just in case the server has some other state we use the last one
+      if let idxOfPreferredPublicKey = body.publicKeys.firstIndex(where: {
+                                        $0._id == body.preferredPublicKeyId
+      }) {
+        // Store the public key ID
+        Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys[idxOfPreferredPublicKey]._id)
       }
+      
 
       Logger.info("registered new iOS client: " + Metadata.shared.clientId)
       completion(nil)

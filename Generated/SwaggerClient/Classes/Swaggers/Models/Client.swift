@@ -13,18 +13,22 @@ public struct Client: Codable {
 
     public var _id: String
     public var sdk: String?
-    public var publicKey: PublicKey
+    /** of all the public keys KeyDeriver&#39;s should deliver to this public key - it is also the most recently added public key */
+    public var preferredPublicKeyId: String?
+    public var publicKeys: [PublicKey]
 
-    public init(_id: String, sdk: String?, publicKey: PublicKey) {
+    public init(_id: String, sdk: String?, preferredPublicKeyId: String?, publicKeys: [PublicKey]) {
         self._id = _id
         self.sdk = sdk
-        self.publicKey = publicKey
+        self.preferredPublicKeyId = preferredPublicKeyId
+        self.publicKeys = publicKeys
     }
 
     public enum CodingKeys: String, CodingKey { 
         case _id = "id"
         case sdk
-        case publicKey
+        case preferredPublicKeyId
+        case publicKeys
     }
 
 

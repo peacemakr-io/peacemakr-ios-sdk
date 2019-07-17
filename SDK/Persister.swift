@@ -11,7 +11,7 @@ import Foundation
 protocol PersisterProtocol {
   static func storeKey(_ key: Data, keyID: String) -> Bool
   static func getKey(_ keyID: String) -> Data?
-  static func storeData<T: Codable>(_ key: String, val: T) -> Bool
+  static func storeData<T: Codable>(_ key: String, val: T)
   static func getData<T: Codable>(_ key: String) -> T?
   static func hasData(_ key: String) -> Bool
 }
@@ -61,11 +61,10 @@ class Persister: PersisterProtocol {
     return item as? Data
   }
   
-  class func storeData<T: Codable>(_ key: String, val: T) -> Bool {
+  class func storeData<T: Codable>(_ key: String, val: T) {
     let userDefaults = UserDefaults.standard
     userDefaults.removeObject(forKey: key)
     userDefaults.set(val, forKey: key)
-    return true
   }
   
   class func getData<T: Codable>(_ key: String) -> T? {

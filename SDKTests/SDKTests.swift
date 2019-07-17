@@ -9,12 +9,8 @@
 import XCTest
 @testable import Peacemakr
 
-func log(_ s: String) -> Void {
-  print(s)
-}
-
 class SDKTests: XCTestCase {
-  var sdk: PeacemakrSDK? = nil
+  var sdk: Peacemakr? = nil
   var data: AppData? = nil
   
   let testKey = "1MM/tGB2nztn0YCe185iNq0hnB0+Qnugaxa6ohir79I="
@@ -33,7 +29,7 @@ class SDKTests: XCTestCase {
   }
   
   func testRegister() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try? Peacemakr(apiKey: testKey, logLevel: .debug)
     
     XCTAssertNotNil(sdk)
     
@@ -50,7 +46,7 @@ class SDKTests: XCTestCase {
   }
   
   func testSync() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try? Peacemakr(apiKey: testKey, logLevel: .debug)
     XCTAssertNotNil(sdk)
 
     sdk?.register(completion: { error in
@@ -72,7 +68,7 @@ class SDKTests: XCTestCase {
 
   
   func testEncryptDecrypt() throws {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try? Peacemakr(apiKey: testKey, logLevel: .debug)
     XCTAssertNotNil(sdk)
     
     sdk?.register(completion: { error in
@@ -92,17 +88,20 @@ class SDKTests: XCTestCase {
     
     let decryptExpectation = self.expectation(description: "Decrypt successful")
     
-    let destination = AppData()
+    let dataToEncrypt = "data to encrypt"
     
-    let (serialized, err) = sdk!.encrypt(data!)
+    let (serialized, err) = sdk!.encrypt(plaintext: dataToEncrypt)
     XCTAssert(err == nil)
+    XCTAssertNotNil(serialized)
     
-    XCTAssert(self.sdk!.decrypt(serialized!, dest: destination, completion: { (dest) in
-      XCTAssert(dest as! AppData == self.data!)
+    sdk!.decrypt(ciphertext: serialized!) { (data, err) in
+      if err != nil {
+        XCTFail()
+      }
+      XCTAssert(data == dataToEncrypt)
       decryptExpectation.fulfill()
-    }))
-    
-    
+      
+    }
     waitForExpectations(timeout: 10, handler: nil)
   }
 

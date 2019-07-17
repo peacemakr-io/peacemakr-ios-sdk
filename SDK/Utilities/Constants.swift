@@ -16,6 +16,6 @@ struct Constants {
   static let pubTag = "io.peacemakr.client.public"
   // symmetric keys start with this prefix and append the key ID onto it
   static let symmTagPrefix = "io.peacemakr.client.symmetric."
-  static let clientIDTag = "ClientID"
-  static let pubKeyIDTag = "PubKeyID"
+  static let clientIDTag = "clientID"
+  static let pubKeyIDTag = "pubKeyID"
 }

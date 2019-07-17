@@ -25,8 +25,10 @@ public struct SymmetricKeyRequest: Codable {
     public var symmetricKeyLength: Int
     /** After deriving symmetric keys, this determines the ciphertext packaging scheme required for encrypted key delivery. */
     public var packagedCiphertextVersion: Int
+    /** If true the key deriver must sign delivered symmetric keys ciphertext blobs */
+    public var mustSignDeliveredSymmetricKeys: Bool
 
-    public init(_id: String, deriveSymmetricKeyIds: [String], deliveryPublicKeyIds: [String], keyDerivationServiceId: String, creationTime: Int, symmetricKeyLength: Int, packagedCiphertextVersion: Int) {
+    public init(_id: String, deriveSymmetricKeyIds: [String], deliveryPublicKeyIds: [String], keyDerivationServiceId: String, creationTime: Int, symmetricKeyLength: Int, packagedCiphertextVersion: Int, mustSignDeliveredSymmetricKeys: Bool) {
         self._id = _id
         self.deriveSymmetricKeyIds = deriveSymmetricKeyIds
         self.deliveryPublicKeyIds = deliveryPublicKeyIds
@@ -34,6 +36,7 @@ public struct SymmetricKeyRequest: Codable {
         self.creationTime = creationTime
         self.symmetricKeyLength = symmetricKeyLength
         self.packagedCiphertextVersion = packagedCiphertextVersion
+        self.mustSignDeliveredSymmetricKeys = mustSignDeliveredSymmetricKeys
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -44,6 +47,7 @@ public struct SymmetricKeyRequest: Codable {
         case creationTime
         case symmetricKeyLength
         case packagedCiphertextVersion
+        case mustSignDeliveredSymmetricKeys
     }
 
 

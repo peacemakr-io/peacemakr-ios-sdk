@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Logger {
+public class Logger {
   
   /// MARK: - Log levels
   
@@ -63,6 +63,12 @@ class Logger {
   /// MARK: - Logger
   
   static var consoleOutputs = Set<ConsoleBaseOutput>()
+  
+
+  class func setup(_ consoleLogLevel: Level = .debug) {
+    consoleOutputs.insert(ConsoleBaseOutput(level: consoleLogLevel))
+  }
+
   
   public class func info(_ message: @autoclosure () -> String, _
     file: String = #file, _ function: String = #function, line: Int = #line) {

@@ -18,12 +18,21 @@ public struct CryptoConfig: Codable {
     public var symmetricKeyUseDomainSelectorScheme: String
     /** the org id of the organization that owns these symmetric keys */
     public var ownerOrgId: String
+    /** the type of key that should be associated with clients, for example, rsa */
+    public var clientKeyType: String
+    /** the bit length of all new client keys, for example, 2048 */
+    public var clientKeyBitlength: Int
+    /** the TTL on the client&#39;s local asymetric key */
+    public var clientKeyTTL: Int
 
-    public init(_id: String, symmetricKeyUseDomains: [SymmetricKeyUseDomain], symmetricKeyUseDomainSelectorScheme: String, ownerOrgId: String) {
+    public init(_id: String, symmetricKeyUseDomains: [SymmetricKeyUseDomain], symmetricKeyUseDomainSelectorScheme: String, ownerOrgId: String, clientKeyType: String, clientKeyBitlength: Int, clientKeyTTL: Int) {
         self._id = _id
         self.symmetricKeyUseDomains = symmetricKeyUseDomains
         self.symmetricKeyUseDomainSelectorScheme = symmetricKeyUseDomainSelectorScheme
         self.ownerOrgId = ownerOrgId
+        self.clientKeyType = clientKeyType
+        self.clientKeyBitlength = clientKeyBitlength
+        self.clientKeyTTL = clientKeyTTL
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -31,6 +40,9 @@ public struct CryptoConfig: Codable {
         case symmetricKeyUseDomains
         case symmetricKeyUseDomainSelectorScheme
         case ownerOrgId
+        case clientKeyType
+        case clientKeyBitlength
+        case clientKeyTTL
     }
 
 

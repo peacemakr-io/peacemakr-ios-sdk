@@ -31,19 +31,14 @@ open class OrgAPI {
        - name: header
      - examples: [{contentType=application/json, example={
   "creator" : {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   },
+  "creationTime" : 0,
   "key" : "key",
-  "orgId" : "orgId"
+  "orgId" : "orgId",
+  "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
 }}]
 
      - returns: RequestBuilder<APIKey> 
@@ -61,15 +56,57 @@ open class OrgAPI {
     }
 
     /**
+     Add a new admin to this org
+     
+     - parameter contact: (body)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func addAdminToOrg(contact: Contact, completion: @escaping ((_ data: Contact?,_ error: Error?) -> Void)) {
+        addAdminToOrgWithRequestBuilder(contact: contact).execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Add a new admin to this org
+     - POST /org/admin
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example={
+  "phone" : "phone",
+  "name" : "name",
+  "email" : "email"
+}}]
+     
+     - parameter contact: (body)  
+
+     - returns: RequestBuilder<Contact> 
+     */
+    open class func addAdminToOrgWithRequestBuilder(contact: Contact) -> RequestBuilder<Contact> {
+        let path = "/org/admin"
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: contact)
+
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<Contact>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: true)
+    }
+
+    /**
      Create a new organization. Must be an authenticated request with a valid id_token from a trusted IdP.
      
      - parameter idToken: (query)  
+     - parameter stripeCustomerId: (query)  
      - parameter orgName: (query)  
      - parameter contact: (body)  
      - parameter completion: completion handler to receive the data and the error objects
      */
-    open class func addOrganization(idToken: String, orgName: String, contact: Contact, completion: @escaping ((_ data: Organization?,_ error: Error?) -> Void)) {
-        addOrganizationWithRequestBuilder(idToken: idToken, orgName: orgName, contact: contact).execute { (response, error) -> Void in
+    open class func addOrganization(idToken: String, stripeCustomerId: String, orgName: String, contact: Contact, completion: @escaping ((_ data: Organization?,_ error: Error?) -> Void)) {
+        addOrganizationWithRequestBuilder(idToken: idToken, stripeCustomerId: stripeCustomerId, orgName: orgName, contact: contact).execute { (response, error) -> Void in
             completion(response?.body, error)
         }
     }
@@ -86,69 +123,47 @@ open class OrgAPI {
   "name" : "name",
   "apiKeys" : [ {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   }, {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   } ],
   "id" : "id",
+  "stripeCustomerId" : "stripeCustomerId",
   "clientIds" : [ "clientIds", "clientIds" ],
   "contacts" : [ {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   }, {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   } ]
 }}]
      
      - parameter idToken: (query)  
+     - parameter stripeCustomerId: (query)  
      - parameter orgName: (query)  
      - parameter contact: (body)  
 
      - returns: RequestBuilder<Organization> 
      */
-    open class func addOrganizationWithRequestBuilder(idToken: String, orgName: String, contact: Contact) -> RequestBuilder<Organization> {
+    open class func addOrganizationWithRequestBuilder(idToken: String, stripeCustomerId: String, orgName: String, contact: Contact) -> RequestBuilder<Organization> {
         let path = "/org"
         let URLString = SwaggerClientAPI.basePath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: contact)
@@ -156,6 +171,7 @@ open class OrgAPI {
         var url = URLComponents(string: URLString)
         url?.queryItems = APIHelper.mapValuesToQueryItems([
             "id_token": idToken, 
+            "stripeCustomerId": stripeCustomerId, 
             "orgName": orgName
         ])
 
@@ -197,6 +213,49 @@ open class OrgAPI {
         let apikeyPreEscape = "\(apikey)"
         let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{apikey}", with: apikeyPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return requestBuilder.init(method: "DELETE", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Remove an existing admin from the org (You can not remove the last admin. It will faile with a Bad Request response.)
+     
+     - parameter email: (path)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func deleteAdminFromOrg(email: String, completion: @escaping ((_ data: Void?,_ error: Error?) -> Void)) {
+        deleteAdminFromOrgWithRequestBuilder(email: email).execute { (response, error) -> Void in
+            if error == nil {
+                completion((), error)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+
+    /**
+     Remove an existing admin from the org (You can not remove the last admin. It will faile with a Bad Request response.)
+     - DELETE /org/admin/{email}
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     
+     - parameter email: (path)  
+
+     - returns: RequestBuilder<Void> 
+     */
+    open class func deleteAdminFromOrgWithRequestBuilder(email: String) -> RequestBuilder<Void> {
+        var path = "/org/admin/{email}"
+        let emailPreEscape = "\(email)"
+        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{email}", with: emailPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
         
@@ -274,58 +333,35 @@ open class OrgAPI {
   "name" : "name",
   "apiKeys" : [ {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   }, {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   } ],
   "id" : "id",
+  "stripeCustomerId" : "stripeCustomerId",
   "clientIds" : [ "clientIds", "clientIds" ],
   "contacts" : [ {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   }, {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   } ]
 }}]
@@ -373,58 +409,35 @@ open class OrgAPI {
   "name" : "name",
   "apiKeys" : [ {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   }, {
     "creator" : {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     },
+    "creationTime" : 0,
     "key" : "key",
-    "orgId" : "orgId"
+    "orgId" : "orgId",
+    "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
   } ],
   "id" : "id",
+  "stripeCustomerId" : "stripeCustomerId",
   "clientIds" : [ "clientIds", "clientIds" ],
   "contacts" : [ {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   }, {
-    "addressSecond" : "addressSecond",
-    "zip" : "zip",
-    "country" : "country",
-    "address" : "address",
     "phone" : "phone",
-    "city" : "city",
     "name" : "name",
-    "verified" : true,
-    "state" : "state",
     "email" : "email"
   } ]
 }}]
@@ -446,6 +459,97 @@ open class OrgAPI {
         let requestBuilder: RequestBuilder<Organization>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
 
         return requestBuilder.init(method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Get an ephemeral test org api key
+     
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func getTestOrganizationAPIKey(completion: @escaping ((_ data: APIKey?,_ error: Error?) -> Void)) {
+        getTestOrganizationAPIKeyWithRequestBuilder().execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Get an ephemeral test org api key
+     - GET /org/key/test
+     - examples: [{contentType=application/json, example={
+  "creator" : {
+    "phone" : "phone",
+    "name" : "name",
+    "email" : "email"
+  },
+  "creationTime" : 0,
+  "key" : "key",
+  "orgId" : "orgId",
+  "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
+}}]
+
+     - returns: RequestBuilder<APIKey> 
+     */
+    open class func getTestOrganizationAPIKeyWithRequestBuilder() -> RequestBuilder<APIKey> {
+        let path = "/org/key/test"
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<APIKey>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Update the stripe customer Id associated with this account
+     
+     - parameter stripeCustomerId: (query)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func updateStripeCustomerId(stripeCustomerId: String, completion: @escaping ((_ data: APIKey?,_ error: Error?) -> Void)) {
+        updateStripeCustomerIdWithRequestBuilder(stripeCustomerId: stripeCustomerId).execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Update the stripe customer Id associated with this account
+     - POST /org/stripeId
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example={
+  "creator" : {
+    "phone" : "phone",
+    "name" : "name",
+    "email" : "email"
+  },
+  "creationTime" : 0,
+  "key" : "key",
+  "orgId" : "orgId",
+  "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
+}}]
+     
+     - parameter stripeCustomerId: (query)  
+
+     - returns: RequestBuilder<APIKey> 
+     */
+    open class func updateStripeCustomerIdWithRequestBuilder(stripeCustomerId: String) -> RequestBuilder<APIKey> {
+        let path = "/org/stripeId"
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        var url = URLComponents(string: URLString)
+        url?.queryItems = APIHelper.mapValuesToQueryItems([
+            "stripeCustomerId": stripeCustomerId
+        ])
+
+        let requestBuilder: RequestBuilder<APIKey>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
     }
 
 }

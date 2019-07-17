@@ -87,9 +87,11 @@ open class KeyServiceAPI {
        - name: header
      - examples: [{contentType=application/json, example={
   "creationTime" : 0,
+  "owningClientId" : "owningClientId",
   "id" : "id",
-  "keyType" : "rsa",
+  "keyType" : "ec",
   "encoding" : "pem",
+  "owningOrgId" : "owningOrgId",
   "key" : "key"
 }}]
      

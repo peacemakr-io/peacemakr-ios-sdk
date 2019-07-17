@@ -31,15 +31,26 @@ open class ClientAPI {
        - type: apiKey authorization 
        - name: header
      - examples: [{contentType=application/json, example={
+  "publicKeys" : [ {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  }, {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  } ],
   "id" : "id",
   "sdk" : "sdk",
-  "publicKey" : {
-    "creationTime" : 0,
-    "id" : "id",
-    "keyType" : "rsa",
-    "encoding" : "pem",
-    "key" : "key"
-  }
+  "preferredPublicKeyId" : "preferredPublicKeyId"
 }}]
      
      - parameter client: (body)  
@@ -54,6 +65,56 @@ open class ClientAPI {
         let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<Client>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: true)
+    }
+
+    /**
+     Register a new public key for the client
+     
+     - parameter clientId: (path)  
+     - parameter newPublicKey: (body)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func addClientPublicKey(clientId: String, newPublicKey: PublicKey, completion: @escaping ((_ data: PublicKey?,_ error: Error?) -> Void)) {
+        addClientPublicKeyWithRequestBuilder(clientId: clientId, newPublicKey: newPublicKey).execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Register a new public key for the client
+     - POST /client/{clientId}/addPublicKey
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example={
+  "creationTime" : 0,
+  "owningClientId" : "owningClientId",
+  "id" : "id",
+  "keyType" : "ec",
+  "encoding" : "pem",
+  "owningOrgId" : "owningOrgId",
+  "key" : "key"
+}}]
+     
+     - parameter clientId: (path)  
+     - parameter newPublicKey: (body)  
+
+     - returns: RequestBuilder<PublicKey> 
+     */
+    open class func addClientPublicKeyWithRequestBuilder(clientId: String, newPublicKey: PublicKey) -> RequestBuilder<PublicKey> {
+        var path = "/client/{clientId}/addPublicKey"
+        let clientIdPreEscape = "\(clientId)"
+        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{clientId}", with: clientIdPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: newPublicKey)
+
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<PublicKey>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
 
         return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: true)
     }
@@ -78,15 +139,26 @@ open class ClientAPI {
        - type: apiKey authorization 
        - name: header
      - examples: [{contentType=application/json, example={
+  "publicKeys" : [ {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  }, {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  } ],
   "id" : "id",
   "sdk" : "sdk",
-  "publicKey" : {
-    "creationTime" : 0,
-    "id" : "id",
-    "keyType" : "rsa",
-    "encoding" : "pem",
-    "key" : "key"
-  }
+  "preferredPublicKeyId" : "preferredPublicKeyId"
 }}]
      
      - parameter clientId: (path)  
@@ -128,15 +200,26 @@ open class ClientAPI {
        - type: apiKey authorization 
        - name: header
      - examples: [{contentType=application/json, example={
+  "publicKeys" : [ {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  }, {
+    "creationTime" : 0,
+    "owningClientId" : "owningClientId",
+    "id" : "id",
+    "keyType" : "ec",
+    "encoding" : "pem",
+    "owningOrgId" : "owningOrgId",
+    "key" : "key"
+  } ],
   "id" : "id",
   "sdk" : "sdk",
-  "publicKey" : {
-    "creationTime" : 0,
-    "id" : "id",
-    "keyType" : "rsa",
-    "encoding" : "pem",
-    "key" : "key"
-  }
+  "preferredPublicKeyId" : "preferredPublicKeyId"
 }}]
      
      - parameter clientId: (path)  
@@ -156,51 +239,6 @@ open class ClientAPI {
         let requestBuilder: RequestBuilder<Client>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
 
         return requestBuilder.init(method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
-    }
-
-    /**
-     Register a new public key for the client, replacing existing key
-     
-     - parameter clientId: (path)  
-     - parameter newPublicKey: (body)  
-     - parameter completion: completion handler to receive the data and the error objects
-     */
-    open class func updateClientPublicKey(clientId: String, newPublicKey: PublicKey, completion: @escaping ((_ data: Void?,_ error: Error?) -> Void)) {
-        updateClientPublicKeyWithRequestBuilder(clientId: clientId, newPublicKey: newPublicKey).execute { (response, error) -> Void in
-            if error == nil {
-                completion((), error)
-            } else {
-                completion(nil, error)
-            }
-        }
-    }
-
-
-    /**
-     Register a new public key for the client, replacing existing key
-     - POST /client/{clientId}/updatePublicKey
-     - API Key:
-       - type: apiKey authorization 
-       - name: header
-     
-     - parameter clientId: (path)  
-     - parameter newPublicKey: (body)  
-
-     - returns: RequestBuilder<Void> 
-     */
-    open class func updateClientPublicKeyWithRequestBuilder(clientId: String, newPublicKey: PublicKey) -> RequestBuilder<Void> {
-        var path = "/client/{clientId}/updatePublicKey"
-        let clientIdPreEscape = "\(clientId)"
-        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{clientId}", with: clientIdPostEscape, options: .literal, range: nil)
-        let URLString = SwaggerClientAPI.basePath + path
-        let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: newPublicKey)
-
-        let url = URLComponents(string: URLString)
-
-        let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
-
-        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: true)
     }
 
 }

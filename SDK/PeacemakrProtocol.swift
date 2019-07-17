@@ -25,7 +25,7 @@ public protocol PeacemakrProtocol {
   ///
   /// - Parameter apiKey: API
   /// - Throws: on initialization failure
-  init(apiKey: String) throws
+  init(apiKey: String, logLevel: Logger.Level) throws
   
   /**
    Registers to PeaceMakr as a client.

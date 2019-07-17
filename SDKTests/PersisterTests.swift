@@ -10,10 +10,8 @@ import XCTest
 @testable import Peacemakr
 
 class PersisterTests: XCTestCase {
-  var persister: DefaultPersister? = nil
   
   override func setUp() {
-    persister = DefaultPersister(logHandler: log)
   }
   
   func testKeystore() throws {
@@ -28,9 +26,9 @@ class PersisterTests: XCTestCase {
     
     let keyID = "io.peacemakr.client.symmetric.testKey"
     
-    XCTAssert(persister!.storeKey(keyData, keyID: keyID))
+    XCTAssert(Persister.storeKey(keyData, keyID: keyID))
     
-    let gotKeyData = persister!.getKey(keyID)
+    let gotKeyData = Persister.getKey(keyID)
     XCTAssert(gotKeyData != nil)
     XCTAssert(gotKeyData! == keyData)
   }
@@ -38,9 +36,8 @@ class PersisterTests: XCTestCase {
   func testDatastore() throws {
     let clientID = "some client ID"
     
-    XCTAssert(persister!.storeData("clientID", val: clientID))
-    XCTAssert(persister!.hasData("clientID"))
-    let gotClientID: String? = persister!.getData("clientID")
+    XCTAssert(Persister.hasData("clientID"))
+    let gotClientID: String? = Persister.getData("clientID")
     XCTAssert(gotClientID != nil)
     XCTAssert(gotClientID! == clientID)
   }

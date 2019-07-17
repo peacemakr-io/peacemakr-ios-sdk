@@ -29,15 +29,9 @@ class SyncHandler {
       let orgID = body._id
       let cryptoConfigID = body.cryptoConfigId
       
-      if !Persister.storeData(Constants.dataPrefix + "OrgID", val: orgID) {
-        completion(NSError(domain: "Unable to store org ID", code: -30, userInfo: nil))
-        return
-      }
+      Persister.storeData(Constants.dataPrefix + "OrgID", val: orgID)
       
-      if !Persister.storeData(Constants.dataPrefix + "CryptoConfigID", val: cryptoConfigID) {
-        completion(NSError(domain: "Unable to store crypto config ID", code: -31, userInfo: nil))
-        return
-      }
+      Persister.storeData(Constants.dataPrefix + "CryptoConfigID", val: cryptoConfigID)
       
       Logger.debug("got orgID " + orgID + " and cryptoConfigID " + cryptoConfigID)
       
@@ -66,20 +60,14 @@ class SyncHandler {
         return
       }
       
-      if !Persister.storeData(Constants.dataPrefix + "UseDomainSelectorScheme", val: body.symmetricKeyUseDomainSelectorScheme) {
-        Logger.error("Failed to store use domain selector scheme")
-        completion(NSError(domain: "failed to store use domain selector scheme", code: -37, userInfo: nil))
-      }
+      Persister.storeData(Constants.dataPrefix + "UseDomainSelectorScheme", val: body.symmetricKeyUseDomainSelectorScheme)
       
       guard let data = try? JSONEncoder().encode(body.symmetricKeyUseDomains) else {
         completion(NSError(domain: "Failed to json encode the use domains", code: -36, userInfo: nil))
         return
       }
       
-      if !Persister.storeData(Constants.dataPrefix + "UseDomains", val: data) {
-        Logger.error("Failed to store use domains")
-        completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
-      }
+      Persister.storeData(Constants.dataPrefix + "UseDomains", val: data)
       
       Logger.debug("synchronized the crypto config")
       completion(nil)
