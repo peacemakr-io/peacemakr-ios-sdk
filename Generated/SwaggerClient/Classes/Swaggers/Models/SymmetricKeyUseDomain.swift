@@ -20,8 +20,12 @@ public struct SymmetricKeyUseDomain: Codable {
     public var symmetricKeyInceptionTTL: Int
     /** number of seconds since key creation that the key will be available for encryption */
     public var symmetricKeyEncryptionUseTTL: Int
+    /** whether this use domain is available for encryption; if false, these keys should not be used for encrypting new messages */
+    public var symmetricKeyEncryptionAllowed: Bool?
     /** number of seconds since key creation that the key will be available for decryption */
     public var symmetricKeyDecryptionUseTTL: Int
+    /** whether this use domain is available for decryption; if false, these keys should not be used for decrypting messages */
+    public var symmetricKeyDecryptionAllowed: Bool?
     /** number of seconds since key creation that the key will be available for retention purposes */
     public var symmetricKeyRetentionUseTTL: Int
     /** the number of bits of all symmetric keys in this use domain */
@@ -36,15 +40,21 @@ public struct SymmetricKeyUseDomain: Codable {
     public var encryptionKeyIds: [String]
     /** if all registered kds service become unreachable, then incoming requests for new and existing keys may fallback to the cloud provided KDS */
     public var endableKDSFallbackToCloud: Bool
+    /** if required, all clients must receive these keys in a signed symmetric key delivery from the key deriver */
+    public var requireSignedKeyDelivery: Bool
+    /** The digest algorithm to use for signing messages in this use domain */
+    public var digestAlgorithm: String?
 
-    public init(_id: String, ownerOrgId: String, name: String?, creationTime: Int, symmetricKeyInceptionTTL: Int, symmetricKeyEncryptionUseTTL: Int, symmetricKeyDecryptionUseTTL: Int, symmetricKeyRetentionUseTTL: Int, symmetricKeyLength: Int, symmetricKeyEncryptionAlg: String, encryptingPackagedCiphertextVersion: Int, symmetricKeyDerivationServiceId: String, encryptionKeyIds: [String], endableKDSFallbackToCloud: Bool) {
+    public init(_id: String, ownerOrgId: String, name: String?, creationTime: Int, symmetricKeyInceptionTTL: Int, symmetricKeyEncryptionUseTTL: Int, symmetricKeyEncryptionAllowed: Bool?, symmetricKeyDecryptionUseTTL: Int, symmetricKeyDecryptionAllowed: Bool?, symmetricKeyRetentionUseTTL: Int, symmetricKeyLength: Int, symmetricKeyEncryptionAlg: String, encryptingPackagedCiphertextVersion: Int, symmetricKeyDerivationServiceId: String, encryptionKeyIds: [String], endableKDSFallbackToCloud: Bool, requireSignedKeyDelivery: Bool, digestAlgorithm: String?) {
         self._id = _id
         self.ownerOrgId = ownerOrgId
         self.name = name
         self.creationTime = creationTime
         self.symmetricKeyInceptionTTL = symmetricKeyInceptionTTL
         self.symmetricKeyEncryptionUseTTL = symmetricKeyEncryptionUseTTL
+        self.symmetricKeyEncryptionAllowed = symmetricKeyEncryptionAllowed
         self.symmetricKeyDecryptionUseTTL = symmetricKeyDecryptionUseTTL
+        self.symmetricKeyDecryptionAllowed = symmetricKeyDecryptionAllowed
         self.symmetricKeyRetentionUseTTL = symmetricKeyRetentionUseTTL
         self.symmetricKeyLength = symmetricKeyLength
         self.symmetricKeyEncryptionAlg = symmetricKeyEncryptionAlg
@@ -52,6 +62,8 @@ public struct SymmetricKeyUseDomain: Codable {
         self.symmetricKeyDerivationServiceId = symmetricKeyDerivationServiceId
         self.encryptionKeyIds = encryptionKeyIds
         self.endableKDSFallbackToCloud = endableKDSFallbackToCloud
+        self.requireSignedKeyDelivery = requireSignedKeyDelivery
+        self.digestAlgorithm = digestAlgorithm
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -61,7 +73,9 @@ public struct SymmetricKeyUseDomain: Codable {
         case creationTime
         case symmetricKeyInceptionTTL
         case symmetricKeyEncryptionUseTTL
+        case symmetricKeyEncryptionAllowed
         case symmetricKeyDecryptionUseTTL
+        case symmetricKeyDecryptionAllowed
         case symmetricKeyRetentionUseTTL
         case symmetricKeyLength
         case symmetricKeyEncryptionAlg
@@ -69,6 +83,8 @@ public struct SymmetricKeyUseDomain: Codable {
         case symmetricKeyDerivationServiceId
         case encryptionKeyIds
         case endableKDSFallbackToCloud
+        case requireSignedKeyDelivery
+        case digestAlgorithm
     }
 
 

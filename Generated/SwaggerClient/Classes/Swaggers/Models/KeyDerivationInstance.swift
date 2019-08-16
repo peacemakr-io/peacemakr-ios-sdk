@@ -20,13 +20,16 @@ public struct KeyDerivationInstance: Codable {
     public var version: String
     /** base URL from which this key deriver instance will respond to new key derivation job requests */
     public var baseUrl: String?
+    /** if true then the key deriver is visible to every other organization */
+    public var isPublic: Bool?
 
-    public init(_id: String, serviceIds: [String], active: Bool, version: String, baseUrl: String?) {
+    public init(_id: String, serviceIds: [String], active: Bool, version: String, baseUrl: String?, isPublic: Bool?) {
         self._id = _id
         self.serviceIds = serviceIds
         self.active = active
         self.version = version
         self.baseUrl = baseUrl
+        self.isPublic = isPublic
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -35,6 +38,7 @@ public struct KeyDerivationInstance: Codable {
         case active
         case version
         case baseUrl
+        case isPublic
     }
 
 

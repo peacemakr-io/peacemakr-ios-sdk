@@ -18,4 +18,16 @@ struct Constants {
   static let symmTagPrefix = "io.peacemakr.client.symmetric."
   static let clientIDTag = "ClientID"
   static let pubKeyIDTag = "PubKeyID"
+  static let clientKeyType = "KeyType"
+  static let clientKeyLen = "KeyBitlen"
+  
+  static let Chacha20Poly1305 = "Peacemakr.Symmetric.CHACHA20_POLY1305"
+  static let Aes128gcm        = "Peacemakr.Symmetric.AES_128_GCM"
+  static let Aes192gcm        = "Peacemakr.Symmetric.AES_192_GCM"
+  static let Aes256gcm        = "Peacemakr.Symmetric.AES_256_GCM"
+  
+  static let Sha224 = "Peacemakr.Digest.SHA_224"
+  static let Sha256 = "Peacemakr.Digest.SHA_256"
+  static let Sha384 = "Peacemakr.Digest.SHA_384"
+  static let Sha512 = "Peacemakr.Digest.SHA_512"
 }

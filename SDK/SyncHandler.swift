@@ -81,6 +81,16 @@ class SyncHandler {
         completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
       }
       
+      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyType, val: body.clientKeyType) {
+        Logger.error("Failed to store client key type")
+        completion(NSError(domain: "failed to store client key type", code: -38, userInfo: nil))
+      }
+      
+      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyLen, val: body.clientKeyBitlength) {
+        Logger.error("Failed to store client key length")
+        completion(NSError(domain: "failed to store client key length", code: -39, userInfo: nil))
+      }
+      
       Logger.debug("synchronized the crypto config")
       completion(nil)
     }
@@ -150,7 +160,7 @@ class SyncHandler {
         var (deserialized, _) = deserializedCfg
         
         // Decrypt the key
-        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(recipientKey: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
+        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
           Logger.error("Unable to decrypt key package ciphertext")
           completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
           return

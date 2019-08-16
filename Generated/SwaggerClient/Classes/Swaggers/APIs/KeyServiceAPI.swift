@@ -87,9 +87,11 @@ open class KeyServiceAPI {
        - name: header
      - examples: [{contentType=application/json, example={
   "creationTime" : 0,
+  "owningClientId" : "owningClientId",
   "id" : "id",
-  "keyType" : "rsa",
+  "keyType" : "ec",
   "encoding" : "pem",
+  "owningOrgId" : "owningOrgId",
   "key" : "key"
 }}]
      
@@ -100,7 +102,7 @@ open class KeyServiceAPI {
     open class func getPublicKeyWithRequestBuilder(keyID: String) -> RequestBuilder<PublicKey> {
         var path = "/crypto/asymmetric/{keyID}"
         let keyIDPreEscape = "\(keyID)"
-        let keyIDPostEscape = keyIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let keyIDPostEscape = keyIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{keyID}", with: keyIDPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

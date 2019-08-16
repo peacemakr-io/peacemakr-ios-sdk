@@ -20,6 +20,7 @@ public class Peacemakr: PeacemakrProtocol {
     case initializationError
     case registrationError
     case keyManagerError
+    case keyConfigurationError
 
     
     var localizedDescription: String {
@@ -29,7 +30,9 @@ public class Peacemakr: PeacemakrProtocol {
       case .registrationError:
         return "failed to register to Peacemakr"
       case .keyManagerError:
-        return "faild to access keys"
+        return "failed to access keys"
+      case .keyConfigurationError:
+        return "failed to retrieve configuration for client keypair"
       }
     }
   }
@@ -74,21 +77,48 @@ public class Peacemakr: PeacemakrProtocol {
   }
   
   public func register(completion: (@escaping ErrorHandler)) {
-    registerToPeacemakr(completion: completion)
-    
+    // First we have to sync the org and config info
+    SyncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
+      if err != nil {
+        completion(err)
+      }
+      
+      SyncHandler.syncCryptoConfig(completion: { (err) in
+        if err != nil {
+          completion(err)
+        }
+        
+        self.registerToPeacemakr(completion: {completion($0)})
+      })
+    }
   }
   
   private func registerToPeacemakr(completion: (@escaping ErrorHandler)) {
+    
+    guard let keyType: String = Persister.getData(Constants.dataPrefix + Constants.clientKeyType) else {
+      completion(PeacemakrError.keyConfigurationError)
+      return
+    }
+    
+    guard let keyLen: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
+      completion(PeacemakrError.keyConfigurationError)
+      return
+    }
 
-    guard let keyPair = try? KeyManager.createAndStoreKeyPair(with: rand) else {
+    guard let keyPair = try? KeyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
+      completion(PeacemakrError.registrationError)
+      return
+    }
+    
+    guard let orgID: String = Persister.getData(Constants.dataPrefix + "OrgID") else {
       completion(PeacemakrError.registrationError)
       return
     }
 
     // Call up to server and register myself
-    let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: "rsa", encoding: "pem", key: keyPair.pub.toString())
+    let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: keyType, encoding: "pem", key: keyPair.pub.toString(), owningClientId: nil, owningOrgId: orgID)
 
-    let registerClient = Client(_id: "", sdk: version, publicKey: pubKeyToSend)
+    let registerClient = Client(_id: "", sdk: version, preferredPublicKeyId: nil, publicKeys: [pubKeyToSend])
 
     let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
 
@@ -108,7 +138,7 @@ public class Peacemakr: PeacemakrProtocol {
 
     // Store the clientID and publicKeyID
      guard Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: body._id),
-          Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKey._id) else {
+          Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
         Logger.error("failed to store key pair")
         completion(NSError(domain: "could not store metadata", code: -2, userInfo: nil))
         return
@@ -216,7 +246,7 @@ public class Peacemakr: PeacemakrProtocol {
     let p = Plaintext(data: rawMessageData, aad: aadData)
 
     guard let encrypted = UnwrapCall(CryptoContext.encrypt(
-      recipientKey: aadAndKey.key,
+      key: aadAndKey.key,
       plaintext: p,
       rand: self.rand
     ), onError: Logger.onError) else {
@@ -231,10 +261,9 @@ public class Peacemakr: PeacemakrProtocol {
       return (nil, NSError(domain: "Unable to get my private key", code: -104, userInfo: nil))
     }
 
-    // TODO: digest alg should come from config or fall back to default sha 512 or sha 256
-    CryptoContext.sign(recipientKey: signKey, plaintext: p, digest: .SHA_256, ciphertext: &encCiphertext)
+    CryptoContext.sign(senderKey: signKey, plaintext: p, digest: aadAndKey.digest, ciphertext: &encCiphertext)
 
-    guard let serialized = UnwrapCall(CryptoContext.serialize(.SHA_256, encCiphertext), onError: Logger.onError) else {
+    guard let serialized = UnwrapCall(CryptoContext.serialize(aadAndKey.digest, encCiphertext), onError: Logger.onError) else {
       Logger.error("Serialization failed")
       return (nil, NSError(domain: "Serialization failed", code: -105, userInfo: nil))
     }
@@ -295,7 +324,7 @@ public class Peacemakr: PeacemakrProtocol {
       }
 
       // Then decrypt
-      guard let decryptResult = UnwrapCall(CryptoContext.decrypt(recipientKey: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
+      guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: symmKey, ciphertext: deserialized), onError: Logger.onError) else {
         completion((nil, NSError(domain: "Decryption failed", code: -107, userInfo: nil)))
         return
       }

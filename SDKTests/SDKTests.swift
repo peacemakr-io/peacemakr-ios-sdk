@@ -14,33 +14,55 @@ func log(_ s: String) -> Void {
 }
 
 class SDKTests: XCTestCase {
-  var sdk: PeacemakrSDK? = nil
+  var sdk: Peacemakr? = nil
   var data: AppData? = nil
   
-  let testKey = "1MM/tGB2nztn0YCe185iNq0hnB0+Qnugaxa6ohir79I="
   let gibblygook = "gibblygook"
-
+  
   override func setUp() {
     super.setUp()
+    
+    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    
     data = AppData()
     data!.setSomeProperty(prop: "something")
     data!.setSomeOtherProperty(key: "someKey", value: "someValue")
   }
-
+  
   override func tearDown() {
     super.tearDown()
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
   
+  private func getAPIKey() -> String {
+    
+    let gotAPIKey = self.expectation(description: "Got API Key for test org")
+    
+    var key: String = ""
+    OrgAPI.getTestOrganizationAPIKey { (k, err) in
+      if err != nil {
+        XCTAssert(false, err!.localizedDescription)
+      }
+      
+      key = k?.key ?? ""
+      print("Test Org API Key: ", key)
+      gotAPIKey.fulfill()
+    }
+    
+    waitForExpectations(timeout: 5, handler: nil)
+    
+    return key
+  }
+  
   func testRegister() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try? Peacemakr(apiKey: getAPIKey())
     
     XCTAssertNotNil(sdk)
     
     let expectation = self.expectation(description: "Registration successful")
     
     sdk?.register(completion: { error in
-      XCTAssertNil(error)
+      XCTAssertNil(error, error!.localizedDescription)
       expectation.fulfill()
     })
     
@@ -50,12 +72,17 @@ class SDKTests: XCTestCase {
   }
   
   func testSync() {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try? Peacemakr(apiKey: getAPIKey())
     XCTAssertNotNil(sdk)
 
+    let expectation = self.expectation(description: "Registration successful")
+    
     sdk?.register(completion: { error in
       XCTAssertNil(error)
+      expectation.fulfill()
     })
+    
+    waitForExpectations(timeout: 10, handler: nil)
     
     UserDefaults.standard.synchronize()
 
@@ -72,7 +99,7 @@ class SDKTests: XCTestCase {
 
   
   func testEncryptDecrypt() throws {
-    sdk = PeacemakrSDK(apiKey: testKey, logHandler: log)
+    sdk = try Peacemakr(apiKey: getAPIKey())
     XCTAssertNotNil(sdk)
     
     sdk?.register(completion: { error in
@@ -82,7 +109,7 @@ class SDKTests: XCTestCase {
 
     let syncExpectation = self.expectation(description: "Sync successful")
     sdk!.sync { (err) in
-      XCTAssert(err == nil)
+      XCTAssert(err == nil, err!.localizedDescription)
       syncExpectation.fulfill()
     }
 
@@ -92,15 +119,15 @@ class SDKTests: XCTestCase {
     
     let decryptExpectation = self.expectation(description: "Decrypt successful")
     
-    let destination = AppData()
+    let (serialized, err) = sdk!.encrypt(plaintext: data!.serializedValue)
+    XCTAssert(err == nil, err!.localizedDescription)
     
-    let (serialized, err) = sdk!.encrypt(data!)
-    XCTAssert(err == nil)
-    
-    XCTAssert(self.sdk!.decrypt(serialized!, dest: destination, completion: { (dest) in
-      XCTAssert(dest as! AppData == self.data!)
+    self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
+      XCTAssert(dest.error == nil)
+      XCTAssert(dest.data != nil)
+      XCTAssertEqual(dest.data, self.data?.serializedValue)
       decryptExpectation.fulfill()
-    }))
+    })
     
     
     waitForExpectations(timeout: 10, handler: nil)

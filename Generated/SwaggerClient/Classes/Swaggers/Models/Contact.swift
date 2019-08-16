@@ -14,25 +14,11 @@ public struct Contact: Codable {
     public var name: String
     public var email: String
     public var phone: String?
-    public var address: String?
-    public var addressSecond: String?
-    public var city: String?
-    public var zip: String?
-    public var state: String?
-    public var country: String?
-    public var verified: Bool?
 
-    public init(name: String, email: String, phone: String?, address: String?, addressSecond: String?, city: String?, zip: String?, state: String?, country: String?, verified: Bool?) {
+    public init(name: String, email: String, phone: String?) {
         self.name = name
         self.email = email
         self.phone = phone
-        self.address = address
-        self.addressSecond = addressSecond
-        self.city = city
-        self.zip = zip
-        self.state = state
-        self.country = country
-        self.verified = verified
     }
 
 

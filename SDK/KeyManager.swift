@@ -31,27 +31,47 @@ class KeyManager {
     }
   }
   
-  /// MARK: - Core Crypto Configuration
-  
-  static let myKeyCfg = CoreCrypto.CryptoConfig(
-    mode: EncryptionMode.ASYMMETRIC,
-    symm_cipher: SymmetricCipher.AES_256_GCM,
-    asymm_cipher: AsymmetricCipher.RSA_4096,
-    digest: MessageDigestAlgorithm.SHA_512
-  )
+  static let defaultSymmetricCipher = SymmetricCipher.CHACHA20_POLY1305
   
   /// MARK: - Generate New Key Pair
-  class func  createKeyPair(with rand: RandomDevice) throws -> PeacemakrKey {
-    guard let keyPair = PeacemakrKey(asymmCipher: myKeyCfg.asymmCipher, symmCipher: myKeyCfg.symmCipher, rand: rand) else {
+  
+  private class func parseIntoCipher(keyType: String, keyLen: Int) -> AsymmetricCipher {
+    if keyType == "ec" {
+      switch keyLen {
+      case 256:
+        return .ECDH_P256
+      case 384:
+        return .ECDH_P384
+      case 521:
+        return .ECDH_P521
+      default:
+        return .ECDH_P256
+      }
+    } else if keyType == "rsa" {
+      switch keyLen {
+      case 2048:
+        return .RSA_2048
+      case 4096:
+        return .RSA_4096
+      default:
+        return .RSA_4096
+      }
+    }
+    
+    return .ECDH_P256
+  }
+  
+  class func createKeyPair(with rand: RandomDevice, asymm: AsymmetricCipher) throws -> PeacemakrKey {
+    guard let keyPair = PeacemakrKey(asymmCipher: asymm, symmCipher: defaultSymmetricCipher, rand: rand) else {
       throw KeyManagerError.keygenError
     }
     return keyPair
 
   }
+  
   // Generate and Store keypair
-  class func  createAndStoreKeyPair(with rand: RandomDevice) throws -> (priv: Data, pub: Data) {
-    
-    let newKeyPair = try createKeyPair(with: rand)
+  class func createAndStoreKeyPair(with rand: RandomDevice, keyType: String, keyLen: Int) throws -> (priv: Data, pub: Data) {
+    let newKeyPair = try createKeyPair(with: rand, asymm: parseIntoCipher(keyType: keyType, keyLen: keyLen))
     
     // Store private key
     guard let priv = UnwrapCall(newKeyPair.toPem(isPriv: true), onError: Logger.onError),
@@ -87,7 +107,7 @@ class KeyManager {
   }
   
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
-  class func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey)? {
+  class func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
     
     guard let keyIDandCfg = KeyManager.selectKey(useDomainID: useDomainID) else {
       Logger.error("failed to select a key")
@@ -109,7 +129,37 @@ class KeyManager {
       return nil
     }
     
-    return (messageAAD, keyToUse)
+    return (messageAAD, keyToUse, keyIDandCfg.keyConfig.digestAlgorithm)
+  }
+  
+  private class func parseDigestAlgorithm(digest: String?) -> MessageDigestAlgorithm {
+    switch (digest) {
+    case Constants.Sha224:
+      return .SHA_224
+    case Constants.Sha256:
+      return .SHA_256
+    case Constants.Sha384:
+      return .SHA_384
+    case Constants.Sha512:
+      return .SHA_512
+    default:
+      return .SHA_256
+    }
+  }
+  
+  private class func parseEncryptionAlgorithm(algo: String) -> SymmetricCipher {
+    switch (algo) {
+    case Constants.Aes128gcm:
+      return .AES_128_GCM
+    case Constants.Aes192gcm:
+      return .AES_192_GCM
+    case Constants.Aes256gcm:
+      return .AES_256_GCM
+    case Constants.Chacha20Poly1305:
+      return .CHACHA20_POLY1305
+    default:
+      return .CHACHA20_POLY1305
+    }
   }
   
   class func selectKey(useDomainID: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
@@ -124,7 +174,6 @@ class KeyManager {
       return nil
     }
     
-    // TODO: SymmetricKeyUseDomain() should initialize with all set to nil
     // var useDomainToUse = SymmetricKeyUseDomain()
     var useDomainToUse = useDomains.randomElement()
     
@@ -145,19 +194,10 @@ class KeyManager {
       return nil
     }
     
-    var keyCfg = CoreCrypto.CryptoConfig(mode: .SYMMETRIC,
-                                         symm_cipher: .CHACHA20_POLY1305,
+    let keyCfg = CoreCrypto.CryptoConfig(mode: .SYMMETRIC,
+                                         symm_cipher: parseEncryptionAlgorithm(algo: domain.symmetricKeyEncryptionAlg),
                                          asymm_cipher: .ASYMMETRIC_UNSPECIFIED,
-                                         digest: .SHA_512)
-    
-    if domain.symmetricKeyEncryptionAlg == "AESGCM" {
-      
-      keyCfg = CoreCrypto.CryptoConfig(mode: .SYMMETRIC,
-                                       symm_cipher: .AES_256_GCM,
-                                       asymm_cipher: .ASYMMETRIC_UNSPECIFIED,
-                                       digest: .SHA_512)
-    }
-    
+                                         digest: parseDigestAlgorithm(digest: domain.digestAlgorithm))
     
     return (encryptionKeyID, keyCfg)
   }
@@ -172,14 +212,11 @@ class KeyManager {
     }
     
     // should be base64Encoded? or not?
-    guard let keyData = Persister.getKey(tag) else {
+    guard let keyStr = String(data: Persister.getKey(tag) ?? Data(), encoding: .utf8) else {
       return nil
     }
     
-    return PeacemakrKey(asymmCipher: KeyManager.myKeyCfg.asymmCipher,
-                        symmCipher: myKeyCfg.symmCipher,
-                        fileContents: keyData.toString(),
-                        isPriv: priv)
+    return PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyStr, isPriv: priv)
   }
   
   class func getMyPublicKeyID() -> String {
@@ -195,7 +232,7 @@ class KeyManager {
     
     if let keyBytes: String = Persister.getData(Constants.dataPrefix + keyID) {
       
-      return completion(PeacemakrKey(asymmCipher: myKeyCfg.asymmCipher, symmCipher: myKeyCfg.symmCipher, fileContents: keyBytes, isPriv: false))
+      return completion(PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyBytes, isPriv: false))
       
     }
     
@@ -215,7 +252,7 @@ class KeyManager {
           Logger.error("failed to store key with ID: \(keyID)")
         }
         
-        return completion(PeacemakrKey(asymmCipher: myKeyCfg.asymmCipher, symmCipher: myKeyCfg.symmCipher, fileContents: keyStr, isPriv: false))
+        return completion(PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyStr, isPriv: false))
       } else {
         Logger.error("server error")
         return completion(nil)

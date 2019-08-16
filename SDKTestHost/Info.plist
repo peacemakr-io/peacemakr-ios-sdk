@@ -47,7 +47,7 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>peacemakr.io</key>
+			<key>localhost:8080/api/v1</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<false/>

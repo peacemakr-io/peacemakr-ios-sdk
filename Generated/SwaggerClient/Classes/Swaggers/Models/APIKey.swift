@@ -13,11 +13,16 @@ public struct APIKey: Codable {
 
     public var key: String
     public var orgId: String
+    public var creationTime: Int?
+    /** list of useDomains that APIKey has access to */
+    public var authorizedUseDomains: [String]?
     public var creator: Contact?
 
-    public init(key: String, orgId: String, creator: Contact?) {
+    public init(key: String, orgId: String, creationTime: Int?, authorizedUseDomains: [String]?, creator: Contact?) {
         self.key = key
         self.orgId = orgId
+        self.creationTime = creationTime
+        self.authorizedUseDomains = authorizedUseDomains
         self.creator = creator
     }
 

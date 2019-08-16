@@ -82,10 +82,14 @@ open class CryptoConfigAPI {
      - examples: [{contentType=application/json, example={
   "symmetricKeyRetentionUseTTL" : 5,
   "creationTime" : 0,
+  "symmetricKeyEncryptionAllowed" : true,
+  "requireSignedKeyDelivery" : true,
+  "digestAlgorithm" : "SHA_256",
   "symmetricKeyEncryptionUseTTL" : 1,
   "endableKDSFallbackToCloud" : true,
+  "symmetricKeyDecryptionAllowed" : true,
   "name" : "name",
-  "symmetricKeyEncryptionAlg" : "symmetricKeyEncryptionAlg",
+  "symmetricKeyEncryptionAlg" : "CHACHA20_POLY1305",
   "ownerOrgId" : "ownerOrgId",
   "id" : "id",
   "symmetricKeyInceptionTTL" : 6,
@@ -141,10 +145,14 @@ open class CryptoConfigAPI {
   "symmetricKeyUseDomains" : [ {
     "symmetricKeyRetentionUseTTL" : 5,
     "creationTime" : 0,
+    "symmetricKeyEncryptionAllowed" : true,
+    "requireSignedKeyDelivery" : true,
+    "digestAlgorithm" : "SHA_256",
     "symmetricKeyEncryptionUseTTL" : 1,
     "endableKDSFallbackToCloud" : true,
+    "symmetricKeyDecryptionAllowed" : true,
     "name" : "name",
-    "symmetricKeyEncryptionAlg" : "symmetricKeyEncryptionAlg",
+    "symmetricKeyEncryptionAlg" : "CHACHA20_POLY1305",
     "ownerOrgId" : "ownerOrgId",
     "id" : "id",
     "symmetricKeyInceptionTTL" : 6,
@@ -156,10 +164,14 @@ open class CryptoConfigAPI {
   }, {
     "symmetricKeyRetentionUseTTL" : 5,
     "creationTime" : 0,
+    "symmetricKeyEncryptionAllowed" : true,
+    "requireSignedKeyDelivery" : true,
+    "digestAlgorithm" : "SHA_256",
     "symmetricKeyEncryptionUseTTL" : 1,
     "endableKDSFallbackToCloud" : true,
+    "symmetricKeyDecryptionAllowed" : true,
     "name" : "name",
-    "symmetricKeyEncryptionAlg" : "symmetricKeyEncryptionAlg",
+    "symmetricKeyEncryptionAlg" : "CHACHA20_POLY1305",
     "ownerOrgId" : "ownerOrgId",
     "id" : "id",
     "symmetricKeyInceptionTTL" : 6,
@@ -169,7 +181,10 @@ open class CryptoConfigAPI {
     "encryptionKeyIds" : [ "encryptionKeyIds", "encryptionKeyIds" ],
     "symmetricKeyLength" : 2
   } ],
-  "id" : "id"
+  "id" : "id",
+  "clientKeyType" : "clientKeyType",
+  "clientKeyTTL" : 3,
+  "clientKeyBitlength" : 9
 }}]
      
      - parameter cryptoConfigId: (path)  
@@ -192,7 +207,55 @@ open class CryptoConfigAPI {
     }
 
     /**
-     Expire a use domain
+     Rapid expiration of existing use doamin and immediately replacment with an identical use domain containing fresh keys
+     
+     - parameter useDomainId: (path)  
+     - parameter optionalNextKeyDerivationServiceId: (query)  (optional)
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func rapidRotationUseDomain(useDomainId: String, optionalNextKeyDerivationServiceId: String? = nil, completion: @escaping ((_ data: Void?,_ error: Error?) -> Void)) {
+        rapidRotationUseDomainWithRequestBuilder(useDomainId: useDomainId, optionalNextKeyDerivationServiceId: optionalNextKeyDerivationServiceId).execute { (response, error) -> Void in
+            if error == nil {
+                completion((), error)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+
+    /**
+     Rapid expiration of existing use doamin and immediately replacment with an identical use domain containing fresh keys
+     - POST /crypto/useDomain/{useDomainId}/rapidRotation
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     
+     - parameter useDomainId: (path)  
+     - parameter optionalNextKeyDerivationServiceId: (query)  (optional)
+
+     - returns: RequestBuilder<Void> 
+     */
+    open class func rapidRotationUseDomainWithRequestBuilder(useDomainId: String, optionalNextKeyDerivationServiceId: String? = nil) -> RequestBuilder<Void> {
+        var path = "/crypto/useDomain/{useDomainId}/rapidRotation"
+        let useDomainIdPreEscape = "\(useDomainId)"
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        var url = URLComponents(string: URLString)
+        url?.queryItems = APIHelper.mapValuesToQueryItems([
+            "optionalNextKeyDerivationServiceId": optionalNextKeyDerivationServiceId
+        ])
+
+        let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Delete a fully expired use domain
      
      - parameter useDomainId: (path)  
      - parameter completion: completion handler to receive the data and the error objects
@@ -209,7 +272,7 @@ open class CryptoConfigAPI {
 
 
     /**
-     Expire a use domain
+     Delete a fully expired use domain
      - DELETE /crypto/useDomain/{useDomainId}
      - API Key:
        - type: apiKey authorization 
@@ -232,6 +295,94 @@ open class CryptoConfigAPI {
         let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
 
         return requestBuilder.init(method: "DELETE", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Update the crypto configuration, ONLY the clientKeyType clientKeyBitlength, and clientKeyTTL fields.
+     
+     - parameter cryptoConfigId: (path)  
+     - parameter updatedCryptoConfig: (body)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func updateCryptoConfig(cryptoConfigId: String, updatedCryptoConfig: CryptoConfig, completion: @escaping ((_ data: CryptoConfig?,_ error: Error?) -> Void)) {
+        updateCryptoConfigWithRequestBuilder(cryptoConfigId: cryptoConfigId, updatedCryptoConfig: updatedCryptoConfig).execute { (response, error) -> Void in
+            completion(response?.body, error)
+        }
+    }
+
+
+    /**
+     Update the crypto configuration, ONLY the clientKeyType clientKeyBitlength, and clientKeyTTL fields.
+     - POST /crypto/config/{cryptoConfigId}
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     - examples: [{contentType=application/json, example={
+  "symmetricKeyUseDomainSelectorScheme" : "moduloIdentifier",
+  "ownerOrgId" : "ownerOrgId",
+  "symmetricKeyUseDomains" : [ {
+    "symmetricKeyRetentionUseTTL" : 5,
+    "creationTime" : 0,
+    "symmetricKeyEncryptionAllowed" : true,
+    "requireSignedKeyDelivery" : true,
+    "digestAlgorithm" : "SHA_256",
+    "symmetricKeyEncryptionUseTTL" : 1,
+    "endableKDSFallbackToCloud" : true,
+    "symmetricKeyDecryptionAllowed" : true,
+    "name" : "name",
+    "symmetricKeyEncryptionAlg" : "CHACHA20_POLY1305",
+    "ownerOrgId" : "ownerOrgId",
+    "id" : "id",
+    "symmetricKeyInceptionTTL" : 6,
+    "symmetricKeyDerivationServiceId" : "symmetricKeyDerivationServiceId",
+    "symmetricKeyDecryptionUseTTL" : 5,
+    "encryptingPackagedCiphertextVersion" : 7,
+    "encryptionKeyIds" : [ "encryptionKeyIds", "encryptionKeyIds" ],
+    "symmetricKeyLength" : 2
+  }, {
+    "symmetricKeyRetentionUseTTL" : 5,
+    "creationTime" : 0,
+    "symmetricKeyEncryptionAllowed" : true,
+    "requireSignedKeyDelivery" : true,
+    "digestAlgorithm" : "SHA_256",
+    "symmetricKeyEncryptionUseTTL" : 1,
+    "endableKDSFallbackToCloud" : true,
+    "symmetricKeyDecryptionAllowed" : true,
+    "name" : "name",
+    "symmetricKeyEncryptionAlg" : "CHACHA20_POLY1305",
+    "ownerOrgId" : "ownerOrgId",
+    "id" : "id",
+    "symmetricKeyInceptionTTL" : 6,
+    "symmetricKeyDerivationServiceId" : "symmetricKeyDerivationServiceId",
+    "symmetricKeyDecryptionUseTTL" : 5,
+    "encryptingPackagedCiphertextVersion" : 7,
+    "encryptionKeyIds" : [ "encryptionKeyIds", "encryptionKeyIds" ],
+    "symmetricKeyLength" : 2
+  } ],
+  "id" : "id",
+  "clientKeyType" : "clientKeyType",
+  "clientKeyTTL" : 3,
+  "clientKeyBitlength" : 9
+}}]
+     
+     - parameter cryptoConfigId: (path)  
+     - parameter updatedCryptoConfig: (body)  
+
+     - returns: RequestBuilder<CryptoConfig> 
+     */
+    open class func updateCryptoConfigWithRequestBuilder(cryptoConfigId: String, updatedCryptoConfig: CryptoConfig) -> RequestBuilder<CryptoConfig> {
+        var path = "/crypto/config/{cryptoConfigId}"
+        let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: updatedCryptoConfig)
+
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<CryptoConfig>.Type = SwaggerClientAPI.requestBuilderFactory.getBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: true)
     }
 
     /**
@@ -328,6 +479,63 @@ open class CryptoConfigAPI {
         let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
 
         return requestBuilder.init(method: "PUT", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
+    }
+
+    /**
+     Chnage expiration of a use domain
+     
+     - parameter useDomainId: (path)  
+     - parameter inceptionTTL: (query)  
+     - parameter encryptionTTL: (query)  
+     - parameter decryptionTTL: (query)  
+     - parameter retentionTTL: (query)  
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func updateExpireUseDomain(useDomainId: String, inceptionTTL: Int, encryptionTTL: Int, decryptionTTL: Int, retentionTTL: Int, completion: @escaping ((_ data: Void?,_ error: Error?) -> Void)) {
+        updateExpireUseDomainWithRequestBuilder(useDomainId: useDomainId, inceptionTTL: inceptionTTL, encryptionTTL: encryptionTTL, decryptionTTL: decryptionTTL, retentionTTL: retentionTTL).execute { (response, error) -> Void in
+            if error == nil {
+                completion((), error)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+
+    /**
+     Chnage expiration of a use domain
+     - POST /crypto/useDomain/{useDomainId}/updateExpire
+     - API Key:
+       - type: apiKey authorization 
+       - name: header
+     
+     - parameter useDomainId: (path)  
+     - parameter inceptionTTL: (query)  
+     - parameter encryptionTTL: (query)  
+     - parameter decryptionTTL: (query)  
+     - parameter retentionTTL: (query)  
+
+     - returns: RequestBuilder<Void> 
+     */
+    open class func updateExpireUseDomainWithRequestBuilder(useDomainId: String, inceptionTTL: Int, encryptionTTL: Int, decryptionTTL: Int, retentionTTL: Int) -> RequestBuilder<Void> {
+        var path = "/crypto/useDomain/{useDomainId}/updateExpire"
+        let useDomainIdPreEscape = "\(useDomainId)"
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
+        let URLString = SwaggerClientAPI.basePath + path
+        let parameters: [String:Any]? = nil
+        
+        var url = URLComponents(string: URLString)
+        url?.queryItems = APIHelper.mapValuesToQueryItems([
+            "inceptionTTL": inceptionTTL.encodeToJSON(), 
+            "encryptionTTL": encryptionTTL.encodeToJSON(), 
+            "decryptionTTL": decryptionTTL.encodeToJSON(), 
+            "retentionTTL": retentionTTL.encodeToJSON()
+        ])
+
+        let requestBuilder: RequestBuilder<Void>.Type = SwaggerClientAPI.requestBuilderFactory.getNonDecodableBuilder()
+
+        return requestBuilder.init(method: "POST", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false)
     }
 
 }

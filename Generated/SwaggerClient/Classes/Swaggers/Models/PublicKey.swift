@@ -16,13 +16,19 @@ public struct PublicKey: Codable {
     public var keyType: String
     public var encoding: String
     public var key: String
+    /** the id of the client that owns this specific public key */
+    public var owningClientId: String?
+    /** the id of the org that owns the client that owns this specific public key */
+    public var owningOrgId: String?
 
-    public init(_id: String, creationTime: Int, keyType: String, encoding: String, key: String) {
+    public init(_id: String, creationTime: Int, keyType: String, encoding: String, key: String, owningClientId: String?, owningOrgId: String?) {
         self._id = _id
         self.creationTime = creationTime
         self.keyType = keyType
         self.encoding = encoding
         self.key = key
+        self.owningClientId = owningClientId
+        self.owningOrgId = owningOrgId
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -31,6 +37,8 @@ public struct PublicKey: Codable {
         case keyType
         case encoding
         case key
+        case owningClientId
+        case owningOrgId
     }
 
 
