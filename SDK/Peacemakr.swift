@@ -337,13 +337,11 @@ public class Peacemakr: PeacemakrProtocol {
             completion((nil, PeacemakrError.keyManagerError))
             return
           }
-          Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey, completion: { (verified) in
-            if !verified {
-              completion((nil, NSError(domain: "Verification failed", code: -108, userInfo: nil)))
-              return
-            }
-            completion((outPlaintext.encryptableData, nil))
-          })
+          if !Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey) {
+            completion((nil, NSError(domain: "Verification failed", code: -108, userInfo: nil)))
+            return
+          }
+          completion((outPlaintext.encryptableData, nil))
         })
       } else {
         completion((outPlaintext.encryptableData, nil))

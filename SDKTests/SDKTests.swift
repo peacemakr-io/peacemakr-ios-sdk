@@ -99,21 +99,28 @@ class SDKTests: XCTestCase {
 
   
   func testEncryptDecrypt() throws {
-    sdk = try Peacemakr(apiKey: getAPIKey())
+    sdk = try? Peacemakr(apiKey: getAPIKey())
     XCTAssertNotNil(sdk)
+    
+    let expectation = self.expectation(description: "Registration successful")
     
     sdk?.register(completion: { error in
       XCTAssertNil(error)
+      expectation.fulfill()
     })
     
-
-    let syncExpectation = self.expectation(description: "Sync successful")
-    sdk!.sync { (err) in
-      XCTAssert(err == nil, err!.localizedDescription)
-      syncExpectation.fulfill()
-    }
-
-    waitForExpectations(timeout: 30, handler: nil)
+    waitForExpectations(timeout: 10, handler: nil)
+    
+    UserDefaults.standard.synchronize()
+    
+    let gotOrgInfoExpectation = self.expectation(description: "Got org info")
+    
+    sdk?.sync(completion: { error in
+      XCTAssertNil(error)
+      gotOrgInfoExpectation.fulfill()
+    })
+    
+    waitForExpectations(timeout: 60, handler: nil)
     
     XCTAssert(sdk!.registrationSuccessful, "Register failed")
     
@@ -123,8 +130,9 @@ class SDKTests: XCTestCase {
     XCTAssert(err == nil, err!.localizedDescription)
     
     self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
-      XCTAssert(dest.error == nil)
-      XCTAssert(dest.data != nil)
+      // TODO: Verification failed? Or unable to get the encryption key?
+      XCTAssert(dest.error == nil, dest.error!.localizedDescription)
+      XCTAssert(dest.data != nil, dest.error!.localizedDescription)
       XCTAssertEqual(dest.data, self.data?.serializedValue)
       decryptExpectation.fulfill()
     })

@@ -42,5 +42,14 @@ class Metadata {
     return clientId
   }
   
+  var pubKeyID: String {
+    guard let pubKeyID: String = Persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
+      Logger.error("failed to get public key Id")
+      return ""
+    }
+    
+    return pubKeyID
+  }
+  
 }
 

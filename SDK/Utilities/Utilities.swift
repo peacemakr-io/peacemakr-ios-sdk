@@ -10,11 +10,11 @@ import Foundation
 import CoreCrypto
 
 class Utilities {
-  class func verifyMessage(plaintext: Plaintext, ciphertext: inout Ciphertext, verifyKey: PeacemakrKey, completion: (@escaping (Bool) -> Void)) {
+  class func verifyMessage(plaintext: Plaintext, ciphertext: inout Ciphertext, verifyKey: PeacemakrKey) -> Bool {
     let verified = UnwrapCall(CryptoContext.verify(senderKey: verifyKey, plaintext: plaintext, ciphertext: &ciphertext), onError: Logger.onError)
     if verified == nil || verified == false {
-      completion(false)
+      return false
     }
-    completion(true)
+    return true
   }
 }

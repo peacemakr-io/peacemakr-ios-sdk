@@ -285,4 +285,6 @@ class KeyManager {
     
     return Persister.storeKey(keyData!, keyID: tag)
   }
+  
+  // TODO: rotateClientKeyIfNeeded
 }
