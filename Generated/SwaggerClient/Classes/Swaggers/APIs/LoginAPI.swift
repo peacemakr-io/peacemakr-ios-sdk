@@ -35,58 +35,35 @@ open class LoginAPI {
     "name" : "name",
     "apiKeys" : [ {
       "creator" : {
-        "addressSecond" : "addressSecond",
-        "zip" : "zip",
-        "country" : "country",
-        "address" : "address",
         "phone" : "phone",
-        "city" : "city",
         "name" : "name",
-        "verified" : true,
-        "state" : "state",
         "email" : "email"
       },
+      "creationTime" : 0,
       "key" : "key",
-      "orgId" : "orgId"
+      "orgId" : "orgId",
+      "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
     }, {
       "creator" : {
-        "addressSecond" : "addressSecond",
-        "zip" : "zip",
-        "country" : "country",
-        "address" : "address",
         "phone" : "phone",
-        "city" : "city",
         "name" : "name",
-        "verified" : true,
-        "state" : "state",
         "email" : "email"
       },
+      "creationTime" : 0,
       "key" : "key",
-      "orgId" : "orgId"
+      "orgId" : "orgId",
+      "authorizedUseDomains" : [ "authorizedUseDomains", "authorizedUseDomains" ]
     } ],
     "id" : "id",
+    "stripeCustomerId" : "stripeCustomerId",
     "clientIds" : [ "clientIds", "clientIds" ],
     "contacts" : [ {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     }, {
-      "addressSecond" : "addressSecond",
-      "zip" : "zip",
-      "country" : "country",
-      "address" : "address",
       "phone" : "phone",
-      "city" : "city",
       "name" : "name",
-      "verified" : true,
-      "state" : "state",
       "email" : "email"
     } ]
   }

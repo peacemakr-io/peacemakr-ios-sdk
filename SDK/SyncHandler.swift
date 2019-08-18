@@ -81,6 +81,16 @@ class SyncHandler {
         completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
       }
       
+      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyType, val: body.clientKeyType) {
+        Logger.error("Failed to store client key type")
+        completion(NSError(domain: "failed to store client key type", code: -38, userInfo: nil))
+      }
+      
+      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyLen, val: body.clientKeyBitlength) {
+        Logger.error("Failed to store client key length")
+        completion(NSError(domain: "failed to store client key length", code: -39, userInfo: nil))
+      }
+      
       Logger.debug("synchronized the crypto config")
       completion(nil)
     }
@@ -115,7 +125,7 @@ class SyncHandler {
       completion(nil)
     }
     
-    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: Metadata.shared.clientId)
+    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: Metadata.shared.pubKeyID)
     requestBuilder.execute({(keys, error) in
       if error != nil {
         Logger.error("failed to get encrypted keys with " + error!.localizedDescription)
@@ -129,7 +139,6 @@ class SyncHandler {
         return
       }
       
-      
       // Now iterate over the keys in the message
       for key in body {
         // Get the serialized ciphertext
@@ -142,40 +151,53 @@ class SyncHandler {
           return
         }
         
-        guard let deserializedCfg = UnwrapCall(CryptoContext.deserialize(serialized), onError: Logger.onError) else {
-          Logger.error("Unable to deserialize key package ciphertext")
-          completion(NSError(domain: "Unable to deserialize the key package", code: -12, userInfo: nil))
-          return
-        }
-        var (deserialized, _) = deserializedCfg
-        
-        // Decrypt the key
-        guard let decryptResult = UnwrapCall(CryptoContext.decrypt(recipientKey: myPrivKey, ciphertext: deserialized), onError: Logger.onError) else {
-          Logger.error("Unable to decrypt key package ciphertext")
-          completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
-          return
-        }
-        
-        let (keyPlaintext, needVerify) = decryptResult
-        
-        if needVerify {
-          KeyManager.getPublicKeyByID(keyID: storedKeyIDs.1, completion: { (pKey) in
-            if pKey == nil {
-              Logger.error("Public key: " + storedKeyIDs.signKeyID + " could not be gotten")
-              completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
+        // Get the verification key
+        KeyManager.getPublicKeyByID(keyID: storedKeyIDs.1, completion: { (pKey) in
+          if pKey == nil {
+            Logger.error("Public key: " + storedKeyIDs.signKeyID + " could not be gotten")
+            completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))
+            return
+          }
+          
+          guard let deserializedCfg = UnwrapCall(CryptoContext.deserialize(serialized), onError: Logger.onError) else {
+            Logger.error("Unable to deserialize key package ciphertext")
+            completion(NSError(domain: "Unable to deserialize the key package", code: -12, userInfo: nil))
+            return
+          }
+          var (deserialized, _) = deserializedCfg
+          
+          // If ECDH then do the keygen
+          var decryptKey: PeacemakrKey
+          if myPrivKey.getConfig().asymmCipher.rawValue >= AsymmetricCipher.ECDH_P256.rawValue {
+            guard let ecdhKey = PeacemakrKey(symmCipher: deserializedCfg.1.symmCipher, myKey: myPrivKey, peerKey: pKey!) else {
+              Logger.error("Unable to perform ECDH Keygen")
+              completion(NSError(domain: "Unable to perform ECDH Keygen", code: -12, userInfo: nil))
               return
             }
-            Utilities.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!, completion: {(verified) in
-              if verified {
+            decryptKey = ecdhKey
+          } else {
+            decryptKey = myPrivKey
+          }
+          
+          // Decrypt the key
+          guard let decryptResult = UnwrapCall(CryptoContext.decrypt(key: decryptKey, ciphertext: deserialized), onError: Logger.onError) else {
+            Logger.error("Unable to decrypt key package ciphertext")
+            completion(NSError(domain: "Unable to decrypt the key package", code: -13, userInfo: nil))
+            return
+          }
+          
+          let (keyPlaintext, needVerify) = decryptResult
+          
+          if needVerify {
+            if Utilities.verifyMessage(plaintext: keyPlaintext, ciphertext: &deserialized, verifyKey: pKey!) {
                 finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
-              } else {
-                completion(NSError(domain: "Unable to verify message", code: -20, userInfo: nil))
-              }
-            })
-          })
-        } else {
-          finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
-        }
+            } else {
+              completion(NSError(domain: "Unable to verify message", code: -20, userInfo: nil))
+            }
+          } else {
+            finishKeyStorage(keyPlaintext, key.keyLength, key.keyIds)
+          }
+        })
       }
     })
   }
