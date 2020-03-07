@@ -16,6 +16,7 @@ class KeyManager {
     case serializationError
     case keygenError
     case saveError
+    case loadError
 
     var localizedDescription: String {
       switch self {
@@ -25,7 +26,8 @@ class KeyManager {
         return "keygen failed"
       case .saveError:
         return "failed to save"
-
+      case .loadError:
+        return "failed to load"
       }
     }
   }
@@ -65,7 +67,6 @@ class KeyManager {
       throw KeyManagerError.keygenError
     }
     return keyPair
-
   }
 
   // Generate and Store keypair
@@ -81,6 +82,12 @@ class KeyManager {
     // Store public key
     guard let pub = UnwrapCall(newKeyPair.toPem(isPriv: false), onError: Logger.onError),
           Persister.storeKey(pub, keyID: Constants.pubTag) else {
+      throw KeyManagerError.saveError
+    }
+
+    // Store key creation time in Unix time
+    let success = Persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: Date().timeIntervalSince1970)
+    if !success {
       throw KeyManagerError.saveError
     }
 
@@ -171,7 +178,7 @@ class KeyManager {
     }
 
     // Use the string, if it's empty then just use the first one
-    guard let encodedUseDomains: Data = Persister.getData(Constants.dataPrefix + "UseDomains") else {
+    guard let encodedUseDomains: Data = Persister.getData(Constants.dataPrefix + Constants.useDomains) else {
       Logger.error("Persisted use domains were nil")
       return nil
     }
@@ -298,5 +305,124 @@ class KeyManager {
     return Persister.storeKey(keyData!, keyID: tag)
   }
 
-  // TODO: rotateClientKeyIfNeeded
+  class func rotateClientKeyIfNeeded(rand: RandomDevice, completion: (@escaping (Error?) -> Void)) {
+    guard let myPub = getMyKey(priv: false) else {
+      Logger.error("unable to get my public key")
+      completion(KeyManagerError.loadError)
+      return
+    }
+    let config = myPub.getConfig()
+
+    guard let keyType: String = Persister.getData(Constants.dataPrefix + Constants.clientKeyType),
+          let keyLen: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
+      completion(KeyManagerError.loadError)
+      return
+    }
+    let cryptoConfigCipher = parseIntoCipher(keyType: keyType, keyLen: keyLen)
+
+    guard let keyCreationTime: TimeInterval = Persister.getData(Constants.dataPrefix + Constants.keyCreationTime) else {
+      completion(KeyManagerError.loadError)
+      return
+    }
+
+    guard let keyTTL: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyTTL) else {
+      completion(KeyManagerError.loadError)
+      return
+    }
+
+    // TimeInterval is always in seconds: https://developer.apple.com/documentation/foundation/timeinterval
+    let isStale = Int(Date().timeIntervalSince1970 - keyCreationTime) > keyTTL
+
+    if !isStale && cryptoConfigCipher == config.asymmCipher {
+      // No error, but bail early cause no rotation needed
+      completion(nil)
+      return
+    }
+    Logger.debug("Rotating stale asymmetric keys")
+
+    // Might have to roll back changes
+    guard let prevPriv = getMyKey(priv: true) else {
+      completion(KeyManagerError.loadError)
+      return
+    }
+    let prevCreationTime = keyCreationTime
+
+    let rollback: (Error) -> Error = { (outerError) in
+      // Store private key
+      guard let priv = UnwrapCall(prevPriv.toPem(isPriv: true), onError: Logger.onError),
+            Persister.storeKey(priv, keyID: Constants.privTag) else {
+        Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
+        return KeyManagerError.saveError
+
+      }
+
+      // Store public key
+      guard let pub = UnwrapCall(prevPriv.toPem(isPriv: false), onError: Logger.onError),
+            Persister.storeKey(pub, keyID: Constants.pubTag) else {
+        Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
+        return KeyManagerError.saveError
+
+      }
+
+      // Store key creation time in Unix time
+      let success = Persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: prevCreationTime)
+      if !success {
+        Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
+        return KeyManagerError.saveError
+
+      }
+
+      return outerError
+    }
+
+    // Do the rotation
+    guard let orgID: String = Persister.getData(Constants.dataPrefix + Constants.orgID) else {
+      completion(rollback(KeyManagerError.loadError))
+      return
+    }
+
+    do {
+      let keyPair = try createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen)
+      let pubKeyToSend = PublicKey(
+          _id: Metadata.shared.pubKeyID,
+          creationTime: Int(Date().timeIntervalSince1970),
+          keyType: keyType,
+          encoding: "pem", 
+          key: keyPair.pub.toString(),
+          owningClientId: Metadata.shared.clientId,
+          owningOrgId: orgID)
+      let registerClient = Client(
+          _id: Metadata.shared.clientId,
+          sdk: Metadata.shared.version,
+          preferredPublicKeyId: Metadata.shared.pubKeyID,
+          publicKeys: [pubKeyToSend])
+      let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
+
+      requestBuilder.execute({ (resp, error) in
+        Logger.info("registration request completed")
+        if error != nil {
+          Logger.error("addClient failed with " + error.debugDescription)
+          completion(rollback(error!))
+        }
+
+        guard let response = resp, let body = response.body else {
+          Logger.error("server error: response body was nil")
+          completion(rollback(NSError(domain: "response body was nil", code: -1, userInfo: nil)))
+          return
+        }
+
+        // Store the new publicKeyID
+        guard Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
+          Logger.error("failed to store key pair")
+          completion(rollback(NSError(domain: "could not store metadata", code: -2, userInfo: nil)))
+          return
+        }
+
+        Logger.debug("Rotated client asymmetric keypair")
+        completion(nil)
+      })
+    } catch {
+      completion(rollback(error))
+    }
+  }
 }
