@@ -211,7 +211,7 @@ open class OrgAPI {
     open class func deleteAPIKeyFromOrgWithRequestBuilder(apikey: String) -> RequestBuilder<Void> {
         var path = "/org/key/{apikey}"
         let apikeyPreEscape = "\(apikey)"
-        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{apikey}", with: apikeyPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -254,7 +254,7 @@ open class OrgAPI {
     open class func deleteAdminFromOrgWithRequestBuilder(email: String) -> RequestBuilder<Void> {
         var path = "/org/admin/{email}"
         let emailPreEscape = "\(email)"
-        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let emailPostEscape = emailPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{email}", with: emailPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -297,7 +297,7 @@ open class OrgAPI {
     open class func deleteOrganizationWithRequestBuilder(orgId: String) -> RequestBuilder<Void> {
         var path = "/org/{orgId}"
         let orgIdPreEscape = "\(orgId)"
-        let orgIdPostEscape = orgIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let orgIdPostEscape = orgIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{orgId}", with: orgIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -417,7 +417,7 @@ open class OrgAPI {
     open class func getOrganizationWithRequestBuilder(orgId: String) -> RequestBuilder<Organization> {
         var path = "/org/{orgId}"
         let orgIdPreEscape = "\(orgId)"
-        let orgIdPostEscape = orgIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let orgIdPostEscape = orgIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{orgId}", with: orgIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -493,7 +493,7 @@ open class OrgAPI {
     open class func getOrganizationFromAPIKeyWithRequestBuilder(apikey: String) -> RequestBuilder<Organization> {
         var path = "/org/key/{apikey}"
         let apikeyPreEscape = "\(apikey)"
-        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{apikey}", with: apikeyPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

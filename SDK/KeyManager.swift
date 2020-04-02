@@ -114,7 +114,9 @@ class KeyManager {
 
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
   class func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
-
+    
+    
+    
     guard let keyIDandCfg = KeyManager.selectKey(useDomainID: useDomainID) else {
       Logger.error("failed to select a key")
       return nil
@@ -184,11 +186,10 @@ class KeyManager {
     }
 
     guard let useDomains = try? JSONDecoder().decode([SymmetricKeyUseDomain].self, from: encodedUseDomains) else {
-      Logger.error("failed to encode useDomains")
+      Logger.error("failed to decode useDomains")
       return nil
     }
 
-    // var useDomainToUse = SymmetricKeyUseDomain()
     var useDomainToUse = useDomains.randomElement()
 
     useDomains.forEach { domain in
@@ -260,12 +261,12 @@ class KeyManager {
         Logger.error("failed request public key: " + error!.localizedDescription)
         return completion(nil)
       }
-
+      
       if let keyStr = key?.body?.key {
         if !Persister.storeData(Constants.dataPrefix + keyID, val: keyStr) {
           Logger.error("failed to store key with ID: \(keyID)")
         }
-
+        
         return completion(PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyStr, isPriv: false))
       } else {
         Logger.error("server error")
@@ -301,7 +302,6 @@ class KeyManager {
     key.withUnsafeBufferPointer { buf -> Void in
       keyData = Data(buffer: buf)
     }
-
     return Persister.storeKey(keyData!, keyID: tag)
   }
 

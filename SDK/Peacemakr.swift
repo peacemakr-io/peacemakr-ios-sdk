@@ -114,6 +114,7 @@ public class Peacemakr: PeacemakrProtocol {
       if err != nil {
         completion(err)
       }
+      completion(nil)
     })
   }
 
@@ -354,12 +355,13 @@ public class Peacemakr: PeacemakrProtocol {
           return
         }
 
+    
         KeyManager.getPublicKeyByID(keyID: keyIDs.signKeyID, completion: { (verifyKey) in
-          guard let verifyKey = key else {
+          guard let key = verifyKey else {
             completion((nil, PeacemakrError.keyManagerError))
             return
           }
-          if !Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: verifyKey) {
+          if !Utilities.verifyMessage(plaintext: outPlaintext, ciphertext: &deserialized, verifyKey: key) {
             completion((nil, PeacemakrError.verificationError))
             return
           }
