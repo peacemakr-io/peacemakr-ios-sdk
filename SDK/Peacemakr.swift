@@ -292,17 +292,15 @@ public class Peacemakr: PeacemakrProtocol {
   public func encrypt(plaintext: Data) -> Peacemakr.PeacemakrDataResult {
     return encrypt(plaintext)
   }
-
-  public func encrypt(in domain: String, plaintext: Data) -> Peacemakr.PeacemakrDataResult {
-    return encrypt(plaintext, useDomainID: domain)
+  
+  public func encrypt(in domain: String, plaintext: Data)  -> Peacemakr.PeacemakrDataResult {
+    return encrypt(plaintext, useDomainName: domain)
   }
-
-  private func encrypt(_ rawMessageData: Data, useDomainID: String? = nil) -> (data: Data?, error: Error?) {
-
-    let useDomainToUse = (useDomainID ?? "")
-    guard let aadAndKey = self.keyManager.getEncryptionKey(useDomainID: useDomainToUse),
-          let aadData = aadAndKey.aad.data(using: .utf8) else {
-      return (nil, PeacemakrError.keyManagerError)
+  
+  private func encrypt(_ rawMessageData: Data, useDomainName: String? = nil) -> (data: Data?, error: Error?) {
+    guard let aadAndKey = self.keyManager.getEncryptionKey(useDomainName: useDomainName ?? ""),
+    let aadData = aadAndKey.aad.data(using: .utf8) else {
+      return (nil, NSError(domain: "Unable to get the encryption key", code: -101, userInfo: nil))
     }
     let p = Plaintext(data: rawMessageData, aad: aadData)
 
