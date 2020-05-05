@@ -44,10 +44,10 @@ open class CryptoConfigAPI {
     open class func addExistingUseDomainWithRequestBuilder(cryptoConfigId: String, useDomainId: String) -> RequestBuilder<Void> {
         var path = "/crypto/config/{cryptoConfigId}/useDomain/{useDomainId}"
         let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
-        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
         let useDomainIdPreEscape = "\(useDomainId)"
-        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -108,7 +108,7 @@ open class CryptoConfigAPI {
     open class func addUseDomainWithRequestBuilder(cryptoConfigId: String, newUseDomain: SymmetricKeyUseDomain) -> RequestBuilder<SymmetricKeyUseDomain> {
         var path = "/crypto/config/{cryptoConfigId}/useDomain"
         let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
-        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: newUseDomain)
@@ -239,7 +239,7 @@ open class CryptoConfigAPI {
     open class func rapidRotationUseDomainWithRequestBuilder(useDomainId: String, optionalNextKeyDerivationServiceId: String? = nil) -> RequestBuilder<Void> {
         var path = "/crypto/useDomain/{useDomainId}/rapidRotation"
         let useDomainIdPreEscape = "\(useDomainId)"
-        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -285,7 +285,7 @@ open class CryptoConfigAPI {
     open class func removeUseDomainWithRequestBuilder(useDomainId: String) -> RequestBuilder<Void> {
         var path = "/crypto/useDomain/{useDomainId}"
         let useDomainIdPreEscape = "\(useDomainId)"
-        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -373,7 +373,7 @@ open class CryptoConfigAPI {
     open class func updateCryptoConfigWithRequestBuilder(cryptoConfigId: String, updatedCryptoConfig: CryptoConfig) -> RequestBuilder<CryptoConfig> {
         var path = "/crypto/config/{cryptoConfigId}"
         let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
-        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: updatedCryptoConfig)
@@ -418,7 +418,7 @@ open class CryptoConfigAPI {
     open class func updateCryptoConfigFallbackToCloudWithRequestBuilder(useDomainId: String, fallbackToCloud: Bool) -> RequestBuilder<Void> {
         var path = "/crypto/useDomain/{useDomainId}/enableKDSFallbackToCloud"
         let useDomainIdPreEscape = "\(useDomainId)"
-        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -466,7 +466,7 @@ open class CryptoConfigAPI {
     open class func updateCryptoConfigSelectorSchemeWithRequestBuilder(cryptoConfigId: String, newSelectorScheme: String) -> RequestBuilder<Void> {
         var path = "/crypto/config/{cryptoConfigId}/domainSelectorScheme"
         let cryptoConfigIdPreEscape = "\(cryptoConfigId)"
-        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let cryptoConfigIdPostEscape = cryptoConfigIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{cryptoConfigId}", with: cryptoConfigIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -520,7 +520,7 @@ open class CryptoConfigAPI {
     open class func updateExpireUseDomainWithRequestBuilder(useDomainId: String, inceptionTTL: Int, encryptionTTL: Int, decryptionTTL: Int, retentionTTL: Int) -> RequestBuilder<Void> {
         var path = "/crypto/useDomain/{useDomainId}/updateExpire"
         let useDomainIdPreEscape = "\(useDomainId)"
-        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let useDomainIdPostEscape = useDomainIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{useDomainId}", with: useDomainIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

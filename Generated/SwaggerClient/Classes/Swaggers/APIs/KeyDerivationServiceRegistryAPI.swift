@@ -88,7 +88,7 @@ open class KeyDerivationServiceRegistryAPI {
     open class func deleteKeyDerivationServiceInstanceWithRequestBuilder(keyDerivationInstanceId: String, active: String) -> RequestBuilder<Void> {
         var path = "/crypto/deriver/instance/{keyDerivationInstanceId}"
         let keyDerivationInstanceIdPreEscape = "\(keyDerivationInstanceId)"
-        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{keyDerivationInstanceId}", with: keyDerivationInstanceIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -234,7 +234,7 @@ open class KeyDerivationServiceRegistryAPI {
     open class func getKeyDerivationServiceInstanceWithRequestBuilder(keyDerivationInstanceId: String) -> RequestBuilder<KeyDerivationInstance> {
         var path = "/crypto/deriver/instance/{keyDerivationInstanceId}"
         let keyDerivationInstanceIdPreEscape = "\(keyDerivationInstanceId)"
-        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{keyDerivationInstanceId}", with: keyDerivationInstanceIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -294,7 +294,7 @@ open class KeyDerivationServiceRegistryAPI {
     open class func heartbeatKeyDerivationServiceInstanceWithRequestBuilder(keyDerivationInstanceId: String) -> RequestBuilder<HeatbeatResponse> {
         var path = "/crypto/deriver/instance/{keyDerivationInstanceId}/heartbeat"
         let keyDerivationInstanceIdPreEscape = "\(keyDerivationInstanceId)"
-        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let keyDerivationInstanceIdPostEscape = keyDerivationInstanceIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{keyDerivationInstanceId}", with: keyDerivationInstanceIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

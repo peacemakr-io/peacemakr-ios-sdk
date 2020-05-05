@@ -107,7 +107,7 @@ open class ClientAPI {
     open class func addClientPublicKeyWithRequestBuilder(clientId: String, newPublicKey: PublicKey) -> RequestBuilder<PublicKey> {
         var path = "/client/{clientId}/addPublicKey"
         let clientIdPreEscape = "\(clientId)"
-        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{clientId}", with: clientIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: newPublicKey)
@@ -168,7 +168,7 @@ open class ClientAPI {
     open class func deleteClientWithRequestBuilder(clientId: String) -> RequestBuilder<Client> {
         var path = "/client/{clientId}"
         let clientIdPreEscape = "\(clientId)"
-        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{clientId}", with: clientIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -229,7 +229,7 @@ open class ClientAPI {
     open class func getClientWithRequestBuilder(clientId: String) -> RequestBuilder<Client> {
         var path = "/client/{clientId}"
         let clientIdPreEscape = "\(clientId)"
-        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let clientIdPostEscape = clientIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{clientId}", with: clientIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil

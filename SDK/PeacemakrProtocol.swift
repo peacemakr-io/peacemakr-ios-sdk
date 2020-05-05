@@ -13,7 +13,6 @@ public protocol PeacemakrProtocol {
   
   /// Completion Handlers
   typealias ErrorHandler = (Error?) -> Void
-  typealias PeacemakrStrResult = (data: String?, error: Error?)
   typealias PeacemakrDataResult = (data: Data?, error: Error?)
   
   
@@ -49,11 +48,7 @@ public protocol PeacemakrProtocol {
          - in: domain ID
    - Returns: a b64 encoded ciphertext blob on success, else returns a non-nil error.
    */
-  func encrypt(plaintext: String) -> PeacemakrStrResult
-  
   func encrypt(plaintext: Data) -> PeacemakrDataResult
-  
-  func encrypt(in domain: String, plaintext: String) -> PeacemakrStrResult
   
   func encrypt(in domain: String, plaintext: Data) -> PeacemakrDataResult
   
@@ -66,8 +61,6 @@ public protocol PeacemakrProtocol {
   ///     - dest: Encryptable type
   ///     - completion: Encryptable
   /// - Returns: closure Encryptable
-  func decrypt(ciphertext: String, completion: (@escaping (PeacemakrStrResult) -> Void))
-  
   func decrypt(ciphertext: Data, completion: (@escaping (PeacemakrDataResult) -> Void))
   
   /// MARK: - Utilities

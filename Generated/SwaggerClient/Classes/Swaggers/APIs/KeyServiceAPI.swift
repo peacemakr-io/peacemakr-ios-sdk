@@ -102,7 +102,7 @@ open class KeyServiceAPI {
     open class func getPublicKeyWithRequestBuilder(keyID: String) -> RequestBuilder<PublicKey> {
         var path = "/crypto/asymmetric/{keyID}"
         let keyIDPreEscape = "\(keyID)"
-        let keyIDPostEscape = keyIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let keyIDPostEscape = keyIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{keyID}", with: keyIDPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters: [String:Any]? = nil
@@ -147,7 +147,7 @@ open class KeyServiceAPI {
     open class func postNewEncryptedKeysWithRequestBuilder(encryptingKeyId: String, encryptedSymmetricKey: [EncryptedSymmetricKey]) -> RequestBuilder<Void> {
         var path = "/crypto/symmetric/{encryptingKeyId}"
         let encryptingKeyIdPreEscape = "\(encryptingKeyId)"
-        let encryptingKeyIdPostEscape = encryptingKeyIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        let encryptingKeyIdPostEscape = encryptingKeyIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         path = path.replacingOccurrences(of: "{encryptingKeyId}", with: encryptingKeyIdPostEscape, options: .literal, range: nil)
         let URLString = SwaggerClientAPI.basePath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: encryptedSymmetricKey)

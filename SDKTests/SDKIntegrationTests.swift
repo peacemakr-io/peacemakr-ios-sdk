@@ -1,19 +1,15 @@
 //
-//  SDKTests.swift
-//  SDKTests
+//  SDKIntegrationTests.swift
+//  Peacemakr-iOS
 //
-//  Created by Aman LaChapelle on 11/4/18.
-//  Copyright © 2018 Peacemakr. All rights reserved.
+//  Created by Daniel Huang on 4/2/20.
+//  Copyright © 2020 Peacemakr. All rights reserved.
 //
 
 import XCTest
 @testable import Peacemakr
 
-func log(_ s: String) -> Void {
-  print(s)
-}
-
-class SDKTests: XCTestCase {
+class SDKIntegrationTests: XCTestCase {
   var sdk: Peacemakr? = nil
   var data: AppData? = nil
 
@@ -31,9 +27,29 @@ class SDKTests: XCTestCase {
     super.tearDown()
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
+  
+  func getAPIKey() -> String{
+    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    let gotAPIKey = self.expectation(description: "Got API Key for test org")
+  
+    var key: String = ""
+    OrgAPI.getTestOrganizationAPIKey { (k, err) in
+      if err != nil {
+        XCTAssert(false, "error")
+      }
+      
+      key = k?.key ?? ""
+      print("Test Org API Key: ", key)
+      gotAPIKey.fulfill()
+    }
+    
+    waitForExpectations(timeout: 5, handler: nil)
+    
+    return key
+  }
 
   func testRegister() {
-    sdk = try? Peacemakr(apiKey: "")
+    sdk = try? Peacemakr(apiKey: getAPIKey())
 
     XCTAssertNotNil(sdk)
 
@@ -50,7 +66,7 @@ class SDKTests: XCTestCase {
   }
 
   func testSync() {
-    sdk = try? Peacemakr(apiKey: "")
+    sdk = try? Peacemakr(apiKey: getAPIKey())
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -77,7 +93,8 @@ class SDKTests: XCTestCase {
 
 
   func testEncryptDecrypt() throws {
-    sdk = try? Peacemakr(apiKey: "")
+    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    sdk = try? Peacemakr(apiKey: getAPIKey())
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -113,7 +130,6 @@ class SDKTests: XCTestCase {
       XCTAssertEqual(dest.data, self.data?.serializedValue)
       decryptExpectation.fulfill()
     })
-
 
     waitForExpectations(timeout: 10, handler: nil)
   }

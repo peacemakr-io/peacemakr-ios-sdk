@@ -50,9 +50,9 @@
 			<key>localhost:8080/api/v1</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
+				<false/>
 				<key>NSExceptionRequiresForwardSecrecy</key>
-				<true/>
+				<false/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
