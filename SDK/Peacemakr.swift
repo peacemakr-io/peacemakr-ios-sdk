@@ -30,12 +30,14 @@ public class Peacemakr: PeacemakrProtocol {
     case deserializationError
     case decryptionError
     case verificationError
+    case apiKeyRequiredInProduction
+    case apiKeyProhibitedInStaging
 
 
     var localizedDescription: String {
       switch self {
       case .initializationError:
-        return "failed to initialize Peacemakr SDK"
+        return "failed to initialize core-crypto libraries"
       case .registrationError:
         return "failed to register to Peacemakr"
       case .keyManagerError:
@@ -60,6 +62,10 @@ public class Peacemakr: PeacemakrProtocol {
         return "decryption failed"
       case .verificationError:
         return "verification failed"
+      case .apiKeyRequiredInProduction:
+        return "an apikey is required in production configurations"
+      case .apiKeyProhibitedInStaging:
+      return "an apikey may not be used in staging configurations"
       }
     }
   }
@@ -76,22 +82,37 @@ public class Peacemakr: PeacemakrProtocol {
   /// MARK: - Properties
 
   private let apiKey: String
+  
+  private let url: String
+  
+  private let testingMode: Bool
 
   /// MARK: - Initializers
 
-  required public init(apiKey: String) throws {
+  required public init(apiKey: String, url: String, testingMode: Bool = False) throws {
 
     if !CryptoContext.setup() {
       throw PeacemakrError.initializationError
     }
 
     self.apiKey = apiKey
+    if apiKey.isEmpty && testingMode == False {
+      completion(PeacemakrError.apiKeyRequiredInProduction)
+    }
+    
+    if !apiKey.isEmpty && testingMode == True {
+      completion(PeacemakrError.apiKeyProhibitedInStaging)
+    }
 
     self.rand = PeacemakrRandomDevice()
+    
+    if url.isEmpty {
+      // The default URL should point to prod.
+      url = "https://api.peacemakr.io"
+    }
 
     // TODO: move to configuration file
-//    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
-    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    SwaggerClientAPI.basePath = url + "/api/v1"
     SwaggerClientAPI.customHeaders = ["Authorization": self.apiKey]
   }
 
