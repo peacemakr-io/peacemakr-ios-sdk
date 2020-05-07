@@ -63,9 +63,9 @@ public class Peacemakr: PeacemakrProtocol {
       case .verificationError:
         return "verification failed"
       case .apiKeyRequiredInProduction:
-        return "an apikey is required in production configurations"
+        return "an apikey is required in production mode"
       case .apiKeyProhibitedInStaging:
-      return "an apikey may not be used in staging configurations"
+      return "an apikey may not be used in testing mode"
       }
     }
   }
@@ -86,6 +86,8 @@ public class Peacemakr: PeacemakrProtocol {
   private let url: String
   
   private let testingMode: Bool
+  
+  private let keyManager: KeyManager
 
   /// MARK: - Initializers
 
@@ -103,6 +105,9 @@ public class Peacemakr: PeacemakrProtocol {
     if !apiKey.isEmpty && testingMode == True {
       completion(PeacemakrError.apiKeyProhibitedInStaging)
     }
+    
+    self.testingMode = testingMode
+    self.KeyManager.testingMode = testingMode
 
     self.rand = PeacemakrRandomDevice()
     
@@ -140,7 +145,7 @@ public class Peacemakr: PeacemakrProtocol {
   }
 
   public func register(completion: (@escaping ErrorHandler)) {
-    if (self.apiKey.isEmpty) {
+    if (self.testingMode) {
       Logger.error("Using local-only testing mode!")
       let _ = Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: "my-client-id")
       let _ = Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: "my-pub-key-id")
@@ -228,7 +233,7 @@ public class Peacemakr: PeacemakrProtocol {
   /// MARK: - Sync
 
   public func sync(completion: (@escaping ErrorHandler)) -> Void {
-    if (self.apiKey.isEmpty) {
+    if (self.testingMode) {
       Logger.error("No sync ocurred, using local-only testing mode!")
       completion(nil)
       return
@@ -289,7 +294,7 @@ public class Peacemakr: PeacemakrProtocol {
 
   private func encrypt(_ rawMessageData: Data, useDomainID: String? = nil) -> (data: Data?, error: Error?) {
 
-    let useDomainToUse = self.apiKey.isEmpty ? "my-local-use-domain-id" : (useDomainID ?? "")
+    let useDomainToUse = (useDomainID ?? "")
     guard let aadAndKey = KeyManager.getEncryptionKey(useDomainID: useDomainToUse),
           let aadData = aadAndKey.aad.data(using: .utf8) else {
       return (nil, PeacemakrError.keyManagerError)
@@ -371,7 +376,7 @@ public class Peacemakr: PeacemakrProtocol {
       // And verify (which is another callback)
       if needsVerify {
         // Quick escape if we're testing locally
-        if (keyIDs.signKeyID == "my-pub-key-id" && self.apiKey.isEmpty) {
+        if (keyIDs.signKeyID == "my-pub-key-id" && self.testingMode) {
           completion((outPlaintext.encryptableData, nil))
           return
         }

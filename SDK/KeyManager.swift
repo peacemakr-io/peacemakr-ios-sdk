@@ -34,6 +34,15 @@ class KeyManager {
 
   static let defaultSymmetricCipher = SymmetricCipher.CHACHA20_POLY1305
 
+  static let testingMode: Bool
+
+  /// MARK: - Initializers
+
+  required public init(testingMode: Bool = False) throws {
+    self.testingMode = testingMode
+  }
+
+  
   /// MARK: - Generate New Key Pair
 
   private class func parseIntoCipher(keyType: String, keyLen: Int) -> AsymmetricCipher {
@@ -171,7 +180,7 @@ class KeyManager {
   }
 
   class func selectKey(useDomainID: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
-    if useDomainID == "my-local-use-domain-id" {
+    if self.testingMode {
       return ("my-key-id", CoreCrypto.CryptoConfig(
           mode: CoreCrypto.EncryptionMode.SYMMETRIC,
           symm_cipher: CoreCrypto.SymmetricCipher.CHACHA20_POLY1305,
