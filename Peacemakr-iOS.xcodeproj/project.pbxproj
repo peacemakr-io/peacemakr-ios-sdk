@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0701548121FCF5C100172F8D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; };
-		0701548321FCF5D700172F8D /* Alamofire.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		0701548421FCF80500172F8D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; };
-		0701548721FCF89900172F8D /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548221FCF5D700172F8D /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0710E2862202CB4A00CDD72A /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2662202CB4A00CDD72A /* APIHelper.swift */; };
 		0710E2872202CB4A00CDD72A /* AlamofireImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */; };
 		0710E2882202CB4A00CDD72A /* LoginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0710E2692202CB4A00CDD72A /* LoginAPI.swift */; };
@@ -47,8 +43,9 @@
 		071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722E8218F9996005E2CA5 /* RandomDevice.swift */; };
 		071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722EA218FA301005E2CA5 /* Encryptable.swift */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
-		079A39022410D3F9004D0EF8 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079A39012410D3E9004D0EF8 /* CoreCrypto.framework */; };
-		079A39062410D489004D0EF8 /* CoreCrypto.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 079A39012410D3E9004D0EF8 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		075DBCAF246504A600981567 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 075DBCAE246504A600981567 /* CoreCrypto.framework */; };
+		075DBCB0246504AF00981567 /* CoreCrypto.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 075DBCAE246504A600981567 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		075DBCB1246504D300981567 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; };
 		079A39072410D4AB004D0EF8 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079A39012410D3E9004D0EF8 /* CoreCrypto.framework */; };
 		07E235052201586000192E3C /* Persister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235042201586000192E3C /* Persister.swift */; };
 		07E23508220165E100192E3C /* PersisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235062201653D00192E3C /* PersisterTests.swift */; };
@@ -57,9 +54,6 @@
 		07FBFF3E21E0045900D9D0C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3C21E0045900D9D0C6 /* Main.storyboard */; };
 		07FBFF4021E0045A00D9D0C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3F21E0045A00D9D0C6 /* Assets.xcassets */; };
 		07FBFF4321E0045A00D9D0C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF4121E0045A00D9D0C6 /* LaunchScreen.storyboard */; };
-		8EF3413F24367C2D005E7AF4 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF3413E24367C2D005E7AF4 /* CoreCrypto.framework */; };
-		8EF3414024367C2D005E7AF4 /* CoreCrypto.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF3413E24367C2D005E7AF4 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8EF3414124367C33005E7AF4 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF3413E24367C2D005E7AF4 /* CoreCrypto.framework */; };
 		8EF3414424368D5C005E7AF4 /* SDKIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF3414224368C73005E7AF4 /* SDKIntegrationTests.swift */; };
 		BD1132E922908E2700E04E93 /* PeacemakrProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */; };
 		BD1132ED2290924300E04E93 /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1132EC2290924300E04E93 /* Metadata.swift */; };
@@ -109,8 +103,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0701548321FCF5D700172F8D /* Alamofire.framework in CopyFiles */,
-				079A39062410D489004D0EF8 /* CoreCrypto.framework in CopyFiles */,
+				075DBCB0246504AF00981567 /* CoreCrypto.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +113,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8EF3414024367C2D005E7AF4 /* CoreCrypto.framework in Embed Frameworks */,
-				0701548721FCF89900172F8D /* Alamofire.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -130,7 +121,6 @@
 
 /* Begin PBXFileReference section */
 		0701548021FCF5C100172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
-		0701548221FCF5D700172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		0710E2662202CB4A00CDD72A /* APIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
 		0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireImplementations.swift; sourceTree = "<group>"; };
 		0710E2692202CB4A00CDD72A /* LoginAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
@@ -170,6 +160,7 @@
 		071722E8218F9996005E2CA5 /* RandomDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDevice.swift; sourceTree = "<group>"; };
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
+		075DBCAE246504A600981567 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreCrypto.framework; path = Frameworks/CoreCrypto.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 		07E235042201586000192E3C /* Persister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persister.swift; sourceTree = "<group>"; };
 		07E235062201653D00192E3C /* PersisterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersisterTests.swift; sourceTree = "<group>"; };
@@ -182,7 +173,6 @@
 		07FBFF4421E0045A00D9D0C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		07FBFF4821E0046300D9D0C6 /* SDKTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDKTestHost.entitlements; sourceTree = "<group>"; };
 		2DBD50D0B4B2FA5CAD781738 /* CoreCrypto.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CoreCrypto.xcodeproj; path = "../peacemakr-core-crypto/src/ffi/swift/CoreCrypto/CoreCrypto.xcodeproj"; sourceTree = "<group>"; };
-		8EF3413E24367C2D005E7AF4 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreCrypto.framework; sourceTree = "<group>"; };
 		8EF3414224368C73005E7AF4 /* SDKIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKIntegrationTests.swift; sourceTree = "<group>"; };
 		BD1132E822908E2700E04E93 /* PeacemakrProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeacemakrProtocol.swift; sourceTree = "<group>"; };
 		BD1132EC2290924300E04E93 /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
@@ -199,9 +189,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8EF3414124367C33005E7AF4 /* CoreCrypto.framework in Frameworks */,
-				079A39022410D3F9004D0EF8 /* CoreCrypto.framework in Frameworks */,
-				0701548121FCF5C100172F8D /* Alamofire.framework in Frameworks */,
+				075DBCAF246504A600981567 /* CoreCrypto.framework in Frameworks */,
+				075DBCB1246504D300981567 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,7 +198,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0701548421FCF80500172F8D /* Alamofire.framework in Frameworks */,
 				07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */,
 				079A39072410D4AB004D0EF8 /* CoreCrypto.framework in Frameworks */,
 			);
@@ -219,7 +207,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8EF3413F24367C2D005E7AF4 /* CoreCrypto.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,7 +270,6 @@
 		071269F8218F5D7400F68832 = {
 			isa = PBXGroup;
 			children = (
-				0701548221FCF5D700172F8D /* Alamofire.framework */,
 				07C5104521C63D4600F94A53 /* Resources */,
 				07126A04218F5D7400F68832 /* SDK */,
 				07126A0F218F5D7400F68832 /* SDKTests */,
@@ -339,7 +325,7 @@
 		071722EC218FA6F1005E2CA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8EF3413E24367C2D005E7AF4 /* CoreCrypto.framework */,
+				075DBCAE246504A600981567 /* CoreCrypto.framework */,
 				0701548021FCF5C100172F8D /* Alamofire.framework */,
 			);
 			name = Frameworks;
@@ -559,7 +545,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0701547D21FCF4FD00172F8D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -571,9 +557,9 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = "/usr/local/bin/carthage copy-frameworks";
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
 		0722A73921E70A83004A7616 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -828,7 +814,6 @@
 		07126A17218F5D7400F68832 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -842,6 +827,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;
@@ -858,6 +844,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
@@ -869,7 +856,6 @@
 		07126A18218F5D7400F68832 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -883,6 +869,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;
@@ -899,6 +886,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";

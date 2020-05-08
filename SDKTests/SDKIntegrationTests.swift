@@ -49,7 +49,7 @@ class SDKIntegrationTests: XCTestCase {
   }
 
   func testRegister() {
-    sdk = try? Peacemakr(apiKey: getAPIKey())
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
 
     XCTAssertNotNil(sdk)
 
@@ -66,7 +66,7 @@ class SDKIntegrationTests: XCTestCase {
   }
 
   func testSync() {
-    sdk = try? Peacemakr(apiKey: getAPIKey())
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -94,7 +94,7 @@ class SDKIntegrationTests: XCTestCase {
 
   func testEncryptDecrypt() throws {
     SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
-    sdk = try? Peacemakr(apiKey: getAPIKey())
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")

@@ -22,7 +22,7 @@ public protocol PeacemakrProtocol {
   // NOTE: what is out API key format and how to get it?
   /// Initializes Peacemakr SDK
   ///
-  /// - Parameter apiKey: API
+  /// - Parameter apiKey: The cust
   /// - Throws: on initialization failure
   init(apiKey: String, url: String, testingMode: Bool) throws
   

@@ -32,20 +32,20 @@ class KeyManager {
     }
   }
 
-  static let defaultSymmetricCipher = SymmetricCipher.CHACHA20_POLY1305
+  let defaultSymmetricCipher = SymmetricCipher.CHACHA20_POLY1305
 
-  static let testingMode: Bool
+  let testingMode: Bool
 
   /// MARK: - Initializers
 
-  required public init(testingMode: Bool = False) throws {
+  required public init(testingMode: Bool = false) {
     self.testingMode = testingMode
   }
 
   
   /// MARK: - Generate New Key Pair
 
-  private class func parseIntoCipher(keyType: String, keyLen: Int) -> AsymmetricCipher {
+  private func parseIntoCipher(keyType: String, keyLen: Int) -> AsymmetricCipher {
     if keyType == "ec" {
       switch keyLen {
       case 256:
@@ -71,7 +71,7 @@ class KeyManager {
     return .ECDH_P256
   }
 
-  class func createKeyPair(with rand: RandomDevice, asymm: AsymmetricCipher) throws -> PeacemakrKey {
+  func createKeyPair(with rand: RandomDevice, asymm: AsymmetricCipher) throws -> PeacemakrKey {
     guard let keyPair = PeacemakrKey(asymmCipher: asymm, symmCipher: defaultSymmetricCipher, rand: rand) else {
       throw KeyManagerError.keygenError
     }
@@ -79,7 +79,7 @@ class KeyManager {
   }
 
   // Generate and Store keypair
-  class func createAndStoreKeyPair(with rand: RandomDevice, keyType: String, keyLen: Int) throws -> (priv: Data, pub: Data) {
+  func createAndStoreKeyPair(with rand: RandomDevice, keyType: String, keyLen: Int) throws -> (priv: Data, pub: Data) {
     let newKeyPair = try createKeyPair(with: rand, asymm: parseIntoCipher(keyType: keyType, keyLen: keyLen))
 
     // Store private key
@@ -103,7 +103,7 @@ class KeyManager {
     return (priv, pub)
   }
 
-  class func getKeyID(serialized: Data) throws -> (keyID: String, signKeyID: String) {
+  func getKeyID(serialized: Data) throws -> (keyID: String, signKeyID: String) {
 
     guard let serializedAAD = UnwrapCall(CryptoContext.extractUnverifiedAAD(serialized), onError: Logger.onError) else {
       throw KeyManagerError.serializationError
@@ -122,11 +122,11 @@ class KeyManager {
   }
 
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
-  class func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
+  func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
     
     
     
-    guard let keyIDandCfg = KeyManager.selectKey(useDomainID: useDomainID) else {
+    guard let keyIDandCfg = self.selectKey(useDomainID: useDomainID) else {
       Logger.error("failed to select a key")
       return nil
     }
@@ -141,7 +141,7 @@ class KeyManager {
       return nil
     }
 
-    guard let keyToUse = KeyManager.getLocalKeyByID(keyID: keyIDandCfg.keyId, cfg: keyIDandCfg.keyConfig) else {
+    guard let keyToUse = self.getLocalKeyByID(keyID: keyIDandCfg.keyId, cfg: keyIDandCfg.keyConfig) else {
       Logger.error("Unable to get key with ID " + keyIDandCfg.keyId)
       return nil
     }
@@ -149,7 +149,7 @@ class KeyManager {
     return (messageAAD, keyToUse, keyIDandCfg.keyConfig.digestAlgorithm)
   }
 
-  private class func parseDigestAlgorithm(digest: String?) -> MessageDigestAlgorithm {
+  private func parseDigestAlgorithm(digest: String?) -> MessageDigestAlgorithm {
     switch (digest) {
     case Constants.Sha224:
       return .SHA_224
@@ -164,7 +164,7 @@ class KeyManager {
     }
   }
 
-  private class func parseEncryptionAlgorithm(algo: String) -> SymmetricCipher {
+  private func parseEncryptionAlgorithm(algo: String) -> SymmetricCipher {
     switch (algo) {
     case Constants.Aes128gcm:
       return .AES_128_GCM
@@ -179,7 +179,7 @@ class KeyManager {
     }
   }
 
-  class func selectKey(useDomainID: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
+  func selectKey(useDomainID: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
     if self.testingMode {
       return ("my-key-id", CoreCrypto.CryptoConfig(
           mode: CoreCrypto.EncryptionMode.SYMMETRIC,
@@ -227,7 +227,7 @@ class KeyManager {
   }
 
 
-  class func getMyKey(priv: Bool) -> PeacemakrKey? {
+  func getMyKey(priv: Bool) -> PeacemakrKey? {
     var tag: String
     if priv {
       tag = Constants.privTag
@@ -243,7 +243,7 @@ class KeyManager {
     return PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyStr, isPriv: priv)
   }
 
-  class func getMyPublicKeyID() -> String {
+  func getMyPublicKeyID() -> String {
     guard let pubKeyID: String = Persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
       return ""
     }
@@ -252,7 +252,7 @@ class KeyManager {
   }
 
 
-  class func getPublicKeyByID(keyID: String, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
+  func getPublicKeyByID(keyID: String, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
 
     if let keyBytes: String = Persister.getData(Constants.dataPrefix + keyID) {
 
@@ -276,7 +276,7 @@ class KeyManager {
           Logger.error("failed to store key with ID: \(keyID)")
         }
         
-        return completion(PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyStr, isPriv: false))
+        return completion(PeacemakrKey(symmCipher: self.defaultSymmetricCipher, fileContents: keyStr, isPriv: false))
       } else {
         Logger.error("server error")
         return completion(nil)
@@ -284,7 +284,7 @@ class KeyManager {
     })
   }
 
-  class func getLocalKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
+  func getLocalKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig) -> PeacemakrKey? {
     if keyID == "my-key-id" {
       Logger.error("Using insecure key for local-only testing!")
       return PeacemakrKey(symmCipher: cfg.symmCipher, bytes: Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]))
@@ -300,7 +300,7 @@ class KeyManager {
 
   }
 
-  class func storeKey(key: [UInt8], keyID: [UInt8]) -> Bool {
+  func storeKey(key: [UInt8], keyID: [UInt8]) -> Bool {
     guard let keyIDStr = String(bytes: keyID, encoding: .utf8) else {
       Logger.error("failed to serialize keyID to string")
       return false
@@ -314,7 +314,7 @@ class KeyManager {
     return Persister.storeKey(keyData!, keyID: tag)
   }
 
-  class func rotateClientKeyIfNeeded(rand: RandomDevice, completion: (@escaping (Error?) -> Void)) {
+  func rotateClientKeyIfNeeded(rand: RandomDevice, completion: (@escaping (Error?) -> Void)) {
     guard let myPub = getMyKey(priv: false) else {
       Logger.error("unable to get my public key")
       completion(KeyManagerError.loadError)
