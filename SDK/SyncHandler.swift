@@ -139,8 +139,11 @@ class SyncHandler {
       }
 
       guard let encKeys = keys, let body = encKeys.body, body.count != 0 else {
-        Logger.error("no keys returned in get all encrypted keys request")
-        completion(NSError(domain: "No keys were returned", code: -10, userInfo: nil))
+        Logger.info("no keys returned in get all encrypted keys request")
+        // Per testing seen with Daniel, sometimes Sync returns nothing.
+        // And that's ok.
+        // completion(NSError(domain: "No keys were returned", code: -10, userInfo: nil))
+        completion(nil)
         return
       }
 
