@@ -39,25 +39,16 @@ pushd ${OUTPUT_DIR}
 rm -rf Peacemakr.framework || true
 cp -R ${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework .
 cp -R ${PROJECT_SRC}/build/Release-iphonesimulator/Peacemakr.framework/Modules/Peacemakr.swiftmodule/ ${OUTPUT_DIR}/Peacemakr.framework/Modules/Peacemakr.swiftmodule
-# defaults write ${OUTPUT_DIR}/Peacemakr.framework/Info.plist CFBundleSupportedPlatforms -array-add "iPhoneSimulator"
-plutil -insert CFBundleSupportedPlatforms.1 -string 'iPhoneSimulator'  ${OUTPUT_DIR}/Peacemakr.framework/Info.plist
+defaults write ${OUTPUT_DIR}/Peacemakr.framework/Info.plist CFBundleSupportedPlatforms -array-add "iPhoneSimulator" # plutil -insert CFBundleSupportedPlatforms.1 -string 'iPhoneSimulator'  ${OUTPUT_DIR}/Peacemakr.framework/Info.plist
 lipo -create -output "Peacemakr.framework/Peacemakr" "${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework/Peacemakr" "${PROJECT_SRC}/build/Release-iphonesimulator/Peacemakr.framework/Peacemakr"
 install_name_tool -id "@rpath/Peacemakr.framework/Peacemakr" Peacemakr.framework/Peacemakr
-# Important: Link the libpeacemakr-core-crypto.dylib in the framework file.
-# There are two options to link: via loader_path or rpath.
-#
-# loader_path is the path relative to the plug-in aka CoreCrypto here.
-# we use loader_path here assuming dylib will always be on the same folder as CoreCrypto binary
-#
-# rpath tells the dynamic linker to look for the files in a list of folders
-# we can also get this working by install_name_tool -add_rpath @loader_path/. CoreCrypto
-# install_name_tool -change @rpath/libpeacemakr-core-crypto.dylib @loader_path/libpeacemakr-core-crypto.dylib CoreCrypto.framework/CoreCrypto
+
 /usr/bin/codesign --force --sign - --timestamp=none Peacemakr.framework/Peacemakr
 # copy debug info
 cp -R ${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework.dSYM .
 lipo -create -output "Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr" "${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr" "${PROJECT_SRC}/build/Release-iphonesimulator/Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr"
 
-# rm -rf ${PROJECT_SRC}/src/ffi/swift/CoreCrypto/build
+rm -rf ${PROJECT_SRC}/src/ffi/swift/CoreCrypto/build
 popd
 
 
