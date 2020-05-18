@@ -125,7 +125,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0701548021FCF5C100172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		0710E2662202CB4A00CDD72A /* APIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
 		0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireImplementations.swift; sourceTree = "<group>"; };
 		0710E2692202CB4A00CDD72A /* LoginAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
@@ -841,6 +840,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.iOS;
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
+				REEXPORTED_LIBRARY_PATHS = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";
@@ -885,6 +885,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.peacemakr.iOS;
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
+				REEXPORTED_LIBRARY_PATHS = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";

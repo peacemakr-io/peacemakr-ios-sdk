@@ -1,0 +1,188 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.2.2 effective-4.2 (swiftlang-1103.0.32.6 clang-1103.0.32.51)
+// swift-module-flags: -target x86_64-apple-ios8.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 4.2 -enforce-exclusivity=checked -O -module-name CoreCrypto
+@_exported import CoreCrypto
+import Foundation
+import Swift
+import CoreCrypto.libCoreCrypto
+public typealias Ciphertext = Swift.OpaquePointer
+@_hasMissingDesignatedInitializers public class CryptoContext : CoreCrypto.CryptoContextProtocol {
+  public class func setup() -> Swift.Bool
+  public class func encrypt(key: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, rand: CoreCrypto.RandomDevice) -> CoreCrypto.Result<CoreCrypto.Ciphertext>
+  public class func decrypt(key: CoreCrypto.PeacemakrKey, ciphertext: CoreCrypto.Ciphertext) -> CoreCrypto.Result<(CoreCrypto.Plaintext, Swift.Bool)>
+  public class func sign(senderKey: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, digest: CoreCrypto.MessageDigestAlgorithm, ciphertext: inout CoreCrypto.Ciphertext) -> Swift.Bool
+  public class func serialize(_ digest: CoreCrypto.MessageDigestAlgorithm, _ ciphertext_blob: CoreCrypto.Ciphertext) -> CoreCrypto.Result<Foundation.Data>
+  public class func deserialize(_ serialized: Foundation.Data) -> CoreCrypto.Result<(CoreCrypto.Ciphertext, CoreCrypto.CryptoConfig)>
+  public class func verify(senderKey: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, ciphertext: inout CoreCrypto.Ciphertext) -> CoreCrypto.Result<Swift.Bool>
+  public class func extractUnverifiedAAD(_ serialized: Foundation.Data) -> CoreCrypto.Result<CoreCrypto.Plaintext>
+  public class func HMAC(digestAlgorithm: CoreCrypto.MessageDigestAlgorithm, key: CoreCrypto.PeacemakrKey, buf: Foundation.Data) -> CoreCrypto.Result<Foundation.Data>
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Plaintext {
+  public init(data: Foundation.Data, aad: Foundation.Data)
+  public init?(data: Swift.String, aad: Swift.String)
+  public var encryptableData: Foundation.Data {
+    get
+  }
+  public var authenticatableData: Foundation.Data {
+    get
+  }
+  @objc deinit
+}
+public enum EncryptionMode : Swift.UInt32, Swift.CaseIterable {
+  case SYMMETRIC
+  case ASYMMETRIC
+  public typealias RawValue = Swift.UInt32
+  public init?(rawValue: Swift.UInt32)
+  public var rawValue: Swift.UInt32 {
+    get
+  }
+  public typealias AllCases = [CoreCrypto.EncryptionMode]
+  public static var allCases: [CoreCrypto.EncryptionMode] {
+    get
+  }
+}
+public enum SymmetricCipher : Swift.UInt32, Swift.CaseIterable {
+  case SYMMETRIC_UNSPECIFIED
+  case AES_128_GCM
+  case AES_192_GCM
+  case AES_256_GCM
+  case CHACHA20_POLY1305
+  public typealias RawValue = Swift.UInt32
+  public init?(rawValue: Swift.UInt32)
+  public var rawValue: Swift.UInt32 {
+    get
+  }
+  public typealias AllCases = [CoreCrypto.SymmetricCipher]
+  public static var allCases: [CoreCrypto.SymmetricCipher] {
+    get
+  }
+}
+public enum AsymmetricCipher : Swift.UInt32, Swift.CaseIterable {
+  case ASYMMETRIC_UNSPECIFIED
+  case RSA_2048
+  case RSA_4096
+  case ECDH_P256
+  case ECDH_P384
+  case ECDH_P521
+  case ECDH_SECP256K1
+  public typealias RawValue = Swift.UInt32
+  public init?(rawValue: Swift.UInt32)
+  public var rawValue: Swift.UInt32 {
+    get
+  }
+  public typealias AllCases = [CoreCrypto.AsymmetricCipher]
+  public static var allCases: [CoreCrypto.AsymmetricCipher] {
+    get
+  }
+}
+public enum MessageDigestAlgorithm : Swift.UInt32, Swift.CaseIterable {
+  case DIGEST_UNSPECIFIED
+  case SHA_224
+  case SHA_256
+  case SHA_384
+  case SHA_512
+  public typealias RawValue = Swift.UInt32
+  public var rawValue: Swift.UInt32 {
+    get
+  }
+  public init?(rawValue: Swift.UInt32)
+  public typealias AllCases = [CoreCrypto.MessageDigestAlgorithm]
+  public static var allCases: [CoreCrypto.MessageDigestAlgorithm] {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class CryptoConfig : Swift.Equatable {
+  public init(mode: CoreCrypto.EncryptionMode, symm_cipher: CoreCrypto.SymmetricCipher, asymm_cipher: CoreCrypto.AsymmetricCipher, digest: CoreCrypto.MessageDigestAlgorithm)
+  public var mode: CoreCrypto.EncryptionMode {
+    get
+  }
+  public var symmCipher: CoreCrypto.SymmetricCipher {
+    get
+  }
+  public var asymmCipher: CoreCrypto.AsymmetricCipher {
+    get
+  }
+  public var digestAlgorithm: CoreCrypto.MessageDigestAlgorithm {
+    get
+  }
+  public static func == (lhs: CoreCrypto.CryptoConfig, rhs: CoreCrypto.CryptoConfig) -> Swift.Bool
+  @objc deinit
+}
+public protocol CryptoContextProtocol {
+  static func setup() -> Swift.Bool
+  static func encrypt(key: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, rand: CoreCrypto.RandomDevice) -> CoreCrypto.Result<CoreCrypto.Ciphertext>
+  static func decrypt(key: CoreCrypto.PeacemakrKey, ciphertext: CoreCrypto.Ciphertext) -> CoreCrypto.Result<(CoreCrypto.Plaintext, Swift.Bool)>
+  static func sign(senderKey: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, digest: CoreCrypto.MessageDigestAlgorithm, ciphertext: inout CoreCrypto.Ciphertext) -> Swift.Bool
+  static func serialize(_ digest: CoreCrypto.MessageDigestAlgorithm, _ ciphertext_blob: CoreCrypto.Ciphertext) -> CoreCrypto.Result<Foundation.Data>
+  static func deserialize(_ serialized: Foundation.Data) -> CoreCrypto.Result<(CoreCrypto.Ciphertext, CoreCrypto.CryptoConfig)>
+  static func verify(senderKey: CoreCrypto.PeacemakrKey, plaintext: CoreCrypto.Plaintext, ciphertext: inout CoreCrypto.Ciphertext) -> CoreCrypto.Result<Swift.Bool>
+  static func extractUnverifiedAAD(_ serialized: Foundation.Data) -> CoreCrypto.Result<CoreCrypto.Plaintext>
+  static func HMAC(digestAlgorithm: CoreCrypto.MessageDigestAlgorithm, key: CoreCrypto.PeacemakrKey, buf: Foundation.Data) -> CoreCrypto.Result<Foundation.Data>
+}
+public typealias RNGBuf = CoreCrypto.rng_buf
+public typealias RNGErr = CoreCrypto.rng_err
+open class RandomDevice {
+  public init()
+  open var generator: CoreCrypto.RNGBuf? {
+    get
+  }
+  open var err: CoreCrypto.RNGErr? {
+    get
+  }
+  @objc deinit
+}
+public enum Result<T> {
+  case result(T)
+  case error(CoreCrypto.CoreCryptoError)
+}
+public enum CoreCryptoError : Foundation.LocalizedError {
+  case initializationFailed
+  case encryptionFailed
+  case serializationFailed
+  case deserializationFailed
+  case decryptionFailed
+  case verificationFailed
+  case HMACFailed
+  case keyAllocationFailed
+  case keySerializationFailed
+  public var errorDescription: Swift.String? {
+    get
+  }
+  public static func == (a: CoreCrypto.CoreCryptoError, b: CoreCrypto.CoreCryptoError) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public func UnwrapCall<T>(_ r: CoreCrypto.Result<T>, onError: ((Swift.String) -> Swift.Void)) -> T?
+public func UnwrapCall<T>(_ r: CoreCrypto.Result<T>) throws -> T
+@_hasMissingDesignatedInitializers public class PeacemakrKey {
+  public init?(asymmCipher: CoreCrypto.AsymmetricCipher, symmCipher: CoreCrypto.SymmetricCipher, rand: CoreCrypto.RandomDevice)
+  public init?(symmCipher: CoreCrypto.SymmetricCipher, rand: CoreCrypto.RandomDevice)
+  public init?(symmCipher: CoreCrypto.SymmetricCipher, bytes: Foundation.Data)
+  public init?(symmCipher: CoreCrypto.SymmetricCipher, digest: CoreCrypto.MessageDigestAlgorithm, master: CoreCrypto.PeacemakrKey, bytes: Foundation.Data)
+  public init?(symmCipher: CoreCrypto.SymmetricCipher, fileContents: Swift.String, isPriv: Swift.Bool)
+  public init?(symmCipher: CoreCrypto.SymmetricCipher, myKey: CoreCrypto.PeacemakrKey, peerKey: CoreCrypto.PeacemakrKey)
+  @objc deinit
+  public func getConfig() -> CoreCrypto.CryptoConfig
+  public func getBytes() -> Foundation.Data
+  public func toPem(isPriv: Swift.Bool) -> CoreCrypto.Result<Foundation.Data>
+}
+extension Data {
+  public func toString() -> Swift.String
+}
+extension CoreCrypto.EncryptionMode : Swift.Equatable {}
+extension CoreCrypto.EncryptionMode : Swift.Hashable {}
+extension CoreCrypto.EncryptionMode : Swift.RawRepresentable {}
+extension CoreCrypto.SymmetricCipher : Swift.Equatable {}
+extension CoreCrypto.SymmetricCipher : Swift.Hashable {}
+extension CoreCrypto.SymmetricCipher : Swift.RawRepresentable {}
+extension CoreCrypto.AsymmetricCipher : Swift.Equatable {}
+extension CoreCrypto.AsymmetricCipher : Swift.Hashable {}
+extension CoreCrypto.AsymmetricCipher : Swift.RawRepresentable {}
+extension CoreCrypto.MessageDigestAlgorithm : Swift.Equatable {}
+extension CoreCrypto.MessageDigestAlgorithm : Swift.Hashable {}
+extension CoreCrypto.MessageDigestAlgorithm : Swift.RawRepresentable {}
+extension CoreCrypto.CoreCryptoError : Swift.Equatable {}
+extension CoreCrypto.CoreCryptoError : Swift.Hashable {}
