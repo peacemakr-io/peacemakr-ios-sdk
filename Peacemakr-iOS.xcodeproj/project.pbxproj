@@ -47,6 +47,10 @@
 		071722E9218F9996005E2CA5 /* RandomDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722E8218F9996005E2CA5 /* RandomDevice.swift */; };
 		071722EB218FA301005E2CA5 /* Encryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071722EA218FA301005E2CA5 /* Encryptable.swift */; };
 		072C548A218FB48000B0BB1A /* SampleEncryptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C5489218FB48000B0BB1A /* SampleEncryptable.swift */; };
+		075DBCAF246504A600981567 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 075DBCAE246504A600981567 /* CoreCrypto.framework */; };
+		075DBCB0246504AF00981567 /* CoreCrypto.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 075DBCAE246504A600981567 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		075DBCB1246504D300981567 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; };
+		079A39072410D4AB004D0EF8 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079A39012410D3E9004D0EF8 /* CoreCrypto.framework */; };
 		07E235052201586000192E3C /* Persister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235042201586000192E3C /* Persister.swift */; };
 		07E23508220165E100192E3C /* PersisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E235062201653D00192E3C /* PersisterTests.swift */; };
 		07FBFF3921E0045900D9D0C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FBFF3821E0045900D9D0C6 /* AppDelegate.swift */; };
@@ -111,7 +115,6 @@
 
 /* Begin PBXFileReference section */
 		0701548021FCF5C100172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
-		0701548221FCF5D700172F8D /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		0710E2662202CB4A00CDD72A /* APIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
 		0710E2672202CB4A00CDD72A /* AlamofireImplementations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireImplementations.swift; sourceTree = "<group>"; };
 		0710E2692202CB4A00CDD72A /* LoginAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
@@ -151,6 +154,7 @@
 		071722E8218F9996005E2CA5 /* RandomDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDevice.swift; sourceTree = "<group>"; };
 		071722EA218FA301005E2CA5 /* Encryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryptable.swift; sourceTree = "<group>"; };
 		072C5489218FB48000B0BB1A /* SampleEncryptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleEncryptable.swift; sourceTree = "<group>"; };
+		075DBCAE246504A600981567 /* CoreCrypto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreCrypto.framework; path = Frameworks/CoreCrypto.framework; sourceTree = "<group>"; };
 		07C5104821C63D7900F94A53 /* peacemakr-services.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "peacemakr-services.yml"; sourceTree = "<group>"; };
 		07E235042201586000192E3C /* Persister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persister.swift; sourceTree = "<group>"; };
 		07E235062201653D00192E3C /* PersisterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersisterTests.swift; sourceTree = "<group>"; };
@@ -188,7 +192,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0701548421FCF80500172F8D /* Alamofire.framework in Frameworks */,
 				07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -512,7 +515,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0701547D21FCF4FD00172F8D /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -525,9 +528,9 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = "/usr/local/bin/carthage copy-frameworks";
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
 		0722A73921E70A83004A7616 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -795,6 +798,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;
@@ -813,6 +817,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
@@ -837,6 +842,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = SDK/Info.plist;
@@ -855,6 +861,7 @@
 				PRODUCT_MODULE_NAME = Peacemakr;
 				PRODUCT_NAME = Peacemakr;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";

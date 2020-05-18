@@ -10,8 +10,17 @@ import Foundation
 import CoreCrypto
 
 class SyncHandler {
+  
+  let keyManager: KeyManager
+
+  /// MARK: - Initializers
+
+  required public init(keyManager: KeyManager) {
+    self.keyManager = keyManager
+  }
+  
   // Stores org ID and crypto config ID
-  class func syncOrgInfo(apiKey: String, completion: (@escaping (Error?) -> Void)) -> Void {
+  func syncOrgInfo(apiKey: String, completion: (@escaping (Error?) -> Void)) -> Void {
     let requestBuilder = OrgAPI.getOrganizationFromAPIKeyWithRequestBuilder(apikey: apiKey)
     requestBuilder.execute { (resp, err) in
       if err != nil {
@@ -45,7 +54,7 @@ class SyncHandler {
     }
   }
 
-  class func syncCryptoConfig(completion: (@escaping (Error?) -> Void)) -> Void {
+  func syncCryptoConfig(completion: (@escaping (Error?) -> Void)) -> Void {
     guard let cryptoConfigID: String = Persister.getData(Constants.dataPrefix + Constants.cryptoConfigID) else {
       completion(NSError(domain: "missing CryptoConfigID", code: -34, userInfo: nil))
       Logger.error("Missing CryptoConfigID")
@@ -101,9 +110,9 @@ class SyncHandler {
     }
   }
 
-  class func syncSymmetricKeys(keyIDs: [String]?, completion: (@escaping (Error?) -> Void)) {
+  func syncSymmetricKeys(keyIDs: [String]?, completion: (@escaping (Error?) -> Void)) {
 
-    guard let myPrivKey = KeyManager.getMyKey(priv: true) else {
+    guard let myPrivKey = self.keyManager.getMyKey(priv: true) else {
       Logger.error("failed to get key")
       completion(NSError(domain: "unable to get key", code: -15, userInfo: nil))
       return
@@ -121,7 +130,7 @@ class SyncHandler {
 
       for (i, keyID) in keyIDs.enumerated() {
         let thisKeyBytes = keyBytes[i * keyLen..<(i + 1) * keyLen]
-        if !KeyManager.storeKey(key: Array(thisKeyBytes), keyID: Array(keyID.utf8)) {
+        if !self.keyManager.storeKey(key: Array(thisKeyBytes), keyID: Array(keyID.utf8)) {
           Logger.error("failed to store the key with keyID: " + keyID)
           completion(NSError(domain: "Key storage failed", code: -16, userInfo: nil))
           return
@@ -156,14 +165,14 @@ class SyncHandler {
         }
 
         // Grab the keyID from the ciphertext
-        guard let storedKeyIDs = try? KeyManager.getKeyID(serialized: serialized) else {
+        guard let storedKeyIDs = try? self.keyManager.getKeyID(serialized: serialized) else {
           Logger.error("Unable to extract key IDs serialized key package")
           completion(NSError(domain: "Unable to extract key IDs", code: -11, userInfo: nil))
           return
         }
 
         // Get the verification key
-        KeyManager.getPublicKeyByID(keyID: storedKeyIDs.1, completion: { (pKey) in
+        self.keyManager.getPublicKeyByID(keyID: storedKeyIDs.1, completion: { (pKey) in
           if pKey == nil {
             Logger.error("Public key: " + storedKeyIDs.signKeyID + " could not be gotten")
             completion(NSError(domain: "Could not get signer public key", code: -14, userInfo: nil))

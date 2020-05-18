@@ -30,12 +30,14 @@ public class Peacemakr: PeacemakrProtocol {
     case deserializationError
     case decryptionError
     case verificationError
+    case apiKeyRequiredInProduction
+    case apiKeyProhibitedInStaging
 
 
     var localizedDescription: String {
       switch self {
       case .initializationError:
-        return "failed to initialize Peacemakr SDK"
+        return "failed to initialize core-crypto libraries"
       case .registrationError:
         return "failed to register to Peacemakr"
       case .keyManagerError:
@@ -60,6 +62,10 @@ public class Peacemakr: PeacemakrProtocol {
         return "decryption failed"
       case .verificationError:
         return "verification failed"
+      case .apiKeyRequiredInProduction:
+        return "an apikey is required in production mode"
+      case .apiKeyProhibitedInStaging:
+      return "an apikey may not be used in testing mode"
       }
     }
   }
@@ -76,22 +82,45 @@ public class Peacemakr: PeacemakrProtocol {
   /// MARK: - Properties
 
   private let apiKey: String
+  
+  private let url: String
+  
+  private let testingMode: Bool
+  
+  private let keyManager: KeyManager
+  private let syncHandler: SyncHandler
 
   /// MARK: - Initializers
 
-  required public init(apiKey: String) throws {
+  required public init(apiKey: String, url: String, testingMode: Bool = false) throws {
 
     if !CryptoContext.setup() {
       throw PeacemakrError.initializationError
     }
 
     self.apiKey = apiKey
+    if apiKey.isEmpty && testingMode == false {
+      throw PeacemakrError.apiKeyRequiredInProduction
+    }
+    
+    if !apiKey.isEmpty && testingMode == true {
+      throw PeacemakrError.apiKeyProhibitedInStaging
+    }
+    
+    self.testingMode = testingMode
+    self.keyManager = KeyManager(testingMode: testingMode)
+    self.syncHandler = SyncHandler(keyManager: self.keyManager)
 
     self.rand = PeacemakrRandomDevice()
+    
+    if url.isEmpty {
+      // The default URL should point to prod.
+      self.url = "https://api.peacemakr.io"
+    } else {
+      self.url = url
+    }
 
-    // TODO: move to configuration file
-//    SwaggerClientAPI.basePath = SwaggerClientAPI.basePath.replacingOccurrences(of: "http", with: "https")
-    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    SwaggerClientAPI.basePath = url + "/api/v1"
     SwaggerClientAPI.customHeaders = ["Authorization": self.apiKey]
   }
 
@@ -110,7 +139,7 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
     // Rotate my keypair if necessary
-    KeyManager.rotateClientKeyIfNeeded(rand: self.rand, completion: { (err) in
+    self.keyManager.rotateClientKeyIfNeeded(rand: self.rand, completion: { (err) in
       if err != nil {
         completion(err)
       }
@@ -119,12 +148,12 @@ public class Peacemakr: PeacemakrProtocol {
   }
 
   public func register(completion: (@escaping ErrorHandler)) {
-    if (self.apiKey.isEmpty) {
+    if (self.testingMode) {
       Logger.error("Using local-only testing mode!")
       let _ = Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: "my-client-id")
       let _ = Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: "my-pub-key-id")
 
-      guard let _ = try? KeyManager.createAndStoreKeyPair(with: rand, keyType: "ec", keyLen: 256) else {
+      guard let _ = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: "ec", keyLen: 256) else {
         completion(PeacemakrError.keyCreationError)
         return
       }
@@ -134,12 +163,12 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     // First we have to sync the org and config info
-    SyncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
+    self.syncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
       if err != nil {
         completion(err)
       }
 
-      SyncHandler.syncCryptoConfig(completion: { (err) in
+      self.syncHandler.syncCryptoConfig(completion: { (err) in
         if err != nil {
           completion(err)
         }
@@ -160,7 +189,7 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
-    guard let keyPair = try? KeyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
+    guard let keyPair = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
       completion(PeacemakrError.keyCreationError)
       return
     }
@@ -207,24 +236,24 @@ public class Peacemakr: PeacemakrProtocol {
   /// MARK: - Sync
 
   public func sync(completion: (@escaping ErrorHandler)) -> Void {
-    if (self.apiKey.isEmpty) {
+    if (self.testingMode) {
       Logger.error("No sync ocurred, using local-only testing mode!")
       completion(nil)
       return
     }
 
     self.verifyRegistration(completion: { (err) in
-      SyncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
+      self.syncHandler.syncOrgInfo(apiKey: self.apiKey) { (err) in
         if err != nil {
           completion(err)
         }
 
-        SyncHandler.syncCryptoConfig(completion: { (err) in
+        self.syncHandler.syncCryptoConfig(completion: { (err) in
           if err != nil {
             completion(err)
           }
 
-          SyncHandler.syncSymmetricKeys(keyIDs: nil, completion: { completion($0) })
+          self.syncHandler.syncSymmetricKeys(keyIDs: nil, completion: { completion($0) })
         })
       }
     })
@@ -232,7 +261,7 @@ public class Peacemakr: PeacemakrProtocol {
 
 
   private func getSymmKeyByID(keyID: String, cfg: CoreCrypto.CryptoConfig, completion: (@escaping (PeacemakrKey?, Error?) -> Void)) -> Void {
-    let symmKey = KeyManager.getLocalKeyByID(keyID: keyID, cfg: cfg)
+    let symmKey = self.keyManager.getLocalKeyByID(keyID: keyID, cfg: cfg)
     if symmKey != nil {
       completion(symmKey, nil)
       return
@@ -240,13 +269,13 @@ public class Peacemakr: PeacemakrProtocol {
 
     // If we don't have the key already, re-sync and call the completion callback when we're done
     self.verifyRegistration(completion: { (err) in
-      SyncHandler.syncSymmetricKeys(keyIDs: [keyID], completion: { (err) in
+      self.syncHandler.syncSymmetricKeys(keyIDs: [keyID], completion: { (err) in
         if err != nil {
           completion(nil, err)
           return
         }
 
-        let downloadedKey = KeyManager.getLocalKeyByID(keyID: keyID, cfg: cfg)
+        let downloadedKey = self.keyManager.getLocalKeyByID(keyID: keyID, cfg: cfg)
         if downloadedKey == nil {
           completion(nil, NSError(domain: "Could not get key " + keyID + " from storage after synchronizing keys", code: -17, userInfo: nil))
         }
@@ -268,8 +297,8 @@ public class Peacemakr: PeacemakrProtocol {
 
   private func encrypt(_ rawMessageData: Data, useDomainID: String? = nil) -> (data: Data?, error: Error?) {
 
-    let useDomainToUse = self.apiKey.isEmpty ? "my-local-use-domain-id" : (useDomainID ?? "")
-    guard let aadAndKey = KeyManager.getEncryptionKey(useDomainID: useDomainToUse),
+    let useDomainToUse = (useDomainID ?? "")
+    guard let aadAndKey = self.keyManager.getEncryptionKey(useDomainID: useDomainToUse),
           let aadData = aadAndKey.aad.data(using: .utf8) else {
       return (nil, PeacemakrError.keyManagerError)
     }
@@ -286,7 +315,7 @@ public class Peacemakr: PeacemakrProtocol {
 
     var encCiphertext = encrypted
 
-    guard let signKey = KeyManager.getMyKey(priv: true) else {
+    guard let signKey = self.keyManager.getMyKey(priv: true) else {
       Logger.error("failed to get my private key")
       return (nil, PeacemakrError.keyManagerError)
     }
@@ -314,7 +343,7 @@ public class Peacemakr: PeacemakrProtocol {
 
   private func decrypt(_ serialized: Data, completion: (@escaping (PeacemakrDataResult) -> Void)) {
 
-    guard let keyIDs = try? KeyManager.getKeyID(serialized: serialized) else {
+    guard let keyIDs = try? self.keyManager.getKeyID(serialized: serialized) else {
       Logger.error("Unable to parse key IDs from message")
       completion((nil, PeacemakrError.blobUnwrapError))
       return
@@ -350,13 +379,13 @@ public class Peacemakr: PeacemakrProtocol {
       // And verify (which is another callback)
       if needsVerify {
         // Quick escape if we're testing locally
-        if (keyIDs.signKeyID == "my-pub-key-id" && self.apiKey.isEmpty) {
+        if (keyIDs.signKeyID == "my-pub-key-id" && self.testingMode) {
           completion((outPlaintext.encryptableData, nil))
           return
         }
 
     
-        KeyManager.getPublicKeyByID(keyID: keyIDs.signKeyID, completion: { (verifyKey) in
+        self.keyManager.getPublicKeyByID(keyID: keyIDs.signKeyID, completion: { (verifyKey) in
           guard let key = verifyKey else {
             completion((nil, PeacemakrError.keyManagerError))
             return

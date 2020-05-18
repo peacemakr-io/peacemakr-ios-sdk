@@ -33,7 +33,7 @@ class SDKTests: XCTestCase {
   }
 
   func testRegister() {
-    sdk = try? Peacemakr(apiKey: "")
+    sdk = try? Peacemakr(apiKey: "", url: "http://localhost:8080", testingMode: true)
 
     XCTAssertNotNil(sdk)
 
@@ -50,7 +50,7 @@ class SDKTests: XCTestCase {
   }
 
   func testSync() {
-    sdk = try? Peacemakr(apiKey: "")
+    sdk = try? Peacemakr(apiKey: "", url: "http://localhost:8080", testingMode: true)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -77,7 +77,7 @@ class SDKTests: XCTestCase {
 
 
   func testEncryptDecrypt() throws {
-    sdk = try? Peacemakr(apiKey: "")
+    sdk = try? Peacemakr(apiKey: "", url: "http://localhost:8080", testingMode: true)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
