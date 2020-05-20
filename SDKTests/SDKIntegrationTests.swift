@@ -29,7 +29,7 @@ class SDKIntegrationTests: XCTestCase {
   }
   
   func getAPIKey() -> String{
-    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
+    SwaggerClientAPI.basePath = "https://api.peacemakr.io/api/v1"
     let gotAPIKey = self.expectation(description: "Got API Key for test org")
   
     var key: String = ""
@@ -39,7 +39,7 @@ class SDKIntegrationTests: XCTestCase {
       }
       
       key = k?.key ?? ""
-      print("Test Org API Key: ", key)
+      print("Test Org API Key: ", key, err)
       gotAPIKey.fulfill()
     }
     
@@ -49,7 +49,7 @@ class SDKIntegrationTests: XCTestCase {
   }
 
   func testRegister() {
-    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "https://api.peacemakr.io", testingMode: false)
 
     XCTAssertNotNil(sdk)
 
@@ -66,7 +66,7 @@ class SDKIntegrationTests: XCTestCase {
   }
 
   func testSync() {
-    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "https://api.peacemakr.io", testingMode: false)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -93,8 +93,8 @@ class SDKIntegrationTests: XCTestCase {
 
 
   func testEncryptDecrypt() throws {
-    SwaggerClientAPI.basePath = "http://localhost:8080/api/v1"
-    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "http://localhost:8080", testingMode: false)
+
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "https://api.peacemakr.io", testingMode: false)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
@@ -123,7 +123,8 @@ class SDKIntegrationTests: XCTestCase {
 
     let (serialized, err) = sdk!.encrypt(plaintext: data!.serializedValue)
     XCTAssert(err == nil, err!.localizedDescription)
-
+    XCTAssert(serialized != nil, "error: the serialized value is nil")
+    
     self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
       XCTAssert(dest.error == nil, dest.error!.localizedDescription)
       XCTAssert(dest.data != nil, dest.error!.localizedDescription)

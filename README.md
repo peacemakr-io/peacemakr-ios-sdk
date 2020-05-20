@@ -27,6 +27,16 @@ The release.sh script takes the destination and output the Peacemakr.framework u
 ./release.sh /some/dir
 ```
 
+## Building / Project Structure
+/peacemakr-ios-sdk
+    /Frameworks
+        CoreCrypto
+        Alamofire
+    Peacemakr-iOS.xcodproj
+
+## Testing
+Make sure the Signing & Certificate is set to your development/personal account if you are testing on a real iphone.
+
 ## Lessons Learned from making this worked
 - Runpath search path under "Xcode->Build Setting" indicates the rpath of the built binary. Rpath is a list of paths that dynamic linker look for to get the dependencies/libraries.
 - Rpath can also be set using install_name_tools
@@ -52,3 +62,19 @@ The release.sh script takes the destination and output the Peacemakr.framework u
     - Use lipo to combine the iphoneos and iphonesimulator binaries
     - Update rpath/loader_path of binary if needed
     - SIGN THE BINARY
+- Testing on real iphone
+    - Two ways to make it work with the signing requirements
+        1. Embed & Sign everything
+        2. Add a build phase with the script in https://github.com/Carthage/Carthage/issues/1401
+        ```
+        for f in $(find $CODESIGNING_FOLDER_PATH -name '*.framework')
+        do
+            codesign --force --sign "${CODE_SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements --timestamp=none "$f"
+        done
+
+        for f in $(find $CODESIGNING_FOLDER_PATH -name 'libpeacemakr-core-crypto.dylib')
+        do
+            codesign --force --sign "${CODE_SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements --timestamp=none "$f"
+        done
+        ```
+        - Remember to sign the dylib too :)
