@@ -11,7 +11,8 @@ import CoreCrypto
 
 class Metadata {
   static let shared = Metadata()
-  
+
+
   init(){}
   
   var version: String {
@@ -33,8 +34,8 @@ class Metadata {
     }
   }
   
-  var clientId: String {
-    guard let clientId: String = Persister.getData(Constants.dataPrefix + Constants.clientIDTag) else {
+  func getClientId(persister: Persister) -> String {
+    guard let clientId: String = persister.getData(Constants.dataPrefix + Constants.clientIDTag) else {
       Logger.error("failed to get client Id")
       return ""
     }
@@ -42,8 +43,8 @@ class Metadata {
     return clientId
   }
   
-  var pubKeyID: String {
-    guard let pubKeyID: String = Persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
+  func getPubKeyID(persister: Persister) -> String {
+    guard let pubKeyID: String = persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
       Logger.error("failed to get public key Id")
       return ""
     }
