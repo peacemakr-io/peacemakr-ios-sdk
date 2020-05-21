@@ -181,7 +181,7 @@ class KeyManager {
 
   
   private class func isValidDomainForEncryption(domain: SymmetricKeyUseDomain) -> Bool {
-    return domain.symmetricKeyEncryptionUseTTL + domain.creationTime <= Int(NSDate().timeIntervalSince1970)
+    return Int(NSDate().timeIntervalSince1970) <= domain.symmetricKeyEncryptionUseTTL + domain.creationTime
   }
   
   func selectKey(useDomainName: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
