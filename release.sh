@@ -33,7 +33,9 @@ fi
 
 pushd ${PROJECT_SRC}
 pwd
-xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination "${IPHONE_DEST}" test
+if [[ -z "${2}" ]]; then
+    xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination "${IPHONE_DEST}" -only-testing:Peacemakr-iOS-Tests/SDKTests test
+fi
 xcodebuild -project Peacemakr-iOS.xcodeproj BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO -configuration Release -miphoneos-version-min=8.1 -sdk iphoneos
 xcodebuild -project Peacemakr-iOS.xcodeproj BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO VALID_ARCHS="x86_64" ONLY_ACTIVE_ARCH=NO -configuration Release -miphoneos-version-min=8.1 -sdk iphonesimulator
 popd
