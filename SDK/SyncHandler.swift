@@ -12,10 +12,11 @@ import CoreCrypto
 class SyncHandler {
   
   let keyManager: KeyManager
-
+  let persister: Persister
   /// MARK: - Initializers
 
-  required public init(keyManager: KeyManager) {
+  required public init(persister: Persister, keyManager: KeyManager) {
+    self.persister = persister
     self.keyManager = keyManager
   }
   
@@ -38,12 +39,12 @@ class SyncHandler {
       let orgID = body._id
       let cryptoConfigID = body.cryptoConfigId
 
-      if !Persister.storeData(Constants.dataPrefix + "OrgID", val: orgID) {
+      if !self.persister.storeData(Constants.dataPrefix + "OrgID", val: orgID) {
         completion(NSError(domain: "Unable to store org ID", code: -30, userInfo: nil))
         return
       }
 
-      if !Persister.storeData(Constants.dataPrefix + "CryptoConfigID", val: cryptoConfigID) {
+      if !self.persister.storeData(Constants.dataPrefix + "CryptoConfigID", val: cryptoConfigID) {
         completion(NSError(domain: "Unable to store crypto config ID", code: -31, userInfo: nil))
         return
       }
@@ -55,7 +56,7 @@ class SyncHandler {
   }
 
   func syncCryptoConfig(completion: (@escaping (Error?) -> Void)) -> Void {
-    guard let cryptoConfigID: String = Persister.getData(Constants.dataPrefix + Constants.cryptoConfigID) else {
+    guard let cryptoConfigID: String = self.persister.getData(Constants.dataPrefix + Constants.cryptoConfigID) else {
       completion(NSError(domain: "missing CryptoConfigID", code: -34, userInfo: nil))
       Logger.error("Missing CryptoConfigID")
       return
@@ -75,7 +76,7 @@ class SyncHandler {
         return
       }
 
-      if !Persister.storeData(Constants.dataPrefix + Constants.udSelectorScheme, val: body.symmetricKeyUseDomainSelectorScheme) {
+      if !self.persister.storeData(Constants.dataPrefix + Constants.udSelectorScheme, val: body.symmetricKeyUseDomainSelectorScheme) {
         Logger.error("Failed to store use domain selector scheme")
         completion(NSError(domain: "failed to store use domain selector scheme", code: -37, userInfo: nil))
       }
@@ -85,22 +86,22 @@ class SyncHandler {
         return
       }
 
-      if !Persister.storeData(Constants.dataPrefix + Constants.useDomains, val: data) {
+      if !self.persister.storeData(Constants.dataPrefix + Constants.useDomains, val: data) {
         Logger.error("Failed to store use domains")
         completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
       }
 
-      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyType, val: body.clientKeyType) {
+      if !self.persister.storeData(Constants.dataPrefix + Constants.clientKeyType, val: body.clientKeyType) {
         Logger.error("Failed to store client key type")
         completion(NSError(domain: "failed to store client key type", code: -38, userInfo: nil))
       }
 
-      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyLen, val: body.clientKeyBitlength) {
+      if !self.persister.storeData(Constants.dataPrefix + Constants.clientKeyLen, val: body.clientKeyBitlength) {
         Logger.error("Failed to store client key length")
         completion(NSError(domain: "failed to store client key length", code: -39, userInfo: nil))
       }
 
-      if !Persister.storeData(Constants.dataPrefix + Constants.clientKeyTTL, val: body.clientKeyTTL) {
+      if !self.persister.storeData(Constants.dataPrefix + Constants.clientKeyTTL, val: body.clientKeyTTL) {
         Logger.error("Failed to store client key TTL")
         completion(NSError(domain: "failed to store client key TTL", code: -40, userInfo: nil))
       }
@@ -139,7 +140,7 @@ class SyncHandler {
       completion(nil)
     }
 
-    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: Metadata.shared.pubKeyID, symmetricKeyIds: keyIDs)
+    let requestBuilder = KeyServiceAPI.getAllEncryptedKeysWithRequestBuilder(encryptingKeyId: Metadata.shared.getPubKeyID(persister: self.persister), symmetricKeyIds: keyIDs)
     requestBuilder.execute({ (keys, error) in
       if error != nil {
         Logger.error("failed to get encrypted keys with " + error!.localizedDescription)
