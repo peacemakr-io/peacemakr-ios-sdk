@@ -7,7 +7,7 @@ function usage {
     echo "for example, ./bin/release-ios.sh ~/peacemakr/peacemakr-ios-sdk github-action"
 }
 
-if [[ "$#" -gt 1 ]]; then
+if [[ "$#" -gt 2 ]]; then
     echo "Illegal use"
     usage
     exit 1
