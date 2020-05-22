@@ -9,7 +9,7 @@ on: [push, pull_request]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  test:
     # The type of runner that the job will run on
     runs-on: macos-latest
 
@@ -22,3 +22,17 @@ jobs:
       run: sudo xcode-select -switch /Applications/Xcode_11.4.app
     - name: build and test
       run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' -only-testing:Peacemakr-iOS-Tests/SDKTests test
+
+  build:
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Force xcode 11.4
+      run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+    - name: build and test
+      run: |
+        ./release.sh /tmp/ gh

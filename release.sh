@@ -3,8 +3,8 @@
 set -ex
 
 function usage {
-    echo "Usage: ./release-ios.sh [path to peacemakr-ios folder]"
-    echo "for example, ./bin/release-ios.sh ~/peacemakr/peacemakr-ios-sdk"
+    echo "Usage: ./release-ios.sh [path to peacemakr-ios folder] gh"
+    echo "for example, ./bin/release-ios.sh ~/peacemakr/peacemakr-ios-sdk github-action"
 }
 
 if [[ "$#" -gt 1 ]]; then
@@ -24,12 +24,16 @@ OUTPUT_DIR=${1}
 echo ${OUTPUT_DIR}
 
 PROJECT_SRC=$(pwd)
+IPHONE_DEST='platform=iOS Simulator,name=iPhone 8,OS=13.4.1'
 
+if [[ ! -z "${2}" ]]; then
+    IPHONE_DEST='platform=iOS Simulator,name=iPhone 8,OS=13.4'
+fi
 
 
 pushd ${PROJECT_SRC}
 pwd
-xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4.1' test
+xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination "${IPHONE_DEST}" test
 xcodebuild -project Peacemakr-iOS.xcodeproj BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO -configuration Release -miphoneos-version-min=8.1 -sdk iphoneos
 xcodebuild -project Peacemakr-iOS.xcodeproj BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO VALID_ARCHS="x86_64" ONLY_ACTIVE_ARCH=NO -configuration Release -miphoneos-version-min=8.1 -sdk iphonesimulator
 popd
