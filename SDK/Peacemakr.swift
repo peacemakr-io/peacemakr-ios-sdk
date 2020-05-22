@@ -89,6 +89,7 @@ public class Peacemakr: PeacemakrProtocol {
   
   private let keyManager: KeyManager
   private let syncHandler: SyncHandler
+  private let persister: Persister
 
   /// MARK: - Initializers
 
@@ -108,8 +109,9 @@ public class Peacemakr: PeacemakrProtocol {
     }
     
     self.testingMode = testingMode
-    self.keyManager = KeyManager(testingMode: testingMode)
-    self.syncHandler = SyncHandler(keyManager: self.keyManager)
+    self.persister = Persister()
+    self.keyManager = KeyManager(persister: persister, testingMode: testingMode)
+    self.syncHandler = SyncHandler(persister: persister, keyManager: self.keyManager)
 
     self.rand = PeacemakrRandomDevice()
     
@@ -128,7 +130,7 @@ public class Peacemakr: PeacemakrProtocol {
 
   public var registrationSuccessful: Bool {
     get {
-      return Persister.hasData(Constants.dataPrefix + Constants.clientIDTag) && Persister.hasData(Constants.dataPrefix + Constants.pubKeyIDTag)
+      return self.persister.hasData(Constants.dataPrefix + Constants.clientIDTag) && self.persister.hasData(Constants.dataPrefix + Constants.pubKeyIDTag)
     }
   }
 
@@ -150,8 +152,8 @@ public class Peacemakr: PeacemakrProtocol {
   public func register(completion: (@escaping ErrorHandler)) {
     if (self.testingMode) {
       Logger.error("Using local-only testing mode!")
-      let _ = Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: "my-client-id")
-      let _ = Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: "my-pub-key-id")
+      let _ = self.persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: "my-client-id")
+      let _ = self.persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: "my-pub-key-id")
 
       guard let _ = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: "ec", keyLen: 256) else {
         completion(PeacemakrError.keyCreationError)
@@ -179,12 +181,12 @@ public class Peacemakr: PeacemakrProtocol {
   }
 
   private func registerToPeacemakr(completion: (@escaping ErrorHandler)) {
-    guard let keyType: String = Persister.getData(Constants.dataPrefix + Constants.clientKeyType) else {
+    guard let keyType: String = self.persister.getData(Constants.dataPrefix + Constants.clientKeyType) else {
       completion(PeacemakrError.keyConfigurationError)
       return
     }
 
-    guard let keyLen: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
+    guard let keyLen: Int = self.persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
       completion(PeacemakrError.keyConfigurationError)
       return
     }
@@ -194,7 +196,7 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
-    guard let orgID: String = Persister.getData(Constants.dataPrefix + Constants.orgID) else {
+    guard let orgID: String = self.persister.getData(Constants.dataPrefix + Constants.orgID) else {
       completion(PeacemakrError.registrationError)
       return
     }
@@ -221,14 +223,14 @@ public class Peacemakr: PeacemakrProtocol {
       }
 
       // Store the clientID and publicKeyID
-      guard Persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: body._id),
-            Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
+      guard self.persister.storeData(Constants.dataPrefix + Constants.clientIDTag, val: body._id),
+        self.persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
         Logger.error("failed to store key pair")
         completion(NSError(domain: "could not store metadata", code: -2, userInfo: nil))
         return
       }
 
-      Logger.info("registered new iOS client: " + Metadata.shared.clientId)
+      Logger.info("registered new iOS client: " + Metadata.shared.getClientId(persister: self.persister))
       completion(nil)
     })
   }

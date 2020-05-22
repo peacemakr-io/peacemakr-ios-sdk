@@ -35,10 +35,12 @@ class KeyManager {
   let defaultSymmetricCipher = SymmetricCipher.CHACHA20_POLY1305
 
   let testingMode: Bool
+  private let persister: Persister
 
   /// MARK: - Initializers
 
-  required public init(testingMode: Bool = false) {
+  required public init(persister: Persister, testingMode: Bool = false) {
+    self.persister = persister
     self.testingMode = testingMode
   }
 
@@ -84,18 +86,18 @@ class KeyManager {
 
     // Store private key
     guard let priv = UnwrapCall(newKeyPair.toPem(isPriv: true), onError: Logger.onError),
-          Persister.storeKey(priv, keyID: Constants.privTag) else {
+        self.persister.storeKey(priv, keyID: Constants.privTag) else {
       throw KeyManagerError.saveError
     }
 
     // Store public key
     guard let pub = UnwrapCall(newKeyPair.toPem(isPriv: false), onError: Logger.onError),
-          Persister.storeKey(pub, keyID: Constants.pubTag) else {
+        self.persister.storeKey(pub, keyID: Constants.pubTag) else {
       throw KeyManagerError.saveError
     }
 
     // Store key creation time in Unix time
-    let success = Persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: Date().timeIntervalSince1970)
+    let success = self.persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: Date().timeIntervalSince1970)
     if !success {
       throw KeyManagerError.saveError
     }
@@ -189,7 +191,7 @@ class KeyManager {
     }
 
     // Use the string, if it's empty then just use the first one
-    guard let encodedUseDomains: Data = Persister.getData(Constants.dataPrefix + Constants.useDomains) else {
+    guard let encodedUseDomains: Data = self.persister.getData(Constants.dataPrefix + Constants.useDomains) else {
       Logger.error("Persisted use domains were nil")
       return nil
     }
@@ -236,7 +238,7 @@ class KeyManager {
     }
 
     // should be base64Encoded? or not?
-    guard let keyStr = String(data: Persister.getKey(tag) ?? Data(), encoding: .utf8) else {
+    guard let keyStr = String(data: self.persister.getKey(tag) ?? Data(), encoding: .utf8) else {
       return nil
     }
 
@@ -244,7 +246,7 @@ class KeyManager {
   }
 
   func getMyPublicKeyID() -> String {
-    guard let pubKeyID: String = Persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
+    guard let pubKeyID: String = self.persister.getData(Constants.dataPrefix + Constants.pubKeyIDTag) else {
       return ""
     }
 
@@ -254,7 +256,7 @@ class KeyManager {
 
   func getPublicKeyByID(keyID: String, completion: (@escaping (PeacemakrKey?) -> Void)) -> Void {
 
-    if let keyBytes: String = Persister.getData(Constants.dataPrefix + keyID) {
+    if let keyBytes: String = self.persister.getData(Constants.dataPrefix + keyID) {
 
       return completion(PeacemakrKey(symmCipher: defaultSymmetricCipher, fileContents: keyBytes, isPriv: false))
 
@@ -272,7 +274,7 @@ class KeyManager {
       }
       
       if let keyStr = key?.body?.key {
-        if !Persister.storeData(Constants.dataPrefix + keyID, val: keyStr) {
+        if !self.persister.storeData(Constants.dataPrefix + keyID, val: keyStr) {
           Logger.error("failed to store key with ID: \(keyID)")
         }
         
@@ -292,7 +294,7 @@ class KeyManager {
 
     let tag = Constants.symmTagPrefix + keyID
 
-    guard let keyData = Persister.getKey(tag) else {
+    guard let keyData = self.persister.getKey(tag) else {
       return nil
     }
 
@@ -311,7 +313,7 @@ class KeyManager {
     key.withUnsafeBufferPointer { buf -> Void in
       keyData = Data(buffer: buf)
     }
-    return Persister.storeKey(keyData!, keyID: tag)
+    return self.persister.storeKey(keyData!, keyID: tag)
   }
 
   func rotateClientKeyIfNeeded(rand: RandomDevice, completion: (@escaping (Error?) -> Void)) {
@@ -322,19 +324,19 @@ class KeyManager {
     }
     let config = myPub.getConfig()
 
-    guard let keyType: String = Persister.getData(Constants.dataPrefix + Constants.clientKeyType),
-          let keyLen: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
+    guard let keyType: String = self.persister.getData(Constants.dataPrefix + Constants.clientKeyType),
+        let keyLen: Int = self.persister.getData(Constants.dataPrefix + Constants.clientKeyLen) else {
       completion(KeyManagerError.loadError)
       return
     }
     let cryptoConfigCipher = parseIntoCipher(keyType: keyType, keyLen: keyLen)
 
-    guard let keyCreationTime: TimeInterval = Persister.getData(Constants.dataPrefix + Constants.keyCreationTime) else {
+    guard let keyCreationTime: TimeInterval = self.persister.getData(Constants.dataPrefix + Constants.keyCreationTime) else {
       completion(KeyManagerError.loadError)
       return
     }
 
-    guard let keyTTL: Int = Persister.getData(Constants.dataPrefix + Constants.clientKeyTTL) else {
+    guard let keyTTL: Int = self.persister.getData(Constants.dataPrefix + Constants.clientKeyTTL) else {
       completion(KeyManagerError.loadError)
       return
     }
@@ -359,7 +361,7 @@ class KeyManager {
     let rollback: (Error) -> Error = { (outerError) in
       // Store private key
       guard let priv = UnwrapCall(prevPriv.toPem(isPriv: true), onError: Logger.onError),
-            Persister.storeKey(priv, keyID: Constants.privTag) else {
+            self.persister.storeKey(priv, keyID: Constants.privTag) else {
         Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
         return KeyManagerError.saveError
 
@@ -367,14 +369,14 @@ class KeyManager {
 
       // Store public key
       guard let pub = UnwrapCall(prevPriv.toPem(isPriv: false), onError: Logger.onError),
-            Persister.storeKey(pub, keyID: Constants.pubTag) else {
+            self.persister.storeKey(pub, keyID: Constants.pubTag) else {
         Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
         return KeyManagerError.saveError
 
       }
 
       // Store key creation time in Unix time
-      let success = Persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: prevCreationTime)
+      let success = self.persister.storeData(Constants.dataPrefix + Constants.keyCreationTime, val: prevCreationTime)
       if !success {
         Logger.error("In recovering from " + outerError.localizedDescription + " another error ocurred")
         return KeyManagerError.saveError
@@ -385,7 +387,7 @@ class KeyManager {
     }
 
     // Do the rotation
-    guard let orgID: String = Persister.getData(Constants.dataPrefix + Constants.orgID) else {
+    guard let orgID: String = self.persister.getData(Constants.dataPrefix + Constants.orgID) else {
       completion(rollback(KeyManagerError.loadError))
       return
     }
@@ -393,17 +395,17 @@ class KeyManager {
     do {
       let keyPair = try createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen)
       let pubKeyToSend = PublicKey(
-          _id: Metadata.shared.pubKeyID,
+          _id: Metadata.shared.getPubKeyID(persister: self.persister),
           creationTime: Int(Date().timeIntervalSince1970),
           keyType: keyType,
           encoding: "pem", 
           key: keyPair.pub.toString(),
-          owningClientId: Metadata.shared.clientId,
+          owningClientId: Metadata.shared.getClientId(persister: self.persister),
           owningOrgId: orgID)
       let registerClient = Client(
-          _id: Metadata.shared.clientId,
+          _id: Metadata.shared.getClientId(persister: self.persister),
           sdk: Metadata.shared.version,
-          preferredPublicKeyId: Metadata.shared.pubKeyID,
+          preferredPublicKeyId: Metadata.shared.getPubKeyID(persister: self.persister),
           publicKeys: [pubKeyToSend])
       let requestBuilder = ClientAPI.addClientWithRequestBuilder(client: registerClient)
 
@@ -421,7 +423,7 @@ class KeyManager {
         }
 
         // Store the new publicKeyID
-        guard Persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
+        guard self.persister.storeData(Constants.dataPrefix + Constants.pubKeyIDTag, val: body.publicKeys.first?._id) else {
           Logger.error("failed to store key pair")
           completion(rollback(NSError(domain: "could not store metadata", code: -2, userInfo: nil)))
           return
