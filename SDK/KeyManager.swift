@@ -124,11 +124,9 @@ class KeyManager {
   }
 
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
-  func getEncryptionKey(useDomainID: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
+  func getEncryptionKey(useDomainName: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
     
-    
-    
-    guard let keyIDandCfg = self.selectKey(useDomainID: useDomainID) else {
+    guard let keyIDandCfg = self.selectKey(useDomainName: useDomainName) else {
       Logger.error("failed to select a key")
       return nil
     }
@@ -181,7 +179,12 @@ class KeyManager {
     }
   }
 
-  func selectKey(useDomainID: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
+  
+  private class func isValidDomainForEncryption(domain: SymmetricKeyUseDomain) -> Bool {
+    return Int(NSDate().timeIntervalSince1970) <= domain.symmetricKeyEncryptionUseTTL + domain.creationTime
+  }
+  
+  func selectKey(useDomainName: String) -> (keyId: String, keyConfig: CoreCrypto.CryptoConfig)? {
     if self.testingMode {
       return ("my-key-id", CoreCrypto.CryptoConfig(
           mode: CoreCrypto.EncryptionMode.SYMMETRIC,
@@ -189,7 +192,7 @@ class KeyManager {
           asymm_cipher: CoreCrypto.AsymmetricCipher.ASYMMETRIC_UNSPECIFIED,
           digest: CoreCrypto.MessageDigestAlgorithm.SHA_256))
     }
-
+    
     // Use the string, if it's empty then just use the first one
     guard let encodedUseDomains: Data = self.persister.getData(Constants.dataPrefix + Constants.useDomains) else {
       Logger.error("Persisted use domains were nil")
@@ -200,18 +203,29 @@ class KeyManager {
       Logger.error("failed to decode useDomains")
       return nil
     }
-
-    var useDomainToUse = useDomains.randomElement()
-
+    
+    // If the domain was not explicitly selected, use the first
+    // valid use domain available.
+    var useDomainToUse: SymmetricKeyUseDomain? = nil
+    
+    if useDomainName == "" {
+      useDomains.forEach { domain in
+        if KeyManager.isValidDomainForEncryption(domain: domain) {
+          useDomainToUse = domain
+        }
+      }
+    }
+    
+    // If we want a specific use domain, then match the names, and
+    // select the first valid use domain of that name.
     useDomains.forEach { domain in
-      if domain._id == useDomainID {
+      if domain.name == useDomainName && KeyManager.isValidDomainForEncryption(domain: domain) {
         useDomainToUse = domain
-        return
       }
     }
 
     guard let domain = useDomainToUse else {
-      Logger.error("invalid use domain, no key IDs contained within")
+      Logger.error("invalid or unavilable use domain")
       return nil
     }
 
