@@ -201,6 +201,14 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
+    let currentClientId: String = Persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
+    if currentClientId.isEmpty {
+      // Do not keep registering if we already registered.
+      completion(nil)
+       Logger.info("registion successful, not re-registering, client id: " + currentClientId)
+      return
+    }
+
     // Call up to server and register myself
     let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: keyType, encoding: "pem", key: keyPair.pub.toString(), owningClientId: nil, owningOrgId: orgID)
 

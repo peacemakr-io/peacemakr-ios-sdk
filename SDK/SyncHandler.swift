@@ -91,6 +91,8 @@ class SyncHandler {
         completion(NSError(domain: "failed to store use domains", code: -35, userInfo: nil))
       }
 
+      // If you're looking for when the client is going to re-regesiter a new key
+      // due to a server side config change, go checkout rotateClientKeyIfNeeded.
       if !self.persister.storeData(Constants.dataPrefix + Constants.clientKeyType, val: body.clientKeyType) {
         Logger.error("Failed to store client key type")
         completion(NSError(domain: "failed to store client key type", code: -38, userInfo: nil))
