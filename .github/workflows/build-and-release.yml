@@ -30,7 +30,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         path: Peacemakr.framework.zip
-        name: Peacemakr.framework
+        name: Peacemakr.framework.zip
   upload:
     name: Create and Upload Release
     runs-on: ubuntu-latest
