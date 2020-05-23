@@ -44,7 +44,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: Peacemakr.framework.zip
-          path: /tmp/Peacemakr.framework.zip
+          path: ./
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
@@ -61,6 +61,6 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: /tmp/Peacemakr.framework.zip
+            asset_path: Peacemakr.framework.zip
             asset_name: Peacemakr.framework.zip
             asset_content_type: application/gzip
