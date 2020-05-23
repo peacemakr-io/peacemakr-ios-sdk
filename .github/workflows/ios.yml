@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: IOS-test
+name: Test iOS
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -22,17 +22,3 @@ jobs:
       run: sudo xcode-select -switch /Applications/Xcode_11.4.app
     - name: build and test
       run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' -only-testing:Peacemakr-iOS-Tests/SDKIntegrationTests test
-
-  build:
-    runs-on: macos-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Force xcode 11.4
-      run: sudo xcode-select -switch /Applications/Xcode_11.4.app
-    - name: build and test
-      run: |
-        ./release.sh /tmp/ gh
