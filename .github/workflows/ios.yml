@@ -24,4 +24,4 @@ jobs:
         cp -r ./Carthage/Build/iOS/Alamofire.framework ./Frameworks/
         ls ./Frameworks/
     - name: build and test
-      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.5' test
+      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4.1' test
