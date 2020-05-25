@@ -22,7 +22,7 @@ jobs:
       run: sudo xcode-select -switch /Applications/Xcode_11.4.app
     - name: Dependencies
       run: |
-        carthage --no-use-binaries --platform iOS
+        carthage update --platform iOS
         cp -r ./Carthage/Build/iOS/Alamofire.framework ./Frameworks/
         ls ./Frameworks/
     - name: build and test
