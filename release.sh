@@ -3,8 +3,8 @@
 set -ex
 
 function usage {
-    echo "Usage: ./release-ios.sh [path to peacemakr-ios folder] gh"
-    echo "for example, ./bin/release-ios.sh ~/peacemakr/peacemakr-ios-sdk github-action"
+    echo "Usage: ./release-ios.sh [path to release-sdk folder] gh"
+    echo "for example, ./release.sh ~/sample-project/Frameworks some-text"
 }
 
 if [[ "$#" -gt 2 ]]; then
@@ -24,12 +24,7 @@ OUTPUT_DIR=${1}
 echo ${OUTPUT_DIR}
 
 PROJECT_SRC=$(pwd)
-IPHONE_DEST='platform=iOS Simulator,name=iPhone 8,OS=13.4.1'
-
-if [[ ! -z "${2}" ]]; then
-    IPHONE_DEST='platform=iOS Simulator,name=iPhone 8,OS=13.4'
-fi
-
+IPHONE_DEST='platform=iOS Simulator,name=iPhone 8,OS=13.5'
 
 pushd ${PROJECT_SRC}
 pwd

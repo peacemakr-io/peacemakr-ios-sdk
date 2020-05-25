@@ -20,5 +20,10 @@ jobs:
       uses: actions/checkout@v1
     - name: Force xcode 11.4
       run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+    - name: Dependencies
+      run: |
+        carthage --no-use-binaries --platform iOS
+        cp -r ./Carthage/Build/iOS/Alamofire.framework ./Frameworks/
+        ls ./Frameworks/
     - name: build and test
-      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' -only-testing:Peacemakr-iOS-Tests/SDKTests test
+      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' test
