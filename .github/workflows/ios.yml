@@ -18,10 +18,5 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Dependencies
-      run: |
-        carthage update --platform iOS
-        cp -r ./Carthage/Build/iOS/Alamofire.framework ./Frameworks/
-        ls ./Frameworks/
     - name: build and test
-      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4.1' test
+      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' -only-testing:Peacemakr-iOS-Tests/SDKIntegrationTests  -UseModernBuildSystem=NO test
