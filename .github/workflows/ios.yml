@@ -20,5 +20,7 @@ jobs:
       uses: actions/checkout@v1
     - name: Force xcode 11.4
       run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+    - name: ping server
+      run:  ping -c 1 api.peacemakr.io
     - name: build and test
       run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' test
