@@ -128,15 +128,13 @@ public class Peacemakr: PeacemakrProtocol {
 
   /// MARK: - Registration
 
-  public var registrationSuccessful: Bool {
-    get {
-      return self.persister.hasData(Constants.dataPrefix + Constants.clientIDTag) && self.persister.hasData(Constants.dataPrefix + Constants.pubKeyIDTag)
-    }
+  public func registrationSuccessful() -> Bool {
+    return self.persister.hasData(Constants.dataPrefix + Constants.clientIDTag) && self.persister.hasData(Constants.dataPrefix + Constants.pubKeyIDTag)
   }
 
   private func verifyRegistration(completion: (@escaping ErrorHandler)) {
     // Error on not registered
-    if !self.registrationSuccessful {
+    if !self.registrationSuccessful() {
       completion(PeacemakrError.registrationError)
       return
     }
@@ -202,10 +200,10 @@ public class Peacemakr: PeacemakrProtocol {
     }
 
     let currentClientId: String = self.persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
-    if currentClientId.isEmpty {
+    if !currentClientId.isEmpty {
       // Do not keep registering if we already registered.
+      Logger.info("registion successful, not re-registering, client id: " + currentClientId)
       completion(nil)
-       Logger.info("registion successful, not re-registering, client id: " + currentClientId)
       return
     }
 

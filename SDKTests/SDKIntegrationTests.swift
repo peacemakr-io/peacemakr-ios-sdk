@@ -62,7 +62,7 @@ class SDKIntegrationTests: XCTestCase {
 
     waitForExpectations(timeout: 5, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
   }
 
   func testSync() {
@@ -117,7 +117,7 @@ class SDKIntegrationTests: XCTestCase {
 
     waitForExpectations(timeout: 60, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
 
     let decryptExpectation = self.expectation(description: "Decrypt successful")
 
