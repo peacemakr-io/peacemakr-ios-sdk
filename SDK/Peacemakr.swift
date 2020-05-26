@@ -201,7 +201,7 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
-    let currentClientId: String = Persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
+    let currentClientId: String = self.persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
     if currentClientId.isEmpty {
       // Do not keep registering if we already registered.
       completion(nil)
