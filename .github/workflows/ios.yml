@@ -19,4 +19,4 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: build and test
-      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4' -only-testing:Peacemakr-iOS-Tests/SDKIntegrationTests  -UseModernBuildSystem=NO test
+      run: xcodebuild -project Peacemakr-iOS.xcodeproj -scheme Peacemakr-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.4.1' -only-testing:Peacemakr-iOS-Tests/SDKIntegrationTests -UseModernBuildSystem=NO test
