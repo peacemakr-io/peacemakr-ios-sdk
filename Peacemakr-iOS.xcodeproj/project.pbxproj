@@ -52,6 +52,7 @@
 		07FBFF3E21E0045900D9D0C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3C21E0045900D9D0C6 /* Main.storyboard */; };
 		07FBFF4021E0045A00D9D0C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF3F21E0045A00D9D0C6 /* Assets.xcassets */; };
 		07FBFF4321E0045A00D9D0C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07FBFF4121E0045A00D9D0C6 /* LaunchScreen.storyboard */; };
+		8E000774247CB3D100B89739 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BE24721FEF00A56942 /* Alamofire.framework */; };
 		8E43F7DD2474E85E00A56942 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BE24721FEF00A56942 /* Alamofire.framework */; };
 		8E43F7DE2474E85E00A56942 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BE24721FEF00A56942 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7E52474E87A00A56942 /* Peacemakr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07126A02218F5D7400F68832 /* Peacemakr.framework */; };
@@ -204,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07126A0C218F5D7400F68832 /* Peacemakr.framework in Frameworks */,
+				8E000774247CB3D100B89739 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,7 +446,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 07FBFF4521E0045A00D9D0C6 /* Build configuration list for PBXNativeTarget "SDKTestHost" */;
 			buildPhases = (
-				0722A73921E70A83004A7616 /* ShellScript */,
+				0722A73921E70A83004A7616 /* Run Script */,
 				07FBFF3221E0045900D9D0C6 /* Sources */,
 				07FBFF3321E0045900D9D0C6 /* Frameworks */,
 				07FBFF3421E0045900D9D0C6 /* Resources */,
@@ -555,7 +557,7 @@
 			shellPath = /bin/bash;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
-		0722A73921E70A83004A7616 /* ShellScript */ = {
+		0722A73921E70A83004A7616 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -564,6 +566,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -906,6 +909,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = SDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -937,6 +941,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = SDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

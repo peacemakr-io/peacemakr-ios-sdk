@@ -73,6 +73,7 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.register(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       expectation.fulfill()
     })
 
