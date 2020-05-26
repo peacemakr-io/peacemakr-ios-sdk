@@ -57,10 +57,11 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.register(completion: { error in
       XCTAssertNil(error, error!.localizedDescription)
+      print(error ?? "no error")
       expectation.fulfill()
     })
 
-    waitForExpectations(timeout: 5, handler: nil)
+    waitForExpectations(timeout: 10, handler: nil)
 
     XCTAssert(sdk!.registrationSuccessful, "Register failed")
   }
@@ -85,6 +86,7 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.sync(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       gotOrgInfoExpectation.fulfill()
     })
 
