@@ -60,8 +60,8 @@
 		8E43F7EC2474EB8500A56942 /* CoreCrypto.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7EE2474F7F600A56942 /* libpeacemakr-core-crypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7E12474E86F00A56942 /* libpeacemakr-core-crypto.dylib */; };
 		8E43F7EF2474F7F600A56942 /* libpeacemakr-core-crypto.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7E12474E86F00A56942 /* libpeacemakr-core-crypto.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8E43F7F02474F84600A56942 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; };
-		8E43F7F12474F84600A56942 /* Alamofire.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 0701548021FCF5C100172F8D /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8E43F7F02474F84600A56942 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		8E43F7F12474F84600A56942 /* (null) in Copy Files */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7F42474F84D00A56942 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; };
 		8E43F7F52474F84D00A56942 /* CoreCrypto.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7F6247502A600A56942 /* CoreCrypto.framework in Resources */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; };
@@ -102,7 +102,7 @@
 			files = (
 				8E43F7F52474F84D00A56942 /* CoreCrypto.framework in Copy Files */,
 				0701548321FCF5D700172F8D /* (null) in Copy Files */,
-				8E43F7F12474F84600A56942 /* Alamofire.framework in Copy Files */,
+				8E43F7F12474F84600A56942 /* (null) in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,7 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E43F7F42474F84D00A56942 /* CoreCrypto.framework in Frameworks */,
-				8E43F7F02474F84600A56942 /* Alamofire.framework in Frameworks */,
+				8E43F7F02474F84600A56942 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,7 +366,6 @@
 		8E43F7ED2474F58C00A56942 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				0701548021FCF5C100172F8D /* Alamofire.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -813,7 +812,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -858,7 +857,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -901,7 +900,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -932,7 +931,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -963,7 +962,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SDKTestHost/SDKTestHost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -996,7 +995,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SDKTestHost/SDKTestHost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DR88HTVZXS;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
