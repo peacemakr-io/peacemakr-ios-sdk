@@ -94,7 +94,7 @@ class SDKIntegrationTests: XCTestCase {
 
   func testEncryptDecrypt() throws {
 
-    sdk = try? Peacemakr(apiKey: "kxfWsPh6EQLmLWOoc9VaZMT5gQvEhK+n55t/gFamwl4=", url: "https://api.peacemakr.io", testingMode: false)
+    sdk = try? Peacemakr(apiKey: getAPIKey(), url: "https://api.peacemakr.io", testingMode: false)
     XCTAssertNotNil(sdk)
 
     let expectation = self.expectation(description: "Registration successful")
