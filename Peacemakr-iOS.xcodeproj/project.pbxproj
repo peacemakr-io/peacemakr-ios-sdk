@@ -61,7 +61,6 @@
 		8E43F7EC2474EB8500A56942 /* CoreCrypto.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7EE2474F7F600A56942 /* libpeacemakr-core-crypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7E12474E86F00A56942 /* libpeacemakr-core-crypto.dylib */; };
 		8E43F7EF2474F7F600A56942 /* libpeacemakr-core-crypto.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7E12474E86F00A56942 /* libpeacemakr-core-crypto.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8E43F7F02474F84600A56942 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		8E43F7F12474F84600A56942 /* (null) in Copy Files */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E43F7F42474F84D00A56942 /* CoreCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; };
 		8E43F7F52474F84D00A56942 /* CoreCrypto.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 8E43F7BF24721FEF00A56942 /* CoreCrypto.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -196,7 +195,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E43F7F42474F84D00A56942 /* CoreCrypto.framework in Frameworks */,
-				8E43F7F02474F84600A56942 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -189,15 +189,11 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
-    guard let keyPair = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
-      completion(PeacemakrError.keyCreationError)
-      return
-    }
-
     guard let orgID: String = self.persister.getData(Constants.dataPrefix + Constants.orgID) else {
       completion(PeacemakrError.registrationError)
       return
     }
+
 
     let currentClientId: String = self.persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
     if !currentClientId.isEmpty {
@@ -206,6 +202,13 @@ public class Peacemakr: PeacemakrProtocol {
       completion(nil)
       return
     }
+
+    guard let keyPair = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
+      completion(PeacemakrError.keyCreationError)
+      return
+    }
+
+
 
     // Call up to server and register myself
     let pubKeyToSend = PublicKey(_id: "", creationTime: Int(Date().timeIntervalSince1970), keyType: keyType, encoding: "pem", key: keyPair.pub.toString(), owningClientId: nil, owningOrgId: orgID)
