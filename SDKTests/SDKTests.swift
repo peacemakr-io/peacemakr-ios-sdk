@@ -104,16 +104,16 @@ class SDKTests: XCTestCase {
 
     let decryptExpectation = self.expectation(description: "Decrypt successful")
 
-    let (serialized, err) = sdk!.encrypt(plaintext: data!.serializedValue)
-    XCTAssert(err == nil, err!.localizedDescription)
-
-    self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
-      XCTAssert(dest.error == nil, dest.error!.localizedDescription)
-      XCTAssert(dest.data != nil, dest.error!.localizedDescription)
-      XCTAssertEqual(dest.data, self.data?.serializedValue)
-      decryptExpectation.fulfill()
+    sdk!.encrypt(plaintext: data!.serializedValue, completion: {(serialized, error) in
+      XCTAssert(error == nil, error!.localizedDescription)
+      
+      self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
+        XCTAssert(dest.error == nil, dest.error!.localizedDescription)
+        XCTAssert(dest.data != nil, dest.error!.localizedDescription)
+        XCTAssertEqual(dest.data, self.data?.serializedValue)
+        decryptExpectation.fulfill()
+      })
     })
-
 
     waitForExpectations(timeout: 10, handler: nil)
   }
