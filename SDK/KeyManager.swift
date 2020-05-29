@@ -124,7 +124,7 @@ class KeyManager {
   }
 
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
-  func getEncryptionKey(useDomainName: String) -> (aad: String, cryptoConfig: CoreCrypto.CryptoConfig, keyId: String?)? {
+  func getEncryptionKeyId(useDomainName: String) -> (aad: String, cryptoConfig: CoreCrypto.CryptoConfig, keyId: String?)? {
     
     guard let keyIDandCfg = self.selectKey(useDomainName: useDomainName) else {
       Logger.error("failed to select a key")
@@ -205,16 +205,16 @@ class KeyManager {
     
     if useDomainName == "" {
       useDomains.forEach { domain in
-//        if KeyManager.isValidDomainForEncryption(domain: domain) {
+        if KeyManager.isValidDomainForEncryption(domain: domain) {
           useDomainToUse = domain
-//        }
+        }
       }
     }
     
     // If we want a specific use domain, then match the names, and
     // select the first valid use domain of that name.
     useDomains.forEach { domain in
-      if domain.name == useDomainName {
+      if KeyManager.isValidDomainForEncryption(domain: domain) && domain.name == useDomainName {
         useDomainToUse = domain
       }
     }

@@ -339,7 +339,7 @@ public class Peacemakr: PeacemakrProtocol {
 }
   
   private func encrypt(_ rawMessageData: Data, useDomainName: String? = nil, completion: (@escaping (PeacemakrDataResult) -> Void)) {
-    guard let aadAndKey = self.keyManager.getEncryptionKey(useDomainName: useDomainName ?? ""),
+    guard let aadAndKey = self.keyManager.getEncryptionKeyId(useDomainName: useDomainName ?? ""),
           let aadData = aadAndKey.aad.data(using: .utf8)
     else {
             return completion((nil, PeacemakrError.keyFetchError))
