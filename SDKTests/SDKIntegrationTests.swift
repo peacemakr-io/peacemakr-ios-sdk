@@ -57,12 +57,13 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.register(completion: { error in
       XCTAssertNil(error, error!.localizedDescription)
+      print(error ?? "no error")
       expectation.fulfill()
     })
 
-    waitForExpectations(timeout: 5, handler: nil)
+    waitForExpectations(timeout: 10, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
   }
 
   func testSync() {
@@ -73,6 +74,7 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.register(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       expectation.fulfill()
     })
 
@@ -84,10 +86,12 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.sync(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       gotOrgInfoExpectation.fulfill()
     })
 
     waitForExpectations(timeout: 60, handler: nil)
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
 
   }
 
@@ -101,6 +105,7 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.register(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       expectation.fulfill()
     })
 
@@ -112,25 +117,30 @@ class SDKIntegrationTests: XCTestCase {
 
     sdk?.sync(completion: { error in
       XCTAssertNil(error)
+      print(error ?? "no error")
       gotOrgInfoExpectation.fulfill()
     })
 
     waitForExpectations(timeout: 60, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
 
     let decryptExpectation = self.expectation(description: "Decrypt successful")
 
-    let (serialized, err) = sdk!.encrypt(plaintext: data!.serializedValue)
-    XCTAssert(err == nil, err!.localizedDescription)
-    XCTAssert(serialized != nil, "error: the serialized value is nil")
-    
-    self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
-      XCTAssert(dest.error == nil, dest.error!.localizedDescription)
-      XCTAssert(dest.data != nil, dest.error!.localizedDescription)
-      XCTAssertEqual(dest.data, self.data?.serializedValue)
-      decryptExpectation.fulfill()
+    sdk!.encrypt(plaintext: data!.serializedValue, completion: {(serialized, error) in
+      
+      XCTAssert(error == nil, error!.localizedDescription)
+      XCTAssert(serialized != nil, "error: the serialized value is nil")
+      
+      self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
+        XCTAssert(dest.error == nil, dest.error!.localizedDescription)
+        XCTAssert(dest.data != nil, dest.error!.localizedDescription)
+        XCTAssertEqual(dest.data, self.data?.serializedValue)
+        decryptExpectation.fulfill()
+      })
     })
+    
+    
 
     waitForExpectations(timeout: 10, handler: nil)
   }

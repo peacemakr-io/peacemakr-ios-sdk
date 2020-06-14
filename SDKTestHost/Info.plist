@@ -47,8 +47,6 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>New item</key>
-			<string></string>
 			<key>localhost:8080/api/v1</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

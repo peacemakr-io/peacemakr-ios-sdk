@@ -1,0 +1,66 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Release-iOS
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Force xcode 11.4
+      run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+    - name: build and test
+      run: |
+        ./release.sh $(pwd) gh
+        zip -r Peacemakr.framework.zip Peacemakr.framework
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-artifact@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: Peacemakr.framework.zip
+        name: Peacemakr.framework.zip
+  upload:
+    name: Create and Upload Release
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Download macOS
+        uses: actions/download-artifact@v1
+        with:
+          name: Peacemakr.framework.zip
+          path: ./
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ steps.get_version.outputs.VERSION }}"
+          release_name: Test Release ${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: true
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: Peacemakr.framework.zip
+            asset_name: Peacemakr.framework.zip
+            asset_content_type: application/gzip

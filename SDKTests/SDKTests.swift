@@ -46,7 +46,7 @@ class SDKTests: XCTestCase {
 
     waitForExpectations(timeout: 5, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
   }
 
   func testSync() {
@@ -100,20 +100,20 @@ class SDKTests: XCTestCase {
 
     waitForExpectations(timeout: 60, handler: nil)
 
-    XCTAssert(sdk!.registrationSuccessful, "Register failed")
+    XCTAssert(sdk!.registrationSuccessful(), "Register failed")
 
     let decryptExpectation = self.expectation(description: "Decrypt successful")
 
-    let (serialized, err) = sdk!.encrypt(plaintext: data!.serializedValue)
-    XCTAssert(err == nil, err!.localizedDescription)
-
-    self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
-      XCTAssert(dest.error == nil, dest.error!.localizedDescription)
-      XCTAssert(dest.data != nil, dest.error!.localizedDescription)
-      XCTAssertEqual(dest.data, self.data?.serializedValue)
-      decryptExpectation.fulfill()
+    sdk!.encrypt(plaintext: data!.serializedValue, completion: {(serialized, error) in
+      XCTAssert(error == nil, error!.localizedDescription)
+      
+      self.sdk!.decrypt(ciphertext: serialized!, completion: { (dest) in
+        XCTAssert(dest.error == nil, dest.error!.localizedDescription)
+        XCTAssert(dest.data != nil, dest.error!.localizedDescription)
+        XCTAssertEqual(dest.data, self.data?.serializedValue)
+        decryptExpectation.fulfill()
+      })
     })
-
 
     waitForExpectations(timeout: 10, handler: nil)
   }
