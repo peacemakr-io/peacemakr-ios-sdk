@@ -194,7 +194,6 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
-
     let currentClientId: String = self.persister.getData(Constants.dataPrefix + Constants.clientIDTag) ?? String() as String
     if !currentClientId.isEmpty {
       // Do not keep registering if we already registered.
@@ -203,11 +202,11 @@ public class Peacemakr: PeacemakrProtocol {
       return
     }
 
+
     guard let keyPair = try? self.keyManager.createAndStoreKeyPair(with: rand, keyType: keyType, keyLen: keyLen) else {
       completion(PeacemakrError.keyCreationError)
       return
     }
-
 
 
     // Call up to server and register myself
@@ -298,49 +297,87 @@ public class Peacemakr: PeacemakrProtocol {
 
   /// MARK: - Encryption
 
-  public func encrypt(plaintext: Data) -> Peacemakr.PeacemakrDataResult {
-    return encrypt(plaintext)
+  public func encrypt(plaintext: Data, completion: (@escaping (PeacemakrDataResult) -> Void)) {
+    return encrypt(plaintext, completion: completion)
   }
   
-  public func encrypt(in domain: String, plaintext: Data)  -> Peacemakr.PeacemakrDataResult {
-    return encrypt(plaintext, useDomainName: domain)
+  public func encrypt(in domain: String, plaintext: Data, completion: (@escaping (PeacemakrDataResult) -> Void)) {
+    return encrypt(plaintext, useDomainName: domain, completion: completion)
   }
   
-  private func encrypt(_ rawMessageData: Data, useDomainName: String? = nil) -> (data: Data?, error: Error?) {
-    guard let aadAndKey = self.keyManager.getEncryptionKey(useDomainName: useDomainName ?? ""),
-    let aadData = aadAndKey.aad.data(using: .utf8) else {
-      return (nil, NSError(domain: "Unable to get the encryption key", code: -101, userInfo: nil))
-    }
-    let p = Plaintext(data: rawMessageData, aad: aadData)
-
+  private func encryptAndSign(unwrappedKey: PeacemakrKey, p: Plaintext, digest: MessageDigestAlgorithm) -> (data: Data?, error: Error?) {
+    
     guard let encrypted = UnwrapCall(CryptoContext.encrypt(
-        key: aadAndKey.key,
-        plaintext: p,
-        rand: self.rand
-    ), onError: Logger.onError) else {
-      Logger.error("encryption failed")
-      return (nil, PeacemakrError.encryptionError)
+            key: unwrappedKey,
+            plaintext: p,
+            rand: self.rand
+        ), onError: Logger.onError) else {
+          Logger.error("encryption failed")
+          return (nil, PeacemakrError.encryptionError)
+        }
+    
+      var encCiphertext = encrypted
+  
+      guard let signKey = self.keyManager.getMyKey(priv: true) else {
+        Logger.error("failed to get my private key")
+        return (nil, PeacemakrError.keyManagerError)
+      }
+  
+      let success = CryptoContext.sign(senderKey: signKey, plaintext: p, digest: digest, ciphertext: &encCiphertext)
+      if !success {
+        Logger.error("Signing failed")
+        return (nil, PeacemakrError.signingError)
+      }
+  
+      guard let serialized = UnwrapCall(CryptoContext.serialize(digest, encCiphertext), onError: Logger.onError) else {
+        Logger.error("Serialization failed")
+        return (nil, PeacemakrError.serializationError)
+      }
+  
+      return (serialized, nil)
+    
+}
+  
+  private func encrypt(_ rawMessageData: Data, useDomainName: String? = nil, completion: (@escaping (PeacemakrDataResult) -> Void)) {
+    guard let aadAndKey = self.keyManager.getEncryptionKeyId(useDomainName: useDomainName ?? ""),
+          let aadData = aadAndKey.aad.data(using: .utf8)
+    else {
+            return completion((nil, PeacemakrError.keyFetchError))
     }
 
-    var encCiphertext = encrypted
-
-    guard let signKey = self.keyManager.getMyKey(priv: true) else {
-      Logger.error("failed to get my private key")
-      return (nil, PeacemakrError.keyManagerError)
+    let p = Plaintext(data: rawMessageData, aad: aadData)
+    let digest = aadAndKey.cryptoConfig.digestAlgorithm
+    
+    guard let keyId = aadAndKey.keyId else {
+      completion((nil, PeacemakrError.keyFetchError)) // FIXME change return error
+      return
     }
 
-    let success = CryptoContext.sign(senderKey: signKey, plaintext: p, digest: aadAndKey.digest, ciphertext: &encCiphertext)
-    if !success {
-      Logger.error("Signing failed")
-      return (nil, PeacemakrError.signingError)
-    }
+  
+    guard let key = self.keyManager.getLocalKeyByID(keyID: keyId, cfg: aadAndKey.cryptoConfig)
+      else {
+        Logger.error("Unable to get key with ID " + keyId)
+        getSymmKeyByID(keyID: keyId, cfg: aadAndKey.cryptoConfig, completion: { (fetchKey, err) in
+              if err != nil {
+                Logger.error("Trying to get the symmetric key: " + err!.localizedDescription)
+                return completion((nil, PeacemakrError.keyFetchError))
+              }
+          
+              guard let symmKey = fetchKey else {
+                return completion((nil, PeacemakrError.keyFetchError))
+              }
 
-    guard let serialized = UnwrapCall(CryptoContext.serialize(aadAndKey.digest, encCiphertext), onError: Logger.onError) else {
-      Logger.error("Serialization failed")
-      return (nil, PeacemakrError.serializationError)
-    }
+              let (encryptedData, error) = self.encryptAndSign(unwrappedKey: symmKey, p: p, digest: digest)
 
-    return (serialized, nil)
+              completion((data: encryptedData, error: error))
+        })
+        return
+    }
+    
+    let (encryptedData, error) = self.encryptAndSign(unwrappedKey: key, p: p, digest: digest)
+    completion((data: encryptedData, error: error))
+    return
+
   }
 
 
