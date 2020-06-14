@@ -124,7 +124,7 @@ class KeyManager {
   }
 
   // This edits the plaintext to add the key ID to the message before it gets encrypted and sent out
-  func getEncryptionKey(useDomainName: String) -> (aad: String, key: PeacemakrKey, digest: MessageDigestAlgorithm)? {
+  func getEncryptionKeyId(useDomainName: String) -> (aad: String, cryptoConfig: CoreCrypto.CryptoConfig, keyId: String?)? {
     
     guard let keyIDandCfg = self.selectKey(useDomainName: useDomainName) else {
       Logger.error("failed to select a key")
@@ -141,12 +141,7 @@ class KeyManager {
       return nil
     }
 
-    guard let keyToUse = self.getLocalKeyByID(keyID: keyIDandCfg.keyId, cfg: keyIDandCfg.keyConfig) else {
-      Logger.error("Unable to get key with ID " + keyIDandCfg.keyId)
-      return nil
-    }
-
-    return (messageAAD, keyToUse, keyIDandCfg.keyConfig.digestAlgorithm)
+    return (messageAAD, keyIDandCfg.keyConfig, keyIDandCfg.keyId)
   }
 
   private func parseDigestAlgorithm(digest: String?) -> MessageDigestAlgorithm {
@@ -219,7 +214,7 @@ class KeyManager {
     // If we want a specific use domain, then match the names, and
     // select the first valid use domain of that name.
     useDomains.forEach { domain in
-      if domain.name == useDomainName && KeyManager.isValidDomainForEncryption(domain: domain) {
+      if KeyManager.isValidDomainForEncryption(domain: domain) && domain.name == useDomainName {
         useDomainToUse = domain
       }
     }

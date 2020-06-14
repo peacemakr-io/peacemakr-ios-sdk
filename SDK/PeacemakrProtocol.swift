@@ -48,9 +48,9 @@ public protocol PeacemakrProtocol {
          - in: domain ID
    - Returns: a b64 encoded ciphertext blob on success, else returns a non-nil error.
    */
-  func encrypt(plaintext: Data) -> PeacemakrDataResult
+  func encrypt(plaintext: Data, completion: (@escaping (PeacemakrDataResult) -> Void))
   
-  func encrypt(in domain: String, plaintext: Data) -> PeacemakrDataResult
+  func encrypt(in domain: String, plaintext: Data, completion: (@escaping (PeacemakrDataResult) -> Void))
   
   /// MARK: - Decryption
   
