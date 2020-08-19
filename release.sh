@@ -3,7 +3,7 @@
 set -ex
 
 function usage {
-    echo "Usage: ./release-ios.sh [path to release-sdk folder] gh"
+    echo "Usage: ./release.sh [path to release-sdk folder] gh"
     echo "for example, ./release.sh ~/sample-project/Frameworks some-text"
 }
 
@@ -45,6 +45,8 @@ lipo -create -output "Peacemakr.framework/Peacemakr" "${PROJECT_SRC}/build/Relea
 install_name_tool -id "@rpath/Peacemakr.framework/Peacemakr" Peacemakr.framework/Peacemakr
 
 /usr/bin/codesign --force --sign - --timestamp=none Peacemakr.framework/Peacemakr
+/usr/bin/codesign --force --sign - --timestamp=none Peacemakr.framework/Frameworks/CoreCrypto.framework
+/usr/bin/codesign --force --sign - --timestamp=none Peacemakr.framework/Frameworks/CoreCrypto.framework/libpeacemakr-core-crypto.dylib
 # copy debug info
 cp -R ${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework.dSYM .
 lipo -create -output "Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr" "${PROJECT_SRC}/build/Release-iphoneos/Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr" "${PROJECT_SRC}/build/Release-iphonesimulator/Peacemakr.framework.dSYM/Contents/Resources/DWARF/Peacemakr"
