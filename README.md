@@ -1,18 +1,20 @@
-# Peacemakr iOS SDK
+<p align="center">
+  <br>
+    <img src="https://admin.peacemakr.io/p_logo.png" width="150"/>
+  <br>
+</p>
 
-This repository contains the Swift implementation of the peacemakr SDK.
+# Peacemakr E2E-Encryption-as-a-Service iOS SDK
 
-In order to build the core crypto lib for this repo, execute the following command:
-```
-cd /path/to/peacemakr-core-crypto/bin && ./release-ios.sh /path/to/peacemakr-sdk-ios
-```
+Peacemakr's E2E-Encryption-as-a-Service SDK simplifies your data security with E2E-Encryption service and automated key lifecycle management.
 
-After this you should be able to open your peacemakr-sdk-ios Xcode project and develop normally.
+You can easily encrypt your data without worrying about backward compatibility, cross platform portability, or changing security requirements.
 
-You may run into mysterious 400 and 404 errors, if you do, check the request code is escaping things properly. The generated swift should have something like this
-```
-let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
-```
+Our Zero-Trust capability allows you to customize your security strength to meet the highest standard without having to place your trust in Peacemakr as we don’t have the capacity to get your keys and decrypt your data.
+
+## License
+
+The content of this SDK is open source under [Apache License 2.0](https://github.com/peacemakr-io/peacemakr-python-sdk/blob/master/LICENSE).
 
 ## Setup
 
@@ -78,3 +80,17 @@ Make sure the Signing & Certificate is set to your development/personal account 
         done
         ```
         - Remember to sign the dylib too :)
+
+## FAQ
+
+In order to build the core crypto lib for this repo, execute the following command:
+```
+cd /path/to/peacemakr-core-crypto/bin && ./release-ios.sh /path/to/peacemakr-sdk-ios
+```
+
+After this you should be able to open your peacemakr-sdk-ios Xcode project and develop normally.
+
+You may run into mysterious 400 and 404 errors, if you do, check the request code is escaping things properly. The generated swift should have something like this
+```
+let apikeyPostEscape = apikeyPreEscape.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+```
